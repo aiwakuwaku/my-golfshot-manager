@@ -1,0 +1,1 @@
+# my-golfshot-manager
