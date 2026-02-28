@@ -5,10 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Golf Shot Manager</title>
     
-    <!-- PWA Icons & Manifest (Bright & Round Design) -->
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ShotLog">
+
+    <!-- PWA Icons (Bright & Round Design) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='225' fill='%2300e676'/%3E%3Cpath d='M230 130 h30 v252 h-30 z' fill='%23121212'/%3E%3Cpath d='M260 130 l120 60 l-120 60 z' fill='%23121212'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='225' fill='%2300e676'/%3E%3Cpath d='M230 130 h30 v252 h-30 z' fill='%23121212'/%3E%3Cpath d='M260 130 l120 60 l-120 60 z' fill='%23121212'/%3E%3C/svg%3E">
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Golf%20Shot%20Manager%22%2C%22short_name%22%3A%22ShotLog%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23121212%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27256%27%20fill%3D%27%2523ffffff%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27225%27%20fill%3D%27%252300e676%27%2F%253E%253Cpath%20d%3D%27M230%20130%20h30%20v252%20h-30%20z%27%20fill%3D%27%2523121212%27%2F%253E%253Cpath%20d%3D%27M260%20130%20l120%2060%20l-120%2060%20z%27%20fill%3D%27%2523121212%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -58,6 +65,7 @@
 <body class="bg-gray-100 font-sans text-gray-900">
     <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative">
         
+        <!-- Header -->
         <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-center items-center">
             <h1 class="font-bold text-lg tracking-tight">Golf Shot Manager</h1>
         </header>
@@ -231,15 +239,7 @@
                     <table class="w-full text-[10px] border-collapse min-w-[440px]">
                         <thead>
                             <tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter">
-                                <th class="p-2 border-r w-8">H</th>
-                                <th class="p-2 border-r w-8">Par</th>
-                                <th class="p-2 border-r w-10">Scr</th>
-                                <th class="p-2 border-r w-8">Put</th>
-                                <th class="p-2 border-r w-8">FW</th>
-                                <th class="p-2 border-r w-8">OB</th>
-                                <th class="p-2 border-r w-8">Pn</th>
-                                <th class="p-2 border-r w-8">Bk</th>
-                                <th class="p-2">Details</th>
+                                <th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -252,32 +252,16 @@
                                 <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9+i-1, 'ob') || '-' }}</td>
                                 <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9+i-1, 'penalty') || '-' }}</td>
                                 <td class="p-2 border-r">
-                                    <template v-if="countStat(hIdx*9+i-1, 'bunker') > 0">
-                                        <span :class="{'sand-save': isSandSave(hIdx*9+i-1)}">B</span>
-                                    </template>
+                                    <template v-if="countStat(hIdx*9+i-1, 'bunker') > 0"><span :class="{'sand-save': isSandSave(hIdx*9+i-1)}">B</span></template>
                                     <template v-else>-</template>
                                 </td>
                                 <td class="p-1 text-left leading-tight">
-                                    <div class="flex flex-wrap gap-0.5">
-                                        <span v-for="(shot, sIdx) in getFilledShots(hIdx*9+i-1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] whitespace-nowrap rounded">
-                                            {{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}
-                                        </span>
-                                    </div>
+                                    <div class="flex flex-wrap gap-0.5"><span v-for="(shot, sIdx) in getFilledShots(hIdx*9+i-1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] whitespace-nowrap rounded">{{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}</span></div>
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot class="bg-gray-100 font-bold text-center">
-                            <tr>
-                                <td class="p-2 border-r uppercase">Total</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).par }}</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).score }}</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).putts }}</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).fw }}</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).ob }}</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).pn }}</td>
-                                <td class="p-2 border-r">{{ calculateHalfTotal(hIdx).bk }}</td>
-                                <td class="p-2 text-left text-[8px] text-gray-500 italic">9H Totals</td>
-                            </tr>
+                            <tr><td class="p-2 border-r uppercase">Total</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).par }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).score }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).putts }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).fw }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).ob }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).pn }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).bk }}</td><td class="p-2 text-left text-[8px] text-gray-500 italic">9H Totals</td></tr>
                         </tfoot>
                     </table>
                 </div>
@@ -285,34 +269,13 @@
                 <div class="bg-black text-white p-6 rounded shadow-lg">
                     <div class="text-[10px] text-gray-500 uppercase mb-2 tracking-widest text-center">18 Holes Grand Total</div>
                     <div class="grid grid-cols-3 gap-y-4 text-center">
-                        <div>
-                            <div class="text-[9px] text-gray-500 uppercase">Par</div>
-                            <div class="text-xl font-bold">{{ grandTotals.par }}</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] text-gray-500 uppercase">Score</div>
-                            <div class="text-xl font-bold italic">{{ totalScoreDisplay }}</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] text-gray-500 uppercase">Putts</div>
-                            <div class="text-xl font-bold">{{ grandTotals.putts }}</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] text-gray-500 uppercase">FW</div>
-                            <div class="text-xl font-bold text-green-400">{{ grandTotals.fw }}</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] text-gray-500 uppercase">OB</div>
-                            <div class="text-xl font-bold text-red-400">{{ grandTotals.ob }}</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] text-gray-500 uppercase">Pn</div>
-                            <div class="text-xl font-bold text-orange-400">{{ grandTotals.pn }}</div>
-                        </div>
-                        <div class="col-start-2">
-                            <div class="text-[9px] text-gray-500 uppercase">Bk</div>
-                            <div class="text-xl font-bold">{{ grandTotals.bk }}</div>
-                        </div>
+                        <div><div class="text-[9px] text-gray-500 uppercase">Par</div><div class="text-xl font-bold">{{ grandTotals.par }}</div></div>
+                        <div><div class="text-[9px] text-gray-500 uppercase">Score</div><div class="text-xl font-bold italic">{{ totalScoreDisplay }}</div></div>
+                        <div><div class="text-[9px] text-gray-500 uppercase">Putts</div><div class="text-xl font-bold">{{ grandTotals.putts }}</div></div>
+                        <div><div class="text-[9px] text-gray-500 uppercase">FW</div><div class="text-xl font-bold text-green-400">{{ grandTotals.fw }}</div></div>
+                        <div><div class="text-[9px] text-gray-500 uppercase">OB</div><div class="text-xl font-bold text-red-400">{{ grandTotals.ob }}</div></div>
+                        <div><div class="text-[9px] text-gray-500 uppercase">Pn</div><div class="text-xl font-bold text-orange-400">{{ grandTotals.pn }}</div></div>
+                        <div class="col-start-2"><div class="text-[9px] text-gray-500 uppercase">Bk</div><div class="text-xl font-bold">{{ grandTotals.bk }}</div></div>
                     </div>
                 </div>
 
@@ -320,28 +283,31 @@
             </div>
         </main>
 
-        <!-- Navigation Bar -->
         <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto nav-bar z-30">
-            <button @click="view = 'settings'" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'">
-                <div class="icon-container"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div>
-                <span class="nav-label">Settings</span>
-            </button>
-            <button @click="isRoundStarted ? view = 'hole' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]">
-                <div class="icon-container"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div>
-                <span class="nav-label">Input</span>
-            </button>
-            <button @click="isRoundStarted ? view = 'summary' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'summary' ? 'nav-active' : 'nav-inactive')]">
-                <div class="icon-container"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></div>
-                <span class="nav-label">Card</span>
-            </button>
+            <button @click="view = 'settings'" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><div class="icon-container"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div><span class="nav-label">Settings</span></button>
+            <button @click="isRoundStarted ? view = 'hole' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div><span class="nav-label">Input</span></button>
+            <button @click="isRoundStarted ? view = 'summary' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'summary' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></div><span class="nav-label">Card</span></button>
         </nav>
     </div>
 
     <script>
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, onMounted } = Vue;
 
         createApp({
             setup() {
+                // PWA Service Worker Registration logic (Self-contained)
+                onMounted(() => {
+                    if ('serviceWorker' in navigator) {
+                        const swCode = `
+                            self.addEventListener('install', (e) => self.skipWaiting());
+                            self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
+                        `;
+                        const blob = new Blob([swCode], { type: 'text/javascript' });
+                        const url = URL.createObjectURL(blob);
+                        navigator.serviceWorker.register(url).catch(err => console.error(err));
+                    }
+                });
+
                 const view = ref('settings');
                 const storedCourses = localStorage.getItem('golf_courses');
                 const courses = ref(storedCourses ? JSON.parse(storedCourses) : []);
@@ -364,18 +330,12 @@
                 const orderedClubs = computed(() => {
                     const fixedOrder = ['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'p'];
                     return [...settings.value.selectedClubs].sort((a, b) => {
-                        const lowA = a.toLowerCase();
-                        const lowB = b.toLowerCase();
-                        if (lowA === lowB) return 0;
-                        if (lowA === 'pt') return 1;
-                        if (lowB === 'pt') return -1;
-                        const idxA = fixedOrder.indexOf(lowA);
-                        const idxB = fixedOrder.indexOf(lowB);
+                        const lowA = a.toLowerCase(); const lowB = b.toLowerCase();
+                        if (lowA === 'pt') return 1; if (lowB === 'pt') return -1;
+                        const idxA = fixedOrder.indexOf(lowA); const idxB = fixedOrder.indexOf(lowB);
                         if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-                        if (idxA !== -1) return -1;
-                        if (idxB !== -1) return 1;
-                        const numA = Number(a);
-                        const numB = Number(b);
+                        if (idxA !== -1) return -1; if (idxB !== -1) return 1;
+                        const numA = Number(a); const numB = Number(b);
                         if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
                         return lowA.localeCompare(lowB);
                     });
@@ -385,9 +345,7 @@
                 const currentShotIdx = ref(0);
                 const holeResults = ref(Array.from({ length: 18 }, () => ({
                     score: 0, putts: 2, fw: false,
-                    shots: Array.from({ length: 7 }, () => ({ 
-                        club: '1w', plan: 'A', result: '○', ob: false, penalty: false, bunker: false 
-                    }))
+                    shots: Array.from({ length: 7 }, () => ({ club: '1w', plan: 'A', result: '○', ob: false, penalty: false, bunker: false }))
                 })));
 
                 const displayName = (name) => name ? (name.includes('_') ? name.split('_')[1] : name) : '';
@@ -398,19 +356,12 @@
                     Papa.parse(file, {
                         header: false, skipEmptyLines: true,
                         complete: function(res) {
-                            const parsed = [];
-                            let current = null;
+                            const parsed = []; let current = null;
                             res.data.forEach(row => {
-                                if (row[1] === 'H1') {
-                                    current = { id: row[0], name: row[0], sections: [] };
-                                    parsed.push(current);
-                                } else if (current && row[0] && row[1]?.match(/^\d+$/)) {
-                                    current.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) });
-                                }
+                                if (row[1] === 'H1') { current = { id: row[0], name: row[0], sections: [] }; parsed.push(current); }
+                                else if (current && row[0] && row[1]?.match(/^\d+$/)) { current.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); }
                             });
-                            courses.value = parsed;
-                            localStorage.setItem('golf_courses', JSON.stringify(parsed));
-                            settings.value.prefix = 'index';
+                            courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); settings.value.prefix = 'index';
                         }
                     });
                 };
@@ -422,18 +373,9 @@
                 const autoSelectSections = () => {
                     if (!selectedCourse.value) return;
                     const names = selectedCourse.value.sections.map(s => s.name);
-                    const hasOut = names.indexOf('OUT');
-                    const hasIn = names.indexOf('IN');
-                    if (hasOut !== -1 && hasIn !== -1) {
-                        settings.value.front = 'OUT';
-                        settings.value.back = 'IN';
-                    } else if (names.length >= 2) {
-                        settings.value.front = names[0];
-                        settings.value.back = names[1];
-                    } else {
-                        settings.value.front = names[0] || '';
-                        settings.value.back = names[0] || '';
-                    }
+                    if (names.includes('OUT') && names.includes('IN')) { settings.value.front = 'OUT'; settings.value.back = 'IN'; }
+                    else if (names.length >= 2) { settings.value.front = names[0]; settings.value.back = names[1]; }
+                    else { settings.value.front = names[0] || ''; settings.value.back = names[0] || ''; }
                 };
 
                 const syncSections = (type) => {
@@ -446,15 +388,13 @@
 
                 const getHolePar = (idx) => {
                     if (!selectedCourse.value || !settings.value.front || !settings.value.back) return 0;
-                    const secName = idx < 9 ? settings.value.front : settings.value.back;
-                    const section = selectedCourse.value.sections.find(s => s.name === secName);
-                    return section ? section.pars[idx % 9] : 0;
+                    const sec = selectedCourse.value.sections.find(s => s.name === (idx < 9 ? settings.value.front : settings.value.back));
+                    return sec ? sec.pars[idx % 9] : 0;
                 };
 
                 const startRound = () => {
                     for(let i=0; i<18; i++) holeResults.value[i].score = getHolePar(i);
-                    isRoundStarted.value = true;
-                    view.value = 'hole';
+                    isRoundStarted.value = true; view.value = 'hole';
                 };
 
                 const currentHoleNum = computed(() => (currentHoleIndex.value % 9) + 1);
@@ -462,85 +402,56 @@
                 const currentPar = computed(() => getHolePar(currentHoleIndex.value));
                 const currentShotData = computed(() => holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value]);
 
-                const updateScore = (v) => {
-                    const next = holeResults.value[currentHoleIndex.value].score + v;
-                    if(next >= 1) holeResults.value[currentHoleIndex.value].score = next;
-                };
-                const updatePutt = (v) => {
-                    const next = holeResults.value[currentHoleIndex.value].putts + v;
-                    if(next >= 0) holeResults.value[currentHoleIndex.value].putts = next;
-                };
+                const updateScore = (v) => { const n = holeResults.value[currentHoleIndex.value].score + v; if(n >= 1) holeResults.value[currentHoleIndex.value].score = n; };
+                const updatePutt = (v) => { const n = holeResults.value[currentHoleIndex.value].putts + v; if(n >= 0) holeResults.value[currentHoleIndex.value].putts = n; };
 
                 const resetCurrentShot = () => {
-                    if(confirm(`第${currentShotIdx.value + 1}打の内容をリセット（取り消し）しますか？`)) {
-                        const shot = holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value];
-                        shot.club = '1w'; shot.plan = 'A'; shot.result = '○';
-                        shot.ob = false; shot.penalty = false; shot.bunker = false;
+                    if(confirm(`第${currentShotIdx.value + 1}打の内容をリセットしますか？`)) {
+                        const s = holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value];
+                        s.club = '1w'; s.plan = 'A'; s.result = '○'; s.ob = false; s.penalty = false; s.bunker = false;
                     }
                 };
 
-                const countStat = (hIdx, key) => holeResults.value[hIdx].shots.filter(s => s[key === 'penalty' ? 'penalty' : (key === 'ob' ? 'ob' : 'bunker')]).length;
-
-                const isSandSave = (hIdx) => {
-                    const shots = holeResults.value[hIdx].shots;
-                    const totalScore = holeResults.value[hIdx].score;
-                    let lastBunkerShotNum = 0;
-                    for (let i = 0; i < shots.length; i++) if (shots[i].bunker) lastBunkerShotNum = i + 1;
-                    return lastBunkerShotNum !== 0 && (totalScore - lastBunkerShotNum) <= 1;
+                const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k === 'penalty' ? 'penalty' : (k === 'ob' ? 'ob' : 'bunker')]).length;
+                const isSandSave = (h) => {
+                    const s = holeResults.value[h].shots; let lb = 0;
+                    for (let i = 0; i < s.length; i++) if (s[i].bunker) lb = i + 1;
+                    return lb !== 0 && (holeResults.value[h].score - lb) <= 1;
                 };
 
                 const totalScoreDisplay = computed(() => {
-                    let total = 0, diff = 0;
-                    for(let i=0; i<18; i++) { total += holeResults.value[i].score; diff += (holeResults.value[i].score - getHolePar(i)); }
-                    const diffStr = diff === 0 ? 'E' : (diff > 0 ? '+'+diff : diff);
-                    return `${total} (${diffStr})`;
+                    let t = 0, d = 0;
+                    for(let i=0; i<18; i++) { t += holeResults.value[i].score; d += (holeResults.value[i].score - getHolePar(i)); }
+                    return `${t} (${d === 0 ? 'E' : (d > 0 ? '+'+d : d)})`;
                 });
 
                 const calculateHalfTotal = (hIdx) => {
-                    let pSum = 0, sSum = 0, ptSum = 0, fwSum = 0, obSum = 0, pnSum = 0, bkSum = 0;
+                    let par = 0, scr = 0, put = 0, fw = 0, ob = 0, pn = 0, bk = 0;
                     for(let i=0; i<9; i++) {
                         const idx = (hIdx * 9) + i; const hole = holeResults.value[idx];
-                        pSum += getHolePar(idx); sSum += hole.score; ptSum += hole.putts;
-                        fwSum += (hole.fw ? 1 : 0);
-                        obSum += countStat(idx, 'ob'); pnSum += countStat(idx, 'penalty'); bkSum += countStat(idx, 'bunker');
+                        par += getHolePar(idx); scr += hole.score; put += hole.putts; fw += (hole.fw ? 1 : 0);
+                        ob += countStat(idx, 'ob'); pn += countStat(idx, 'penalty'); bk += countStat(idx, 'bunker');
                     }
-                    return { par: pSum, score: sSum, putts: ptSum, fw: fwSum, ob: obSum, pn: pnSum, bk: bkSum };
+                    return { par, score: scr, putts: put, fw, ob, pn, bk };
                 };
 
                 const grandTotals = computed(() => {
-                    let p = 0, pt = 0, fw = 0, ob = 0, pn = 0, bk = 0;
+                    let par = 0, pt = 0, fw = 0, ob = 0, pn = 0, bk = 0;
                     for(let i=0; i<18; i++) {
-                        p += getHolePar(i); pt += holeResults.value[i].putts;
-                        fw += (holeResults.value[i].fw ? 1 : 0);
+                        par += getHolePar(i); pt += holeResults.value[i].putts; fw += (holeResults.value[i].fw ? 1 : 0);
                         ob += countStat(i, 'ob'); pn += countStat(i, 'penalty'); bk += countStat(i, 'bunker');
                     }
-                    return { par: p, putts: pt, fw: fw, ob: ob, pn: pn, bk: bk };
+                    return { par, putts: pt, fw, ob, pn, bk };
                 });
 
-                const nextHole = () => {
-                    if (currentHoleIndex.value < 17) { currentHoleIndex.value++; currentShotIdx.value = 0; }
-                    else view.value = 'summary';
-                };
+                const nextHole = () => { if (currentHoleIndex.value < 17) { currentHoleIndex.value++; currentShotIdx.value = 0; } else view.value = 'summary'; };
                 const prevHole = () => { if (currentHoleIndex.value > 0) { currentHoleIndex.value--; currentShotIdx.value = 0; } };
-
                 const jumpToHole = (idx) => { currentHoleIndex.value = idx; currentShotIdx.value = 0; view.value = 'hole'; };
-
-                const getFilledShots = (hIdx) => holeResults.value[hIdx].shots.map((s, i) => ({...s, idx: i})).filter((s, i) => i === 0 || s.club !== '1w' || s.ob || s.penalty || s.bunker);
-                
-                const scoreColor = (idx) => {
-                    const s = holeResults.value[idx].score, p = getHolePar(idx);
-                    return s < p ? 'text-red-600' : (s > p ? 'text-blue-600' : 'text-gray-900');
-                };
-
+                const getFilledShots = (h) => holeResults.value[h].shots.map((s, i) => ({...s, idx: i})).filter((s, i) => i === 0 || s.club !== '1w' || s.ob || s.penalty || s.bunker);
+                const scoreColor = (idx) => { const s = holeResults.value[idx].score, p = getHolePar(idx); return s < p ? 'text-red-600' : (s > p ? 'text-blue-600' : 'text-gray-900'); };
                 const confirmNewRound = () => { if (confirm('Reset all data?')) location.reload(); };
 
-                return {
-                    view, settings, prefixes, filteredCourses, selectedCourse, displayName,
-                    importCsv, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs,
-                    currentHoleIndex, currentHoleNum, currentSectionName, currentPar,
-                    currentShotIdx, currentShotData, holeResults,
-                    updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, courses
-                };
+                return { view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, currentHoleIndex, currentHoleNum, currentSectionName, currentPar, currentShotIdx, currentShotData, holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, courses };
             }
         }).mount('#app');
     </script>
