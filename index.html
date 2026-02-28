@@ -9,13 +9,14 @@
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GolfShotMgr">
 
-    <!-- PWA Icons (Bright & Round Design) -->
+    <!-- PWA Icons (Bright & Round Design for all devices) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='225' fill='%2300e676'/%3E%3Cpath d='M230 130 h30 v252 h-30 z' fill='%23121212'/%3E%3Cpath d='M260 130 l120 60 l-120 60 z' fill='%23121212'/%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='225' fill='%2300e676'/%3E%3Cpath d='M230 130 h30 v252 h-30 z' fill='%23121212'/%3E%3Cpath d='M260 130 l120 60 l-120 60 z' fill='%23121212'/%3E%3C/svg%3E">
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Golf%20Shot%20Manager%22%2C%22short_name%22%3A%22ShotLog%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23121212%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27256%27%20fill%3D%27%2523ffffff%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27225%27%20fill%3D%27%252300e676%27%2F%253E%253Cpath%20d%3D%27M230%20130%20h30%20v252%20h-30%20z%27%20fill%3D%27%2523121212%27%2F%253E%253Cpath%20d%3D%27M260%20130%20l120%2060%20l-120%2060%20z%27%20fill%3D%27%2523121212%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+    <!-- PWA Manifest (Explicitly formatted for ChromeOS/Android installation) -->
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Golf%20Shot%20Manager%22%2C%22short_name%22%3A%22ShotLog%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23121212%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27256%27%20fill%3D%27%2523ffffff%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27225%27%20fill%3D%27%252300e676%27%2F%253E%253Cpath%20d%3D%27M230%20130%20h30%20v252%20h-30%20z%27%20fill%3D%27%2523121212%27%2F%253E%253Cpath%20d%3D%27M260%20130%20l120%2060%20l-120%2060%20z%27%20fill%3D%27%2523121212%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27256%27%20fill%3D%27%2523ffffff%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27225%27%20fill%3D%27%252300e676%27%2F%253E%253Cpath%20d%3D%27M230%20130%20h30%20v252%20h-30%20z%27%20fill%3D%27%2523121212%27%2F%253E%253Cpath%20d%3D%27M260%20130%20l120%2060%20l-120%2060%20z%27%20fill%3D%27%2523121212%27%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -265,7 +266,6 @@
                     </table>
                 </div>
 
-                <!-- Grand Total -->
                 <div class="bg-black text-white p-6 rounded shadow-lg">
                     <div class="text-[10px] text-gray-500 uppercase mb-2 tracking-widest text-center">18 Holes Grand Total</div>
                     <div class="grid grid-cols-3 gap-y-4 text-center">
@@ -295,20 +295,18 @@
 
         createApp({
             setup() {
-                // Service Worker Registration for PWA Installability (Standalone mode support)
+                // Service Worker with better PWA lifecycle support
                 onMounted(() => {
                     if ('serviceWorker' in navigator) {
                         const swCode = `
-                            const CACHE_NAME = 'golf-mgr-v1';
+                            const CACHE_NAME = 'v1';
                             self.addEventListener('install', (e) => self.skipWaiting());
                             self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
-                            self.addEventListener('fetch', (e) => {
-                                e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-                            });
+                            self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
                         `;
                         const blob = new Blob([swCode], { type: 'text/javascript' });
                         const url = URL.createObjectURL(blob);
-                        navigator.serviceWorker.register(url).catch(err => console.error(err));
+                        navigator.serviceWorker.register(url);
                     }
                 });
 
@@ -316,7 +314,6 @@
                 const storedCourses = localStorage.getItem('golf_courses');
                 const courses = ref(storedCourses ? JSON.parse(storedCourses) : []);
                 const isRoundStarted = ref(false);
-
                 const clubMaster = ['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'p', '52', '58', 'pt'];
 
                 const settings = ref({
