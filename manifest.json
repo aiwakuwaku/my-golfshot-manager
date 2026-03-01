@@ -2,14 +2,14 @@
 {
   "name": "Golf Shot Manager",
   "short_name": "ShotLog",
-  "start_url": "./index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#121212",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23121212'/%3E%3Ccircle cx='256' cy='256' r='230' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='150' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='70' fill='%23121212'/%3E%3Cpath d='M256 40 v120' stroke='%23121212' stroke-width='20' stroke-linecap='round'/%3E%3C/svg%3E",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjI1NiIgZmlsbD0iIzEyMTIxMiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjMwIiBmaWxsPSIjMDBlNjc2Ii8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxNTAiIGZpbGw9IiNmZmZmZmYiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjcwIiBmaWxsPSIjMTIxMjEyIi8+PHBhdGggZD0iTTI1NiA0MCB2MTIwIiBzdHJva2U9IiMxMjEyMTIiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
