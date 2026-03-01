@@ -1,15 +1,15 @@
-
 {
   "name": "Golf Shot Manager",
   "short_name": "ShotLog",
-  "start_url": "index.html",
+  "id": "/golf-shot-manager/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#121212",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjI1NiIgZmlsbD0iIzEyMTIxMiIvPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjMwIiBmaWxsPSIjMDBlNjc2Ii8+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIxNTAiIGZpbGw9IiNmZmZmZmYiLz48Y2lyY2xlIGN4PSIyNTYiIGN5PSIyNTYiIHI9IjcwIiBmaWxsPSIjMTIxMjEyIi8+PHBhdGggZD0iTTI1NiA0MCB2MTIwIiBzdHJva2U9IiMxMjEyMTIiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==",
+      "src": "icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
