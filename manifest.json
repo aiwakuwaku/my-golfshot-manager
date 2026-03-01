@@ -1,14 +1,15 @@
+--- START OF FILE manifest.json ---
 {
   "name": "Golf Shot Manager",
   "short_name": "ShotLog",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#121212",
   "theme_color": "#121212",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon.svg",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23121212'/%3E%3Ccircle cx='256' cy='256' r='230' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='150' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='70' fill='%23121212'/%3E%3Cpath d='M256 40 v120' stroke='%23121212' stroke-width='20' stroke-linecap='round'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"

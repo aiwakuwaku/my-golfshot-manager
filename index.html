@@ -1,3 +1,4 @@
+--- START OF FILE index.html ---
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,13 +10,14 @@
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ShotLog">
 
-    <!-- PWA Icons (Bright & Round Design) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='235' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='180' fill='%23ffffff'/%3E%3Cg fill='%23cfd8dc'%3E%3Ccircle cx='200' cy='160' r='12'/%3E%3Ccircle cx='260' cy='140' r='12'/%3E%3Ccircle cx='320' cy='170' r='12'/%3E%3Ccircle cx='170' cy='220' r='12'/%3E%3Ccircle cx='230' cy='210' r='12'/%3E%3Ccircle cx='290' cy='200' r='12'/%3E%3Ccircle cx='350' cy='230' r='12'/%3E%3Ccircle cx='180' cy='290' r='12'/%3E%3Ccircle cx='250' cy='280' r='12'/%3E%3Ccircle cx='320' cy='280' r='12'/%3E%3Ccircle cx='210' cy='340' r='12'/%3E%3Ccircle cx='280' cy='340' r='12'/%3E%3C/g%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='235' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='180' fill='%23ffffff'/%3E%3Cg fill='%23cfd8dc'%3E%3Ccircle cx='200' cy='160' r='12'/%3E%3Ccircle cx='260' cy='140' r='12'/%3E%3Ccircle cx='320' cy='170' r='12'/%3E%3Ccircle cx='170' cy='220' r='12'/%3E%3Ccircle cx='230' cy='210' r='12'/%3E%3Ccircle cx='290' cy='200' r='12'/%3E%3Ccircle cx='350' cy='230' r='12'/%3E%3Ccircle cx='180' cy='290' r='12'/%3E%3Ccircle cx='250' cy='280' r='12'/%3E%3Ccircle cx='320' cy='280' r='12'/%3E%3Ccircle cx='210' cy='340' r='12'/%3E%3Ccircle cx='280' cy='340' r='12'/%3E%3C/g%3E%3C/svg%3E">
+    <!-- Icons (Direct Data URI to prevent decode error) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23121212'/%3E%3Ccircle cx='256' cy='256' r='230' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='150' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='70' fill='%23121212'/%3E%3Cpath d='M256 40 v120' stroke='%23121212' stroke-width='20' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23121212'/%3E%3Ccircle cx='256' cy='256' r='230' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='150' fill='%23ffffff'/%3E%3Ccircle cx='256' cy='256' r='70' fill='%23121212'/%3E%3Cpath d='M256 40 v120' stroke='%23121212' stroke-width='20' stroke-linecap='round'/%3E%3C/svg%3E">
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Golf%20Shot%20Manager%22%2C%22short_name%22%3A%22ShotLog%22%2C%22id%22%3A%22%2Fgolf-shot-manager%2F%22%2C%22start_url%22%3A%22.%2Findex.html%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23ffffff%22%2C%22theme_color%22%3A%22%23121212%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27256%27%20fill%3D%27%2523ffffff%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27235%27%20fill%3D%27%252300e676%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27180%27%20fill%3D%27%2523ffffff%27%2F%253E%253Cg%20fill%3D%27%2523cfd8dc%27%253E%253Ccircle%20cx%3D%27200%27%20cy%3D%27160%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27260%27%20cy%3D%27140%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27320%27%20cy%3D%27170%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27170%27%20cy%3D%27220%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27230%27%20cy%3D%27210%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27290%27%20cy%3D%27200%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27350%27%20cy%3D%27230%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27180%27%20cy%3D%27290%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27250%27%20cy%3D%27280%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27320%27%20cy%3D%27280%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27210%27%20cy%3D%27340%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27280%27%20cy%3D%27340%27%20r%3D%2712%27%2F%253E%253C%2Fg%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27256%27%20fill%3D%27%2523ffffff%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27235%27%20fill%3D%27%252300e676%27%2F%253E%253Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27180%27%20fill%3D%27%2523ffffff%27%2F%253E%253Cg%20fill%3D%27%2523cfd8dc%27%253E%253Ccircle%20cx%3D%27200%27%20cy%3D%27160%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27260%27%20cy%3D%27140%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27320%27%20cy%3D%27170%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27170%27%20cy%3D%27220%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27230%27%20cy%3D%27210%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27290%27%20cy%3D%27200%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27350%27%20cy%3D%27230%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27180%27%20cy%3D%27290%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27250%27%20cy%3D%27280%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27320%27%20cy%3D%27280%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27210%27%20cy%3D%27340%27%20r%3D%2712%27%2F%253E%253Ccircle%20cx%3D%27280%27%20cy%3D%27340%27%20r%3D%2712%27%2F%253E%253C%2Fg%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22maskable%20any%22%7D%5D%7D">
+    <link rel="manifest" href="manifest.json">
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -300,15 +302,8 @@
                 // PWA Registration
                 onMounted(() => {
                     if ('serviceWorker' in navigator) {
-                        const swCode = `
-                            const CACHE_NAME = 'golf-mgr-v4';
-                            self.addEventListener('install', (e) => self.skipWaiting());
-                            self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
-                            self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-                        `;
-                        const blob = new Blob([swCode], { type: 'text/javascript' });
-                        const url = URL.createObjectURL(blob);
-                        navigator.serviceWorker.register(url);
+                        navigator.serviceWorker.register('./sw.js')
+                        .then(() => console.log("Service Worker Registered"));
                     }
                 });
 
@@ -317,28 +312,19 @@
                 const courses = ref(storedCourses ? JSON.parse(storedCourses) : []);
                 const isRoundStarted = ref(false);
 
-                // 更新されたクラブマスター
+                // クラブマスター
                 const clubMaster = ['1w', '3w', '5w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '48', '50', '52', '54', '56', '58', 'pt'];
 
                 const settings = ref({
                     date: new Date().toISOString().substr(0, 10),
                     prefix: 'index', courseId: '', front: '', back: '',
-                    // デフォルトで標準的な14本を選択
                     selectedClubs: ['1w', '3w', '5w', '4u', '5u', '6i', '7i', '8i', '9i', 'pw', '52', '54', '58', 'pt']
                 });
 
                 const toggleClub = (c) => {
                     const idx = settings.value.selectedClubs.indexOf(c);
-                    if (idx > -1) {
-                        settings.value.selectedClubs.splice(idx, 1);
-                    } else {
-                        // 最大14本制限
-                        if (settings.value.selectedClubs.length < 14) {
-                            settings.value.selectedClubs.push(c);
-                        } else {
-                            alert("選択できるクラブは最大14本までです。");
-                        }
-                    }
+                    if (idx > -1) { settings.value.selectedClubs.splice(idx, 1); }
+                    else { if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); }
                 };
 
                 const orderedClubs = computed(() => {
@@ -349,8 +335,6 @@
                         const idxA = fixedOrder.indexOf(lowA); const idxB = fixedOrder.indexOf(lowB);
                         if (idxA !== -1 && idxB !== -1) return idxA - idxB;
                         if (idxA !== -1) return -1; if (idxB !== -1) return 1;
-                        const numA = Number(a); const numB = Number(b);
-                        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
                         return lowA.localeCompare(lowB);
                     });
                 });
