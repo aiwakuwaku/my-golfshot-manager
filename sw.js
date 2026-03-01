@@ -1,5 +1,5 @@
-const CACHE_NAME = 'golf-v10';
-const assets = ['index.html', 'manifest.json', 'icon.svg?v=2'];
+const CACHE_NAME = 'golf-v11';
+const assets = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(assets)));
