@@ -1,4 +1,4 @@
---- START OF FILE sw.js ---
+
 const CACHE_NAME = 'golf-mgr-v8';
 const assets = ['index.html', 'manifest.json'];
 
