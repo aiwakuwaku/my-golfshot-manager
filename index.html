@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Golf Shot Manager PRO</title>
+    <title>Golf Shot Manager</title>
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,16 +30,16 @@
 
         /* スコア記号用スタイル */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
-        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; }
-        .score-square { border: 1.5px solid #475569; color: #1e293b; }
+        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } /* バーディ以下 */
+        .score-square { border: 1.5px solid #475569; color: #1e293b; } /* ダボ以上 */
         .score-triangle {
             position: relative; color: #2563eb;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: center;
-        }
+        } /* ボギー */
         
-        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
+        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; } /* 寄せワン */
+        .bk-circle { border: 1.5px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; } /* サンドセーブ */
         
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
@@ -48,7 +48,10 @@
 <body class="bg-gray-100 font-sans text-gray-900">
     <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative">
         <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-center items-center">
-            <h1 class="font-bold text-lg tracking-tight">Golf Shot Manager PRO</h1>
+            <h1 class="font-bold text-lg tracking-tight">
+                Golf Shot Manager
+                <span v-if="isRoundStarted" class="ml-2 text-sm font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
+            </h1>
         </header>
 
         <main class="p-4 flex-grow pb-24 overflow-y-auto">
@@ -181,7 +184,7 @@
             <!-- 3. Card Screen -->
             <div v-if="view === 'summary'" class="space-y-6 pb-10">
                 <div class="flex justify-between items-end border-b pb-1"><div class="flex items-baseline gap-2"><h2 class="text-xl font-bold italic">Score Card</h2><span class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span></div><span class="text-[10px] text-gray-500 font-bold uppercase">{{ settings.date }}</span></div>
-                <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
+                <div v-for="(half, hIdx) in['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
                     <div class="bg-gray-100 px-3 py-2 text-[12px] font-black border-b uppercase tracking-widest">{{ hIdx === 0 ? settings.front : settings.back }}</div>
                     <table class="w-full text-[12px] border-collapse min-w-[440px]">
                         <thead><tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter"><th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th></tr></thead>
@@ -215,7 +218,7 @@
                 </div>
             </div>
 
-            <!-- 4. Analysis Screen -->
+            <!-- 4. Stats Analysis Screen -->
             <div v-if="view === 'analysis'" class="space-y-6 pb-20">
                 <h2 class="text-xl font-bold border-b pb-1">Performance Analysis</h2>
                 <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm">
@@ -282,8 +285,8 @@
                 const courses = ref(JSON.parse(localStorage.getItem('golf_courses') || '[]'));
                 const savedRounds = ref(JSON.parse(localStorage.getItem('golf_saved_rounds') || '[]'));
                 const isRoundStarted = ref(false);
-                const clubMaster = ['1w', '3w', '5w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '48', '50', '52', '54', '56', '58', 'pt'];
-                const settings = ref({ date: new Date().toISOString().substr(0, 10), prefix: 'index', courseId: '', front: '', back: '', selectedClubs: ['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] });
+                const clubMaster =['1w', '3w', '5w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '48', '50', '52', '54', '56', '58', 'pt'];
+                const settings = ref({ date: new Date().toISOString().substr(0, 10), prefix: 'index', courseId: '', front: '', back: '', selectedClubs:['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] });
                 
                 const currentHoleIndex = ref(0), currentShotIdx = ref(0);
                 const holeResults = ref(Array.from({ length: 18 }, () => ({ score: 0, putts: 2, fw: false, shots: Array.from({ length: 7 }, () => ({ club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false })) })));
@@ -293,7 +296,7 @@
                 const isPenaltyStroke = (h, s) => s > 0 && (holeResults.value[h].shots[s-1].errorType === 'OB' || holeResults.value[h].shots[s-1].errorType === 'PN');
                 const displayName = (n) => n?.includes('_') ? n.split('_')[1] : n;
                 
-                const processCsvData = (d) => { const parsed = []; let cur = null; d.forEach(row => { if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections: [] }; parsed.push(cur); } else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); } }); courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); };
+                const processCsvData = (d) => { const parsed =[]; let cur = null; d.forEach(row => { if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections:[] }; parsed.push(cur); } else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); } }); courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); };
                 const importCsv = (e) => { if (!e.target.files[0]) return; Papa.parse(e.target.files[0], { header: false, skipEmptyLines: true, complete: (res) => processCsvData(res.data) }); };
                 const importFromServer = async () => { try { const r = await fetch('courses.csv'); if (!r.ok) throw new Error(); const t = await r.text(); Papa.parse(t, { header: false, skipEmptyLines: true, complete: (res) => { processCsvData(res.data); alert('Synced!'); } }); } catch (e) { alert('Sync failed: courses.csv not found'); } };
 
@@ -324,8 +327,11 @@
                 const getScoreEnclosureClass = (idx) => { const h = holeResults.value[idx], p = getHolePar(idx); if (p === 0 || h.score === 0) return ''; if (h.score < p) return 'score-circle'; if (h.score === p + 1) return 'score-triangle'; if (h.score >= p + 2) return 'score-square'; return ''; };
                 
                 const totalScoreDisplay = computed(() => { let t = 0, d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); t += holeResults.value[i].score; if(p > 0) d += (holeResults.value[i].score - p); } return `${t} (${d >= 0 ? '+'+d : d})`; });
+                const relativeScoreDisplay = computed(() => { let d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); if(p > 0) d += (holeResults.value[i].score - p); } return d === 0 ? 'E' : (d > 0 ? `+${d}` : d); });
+                const relativeScoreColor = computed(() => { let d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); if(p > 0) d += (holeResults.value[i].score - p); } return d > 0 ? 'text-red-400' : (d < 0 ? 'text-blue-400' : 'text-gray-300'); });
+
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
-                const calculateHalfTotal = (hIdx) => { let par = 0, scr = 0, pt = 0, fw = 0, ob = 0, pn = 0, bk = 0; for(let i=0; i<9; i++) { const idx = (hIdx * 9) + i, h = holeResults.value[idx]; const p = getHolePar(idx); par += p; scr += h.score; pt += h.putts; fw += (h.fw ? 1 : 0); ob += countStat(idx, 'ob'); pn += countStat(idx, 'penalty'); bk += countStat(idx, 'bunker'); } return { par, score: scr, putts: pt, fw, ob, pn, bk }; };
+                const calculateHalfTotal = (hIdx) => { let par = 0, scr = 0, put = 0, fw = 0, ob = 0, pn = 0, bk = 0; for(let i=0; i<9; i++) { const idx = (hIdx * 9) + i, h = holeResults.value[idx]; const p = getHolePar(idx); par += p; scr += h.score; pt += h.putts; fw += (h.fw ? 1 : 0); ob += countStat(idx, 'ob'); pn += countStat(idx, 'penalty'); bk += countStat(idx, 'bunker'); } return { par, score: scr, putts: pt, fw, ob, pn, bk }; };
                 const grandTotals = computed(() => { let par = 0, pt = 0; for(let i=0; i<18; i++) { par += getHolePar(i); pt += holeResults.value[i].putts; } return { par, putts: pt }; });
 
                 const analysis = computed(() => {
@@ -356,7 +362,6 @@
                     const hIdx = currentHoleIndex.value;
                     const res = holeResults.value[hIdx];
                     
-                    // ショット数計算（クラブ選択数 ＋ ペナルティ数）
                     let shotCount = 0;
                     res.shots.forEach((s, sIdx) => {
                         if (s.club !== '') shotCount++;
@@ -385,7 +390,7 @@
                 return { 
                     view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, importFromServer, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, 
                     currentHoleIndex, currentShotIdx, currentHoleNum, currentSectionName, currentPar, currentShotData, 
-                    holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, isScramble, getScoreEnclosureClass, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, 
+                    holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, isScramble, getScoreEnclosureClass, totalScoreDisplay, relativeScoreDisplay, relativeScoreColor, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, 
                     setResult, setErrorType, isPenaltyStroke, analysis, saveRound, savedRounds, deleteRound, loadRoundData, exportAllToCSV, courses 
                 };
             }
