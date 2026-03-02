@@ -38,7 +38,7 @@
             border-radius: 50%;
             font-weight: bold;
             font-size: 10px;
-            background-color: #fef3c7; /* 薄い黄色 */
+            background-color: #fef3c7;
         }
     </style>
 </head>
@@ -134,7 +134,7 @@
                         </div>
                         <div class="flex gap-1">
                             <button @click="holeResults[currentHoleIndex].fw = !holeResults[currentHoleIndex].fw" :class="['px-2 py-1 border rounded text-[10px] font-bold transition', holeResults[currentHoleIndex].fw ? 'bg-green-600 text-white' : 'bg-white text-gray-300']">Fw</button>
-                            <!-- Bk Button: Shot that went into bunker OR shot played from bunker -->
+                            <!-- Bk Button: Records if THIS shot ended in a bunker -->
                             <button @click="currentShotData.bunker = !currentShotData.bunker" :class="['px-2 py-1 border rounded text-[10px] font-bold transition', currentShotData.bunker ? 'bg-amber-600 text-white border-amber-800' : 'bg-white text-gray-300']">Bk</button>
                         </div>
                     </div>
@@ -289,15 +289,19 @@
                 
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
                 
-                // Sand Save Logic: Difference between LAST bunker shot index and total score is <= 1
+                // Sand Save Logic: 
+                // Bal entered bunker at shot i (shots[i-1].bunker = true)
+                // Hole finished at score S.
+                // Sand Save successful if strokes from bunker to hole <= 2 (Escape + Putt)
+                // In strokes: S - i <= 2
                 const isSandSave = (h) => {
                     const s = holeResults.value[h].shots;
-                    let lastBunkerShotIdx = 0;
+                    let lastBunkerInIdx = 0;
                     for (let i = 0; i < s.length; i++) {
-                        if (s[i].bunker) lastBunkerShotIdx = i + 1;
+                        if (s[i].bunker) lastBunkerInIdx = i + 1; // 1-based index of shot that resulted in bunker
                     }
-                    if (lastBunkerShotIdx === 0) return false;
-                    return (holeResults.value[h].score - lastBunkerShotIdx) <= 1;
+                    if (lastBunkerInIdx === 0) return false;
+                    return (holeResults.value[h].score - lastBunkerInIdx) <= 2;
                 };
 
                 const totalScoreDisplay = computed(() => { let t = 0, d = 0; for(let i=0; i<18; i++) { t += holeResults.value[i].score; d += (holeResults.value[i].score - getHolePar(i)); } return `${t} (${d >= 0 ? '+'+d : d})`; });
