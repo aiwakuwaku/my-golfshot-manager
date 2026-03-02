@@ -50,7 +50,8 @@
         <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-center items-center">
             <h1 class="font-bold text-lg tracking-tight">
                 Golf Shot Manager
-                <span v-if="isRoundStarted" class="ml-2 text-sm font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
+                <!-- ml-6により2文字分右へ配置 -->
+                <span v-if="isRoundStarted" class="ml-6 text-sm font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
             </h1>
         </header>
 
@@ -184,7 +185,7 @@
             <!-- 3. Card Screen -->
             <div v-if="view === 'summary'" class="space-y-6 pb-10">
                 <div class="flex justify-between items-end border-b pb-1"><div class="flex items-baseline gap-2"><h2 class="text-xl font-bold italic">Score Card</h2><span class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span></div><span class="text-[10px] text-gray-500 font-bold uppercase">{{ settings.date }}</span></div>
-                <div v-for="(half, hIdx) in['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
+                <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
                     <div class="bg-gray-100 px-3 py-2 text-[12px] font-black border-b uppercase tracking-widest">{{ hIdx === 0 ? settings.front : settings.back }}</div>
                     <table class="w-full text-[12px] border-collapse min-w-[440px]">
                         <thead><tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter"><th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th></tr></thead>
@@ -361,24 +362,14 @@
                 const nextHole = () => { 
                     const hIdx = currentHoleIndex.value;
                     const res = holeResults.value[hIdx];
-                    
                     let shotCount = 0;
-                    res.shots.forEach((s, sIdx) => {
-                        if (s.club !== '') shotCount++;
-                        if (isPenaltyStroke(hIdx, sIdx)) shotCount++;
-                    });
-                    
+                    res.shots.forEach((s, sIdx) => { if (s.club !== '') shotCount++; if (isPenaltyStroke(hIdx, sIdx)) shotCount++; });
                     const totalCalc = shotCount + res.putts;
-                    
                     if (totalCalc !== res.score) {
-                        alert(`スコアが一致しません。\n入力内容: ショット数(${shotCount}) + パット数(${res.putts}) = ${totalCalc} 打\n現在の設定スコア: ${res.score} 打\n\n数値を修正してから次のホールへ進んでください。`);
+                        alert(`スコア不整合！\n打数(${shotCount}) + パット(${res.putts}) = ${totalCalc} 打\n現在の設定スコア: ${res.score} 打\n修正してください。`);
                         return;
                     }
-
-                    if (currentHoleIndex.value < 17) { 
-                        currentHoleIndex.value++; 
-                        currentShotIdx.value = 0; 
-                    } else view.value = 'summary'; 
+                    if (currentHoleIndex.value < 17) { currentHoleIndex.value++; currentShotIdx.value = 0; } else view.value = 'summary'; 
                 };
 
                 const prevHole = () => { if (currentHoleIndex.value > 0) { currentHoleIndex.value--; currentShotIdx.value = 0; } };
