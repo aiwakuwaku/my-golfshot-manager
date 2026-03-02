@@ -57,9 +57,12 @@
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Round Date</label>
                     <input type="date" v-model="settings.date" class="w-full border p-3 rounded-lg bg-white text-base">
                 </div>
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center">
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center space-y-3">
                     <input type="file" id="csvFile" class="hidden" accept=".csv" @change="importCsv">
-                    <label for="csvFile" class="inline-block bg-black text-white px-8 py-2 rounded font-bold cursor-pointer active:scale-95 transition">Import Courses (CSV)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label for="csvFile" class="inline-block bg-black text-white px-2 py-2 rounded text-xs font-bold cursor-pointer active:scale-95 transition">Local CSV</label>
+                        <button @click="importFromServer" class="bg-blue-600 text-white px-2 py-2 rounded text-xs font-bold active:scale-95 transition">Sync Server</button>
+                    </div>
                 </div>
                 <div v-if="courses.length > 0" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
@@ -259,7 +262,6 @@
                     })) 
                 })));
 
-                // 直前のショットがOBまたはPNか判定
                 const isPenaltyStroke = (hIdx, sIdx) => {
                     if (sIdx === 0) return false;
                     const prevShot = holeResults.value[hIdx].shots[sIdx - 1];
@@ -267,7 +269,44 @@
                 };
 
                 const displayName = (n) => n ? (n.includes('_') ? n.split('_')[1] : n) : '';
-                const importCsv = (e) => { const file = e.target.files[0]; if (!file) return; Papa.parse(file, { header: false, skipEmptyLines: true, complete: (res) => { const parsed = []; let cur = null; res.data.forEach(row => { if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections: [] }; parsed.push(cur); } else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); } }); courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); settings.value.prefix = 'index'; } }); };
+                
+                const processCsvData = (data) => {
+                    const parsed = []; let cur = null;
+                    data.forEach(row => {
+                        if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections: [] }; parsed.push(cur); }
+                        else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); }
+                    });
+                    courses.value = parsed;
+                    localStorage.setItem('golf_courses', JSON.stringify(parsed));
+                    settings.value.prefix = 'index';
+                };
+
+                const importCsv = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    Papa.parse(file, {
+                        header: false, skipEmptyLines: true,
+                        complete: (res) => processCsvData(res.data)
+                    });
+                };
+
+                const importFromServer = async () => {
+                    try {
+                        const response = await fetch('courses.csv');
+                        if (!response.ok) throw new Error('File not found on server');
+                        const text = await response.text();
+                        Papa.parse(text, {
+                            header: false, skipEmptyLines: true,
+                            complete: (res) => {
+                                processCsvData(res.data);
+                                alert('Synced from server!');
+                            }
+                        });
+                    } catch (err) {
+                        alert('Sync failed: ' + err.message);
+                    }
+                };
+
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
                 const filteredCourses = computed(() => courses.value.filter(c => c.name.startsWith(settings.value.prefix === 'index' ? '' : settings.value.prefix)));
                 const selectedCourse = computed(() => courses.value.find(c => c.id === settings.value.courseId));
@@ -277,28 +316,8 @@
                 const startRound = () => { for(let i=0; i<18; i++) holeResults.value[i].score = getHolePar(i); isRoundStarted.value = true; view.value = 'hole'; };
                 const currentHoleNum = computed(() => (currentHoleIndex.value % 9) + 1), currentSectionName = computed(() => currentHoleIndex.value < 9 ? settings.value.front : settings.value.back), currentPar = computed(() => getHolePar(currentHoleIndex.value)), currentShotData = computed(() => holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value]);
                 
-                const setResult = (r) => { 
-                    const s = currentShotData.value; 
-                    s.result = r; 
-                    s.direction = ''; 
-                    s.errorType = ''; 
-                    s.ob = false; 
-                    s.penalty = false; 
-                };
-                
-                const setErrorType = (e) => { 
-                    const s = currentShotData.value; 
-                    s.errorType = e; 
-                    s.ob = (e === 'OB'); 
-                    s.penalty = (e === 'PN'); 
-                    
-                    // OB/PNに設定された場合、次のショット（ペナルティ打）のデータをクリアする
-                    if ((e === 'OB' || e === 'PN') && currentShotIdx.value < 6) {
-                        const nextShot = holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value + 1];
-                        Object.assign(nextShot, { club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false });
-                    }
-                };
-                
+                const setResult = (r) => { const s = currentShotData.value; s.result = r; s.direction = ''; s.errorType = ''; s.ob = false; s.penalty = false; };
+                const setErrorType = (e) => { const s = currentShotData.value; s.errorType = e; s.ob = (e === 'OB'); s.penalty = (e === 'PN'); if ((e === 'OB' || e === 'PN') && currentShotIdx.value < 6) { const nextShot = holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value + 1]; Object.assign(nextShot, { club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false }); } };
                 const updateScore = (v) => { const n = holeResults.value[currentHoleIndex.value].score + v; if(n >= 1) holeResults.value[currentHoleIndex.value].score = n; }, updatePutt = (v) => { const n = holeResults.value[currentHoleIndex.value].putts + v; if(n >= 0) holeResults.value[currentHoleIndex.value].putts = n; };
                 const resetCurrentShot = () => { if(confirm('修正しますか？')) Object.assign(holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value], { club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false }); };
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
@@ -338,7 +357,7 @@
                 const getFilledShots = (h) => holeResults.value[h].shots.map((s, i) => ({...s, idx: i})).filter((s) => s.club !== '' || s.bunker);
                 const scoreColor = (idx) => { const s = holeResults.value[idx].score, p = getHolePar(idx); return s < p ? 'text-red-600' : (s > p ? 'text-blue-600' : 'text-gray-900'); }, confirmNewRound = () => { if (confirm('Reset?')) location.reload(); };
                 
-                return { view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, currentHoleIndex, currentHoleNum, currentSectionName, currentPar, currentShotIdx, currentShotData, holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, isScramble, getScoreEnclosureClass, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, courses, setResult, setErrorType, isPenaltyStroke };
+                return { view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, importFromServer, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, currentHoleIndex, currentHoleNum, currentSectionName, currentPar, currentShotIdx, currentShotData, holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, isScramble, getScoreEnclosureClass, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, courses, setResult, setErrorType, isPenaltyStroke };
             }
         }).mount('#app');
     </script>
