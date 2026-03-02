@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Golf Shot Manager</title>
-    
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- アイコン設定：デコードエラーを防ぐURLエンコード方式（Golf Stats Proと同じ方式） -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23121212'/%3E%3Ccircle cx='256' cy='256' r='230' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='150' fill='white'/%3E%3Ccircle cx='256' cy='256' r='70' fill='%23121212'/%3E%3Cpath d='M256 40 v120' stroke='%23121212' stroke-width='24' stroke-linecap='round'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23121212'/%3E%3Ccircle cx='256' cy='256' r='230' fill='%2300e676'/%3E%3Ccircle cx='256' cy='256' r='150' fill='white'/%3E%3Ccircle cx='256' cy='256' r='70' fill='%23121212'/%3E%3Cpath d='M256 40 v120' stroke='%23121212' stroke-width='24' stroke-linecap='round'/%3E%3C/svg%3E">
-    
-    <!-- PWA Manifest -->
+    <!-- アイコン設定：Windowsタスクバーとタブの両方に対応 -->
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
     <link rel="manifest" href="manifest.json">
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -42,7 +38,6 @@
         </header>
 
         <main class="p-4 flex-grow pb-24">
-            <!-- 1. Settings Screen -->
             <div v-if="view === 'settings'" class="space-y-6">
                 <h2 class="text-xl font-bold border-b pb-1">Round Settings</h2>
                 <div>
@@ -94,7 +89,6 @@
                 </div>
             </div>
 
-            <!-- 2. Hole Input Screen -->
             <div v-if="view === 'hole'" class="space-y-4">
                 <div class="flex justify-between items-center bg-gray-100 p-3 rounded border">
                     <button @click="prevHole" class="text-xl px-2">◀</button>
@@ -137,7 +131,6 @@
                 <button @click="resetCurrentShot" class="w-full py-3 bg-gray-200 text-gray-700 font-bold rounded-lg text-sm active:bg-gray-300 transition uppercase tracking-widest">修正</button>
             </div>
 
-            <!-- 3. Card Screen -->
             <div v-if="view === 'summary'" class="space-y-6 pb-10">
                 <div class="flex justify-between items-end border-b pb-1"><div class="flex items-baseline gap-2"><h2 class="text-xl font-bold italic">Score Card</h2><span v-if="isRoundStarted" class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span></div><span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{{ settings.date }}</span></div>
                 <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
