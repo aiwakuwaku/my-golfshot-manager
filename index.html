@@ -28,28 +28,19 @@
         .nav-active .icon-container { background-color: #00e676; border-radius: 4px; padding: 2px; }
         .nav-active svg { fill: #121212; }
         .nav-disabled { opacity: 0.3; cursor: not-allowed; }
-        .sand-save {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            border: 1px solid #333;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 10px;
-            background-color: #fef3c7;
-        }
 
-        /* 囲み記号用スタイル */
-        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #dc2626; }
-        .score-square { border: 1.5px solid #475569; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #1e293b; }
+        /* カード画面の記号スタイル */
+        .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
+        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } /* バーディ以下 */
+        .score-square { border: 1.5px solid #475569; color: #1e293b; } /* ダボ以上 */
         .score-triangle {
-            position: relative; width: 30px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #2563eb;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 26'%3E%3Cpolygon points='15,1 29,25 1,25' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E");
+            position: relative; color: #2563eb;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: center;
-        }
-        .scramble-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        } /* ボギー */
+        
+        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; } /* 寄せワン達成 */
+        .bk-circle { border: 1.5px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; } /* サンドセーブ達成：色なし */
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
@@ -148,7 +139,7 @@
                         </div>
                     </div>
 
-                    <!-- △ selected sub-options (L and R swapped) -->
+                    <!-- △ sub-options: L and R positions swapped -->
                     <div v-if="currentShotData.result === '△'" class="flex gap-1 mb-4 animate-in fade-in duration-300">
                         <button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d"
                             :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.direction === d ? 'bg-blue-500 text-white' : 'bg-gray-50 text-gray-400']">
@@ -156,7 +147,7 @@
                         </button>
                     </div>
 
-                    <!-- ☓ selected sub-options -->
+                    <!-- ☓ sub-options -->
                     <div v-if="currentShotData.result === '☓'" class="flex gap-1 mb-4 animate-in fade-in duration-300">
                         <button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)"
                             :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.errorType === e ? 'bg-red-600 text-white' : 'bg-gray-50 text-gray-400']">
@@ -179,52 +170,34 @@
 
             <!-- 3. Card Screen -->
             <div v-if="view === 'summary'" class="space-y-6 pb-10">
-                <div class="flex justify-between items-end border-b pb-1">
-                    <div class="flex items-baseline gap-2">
-                        <h2 class="text-xl font-bold italic">Score Card</h2>
-                        <span v-if="isRoundStarted" class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span>
-                    </div>
-                    <span class="text-[12px] text-gray-500 font-bold uppercase tracking-widest">{{ settings.date }}</span>
-                </div>
+                <div class="flex justify-between items-end border-b pb-1"><div class="flex items-baseline gap-2"><h2 class="text-xl font-bold italic">Score Card</h2><span v-if="isRoundStarted" class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span></div><span class="text-[12px] text-gray-500 font-bold uppercase tracking-widest">{{ settings.date }}</span></div>
                 <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
                     <div class="bg-gray-100 px-3 py-2 text-[12px] font-black border-b uppercase tracking-widest">{{ hIdx === 0 ? settings.front : settings.back }}</div>
                     <table class="w-full text-[12px] border-collapse min-w-[440px]">
-                        <thead>
-                            <tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter">
-                                <th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th>
-                            </tr>
-                        </thead>
+                        <thead><tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter"><th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th></tr></thead>
                         <tbody>
                             <tr v-for="i in 9" :key="i" class="border-b text-center">
                                 <td class="p-2 border-r font-bold bg-gray-200 cursor-pointer" @click="jumpToHole(hIdx*9 + i - 1)">
-                                    <div :class="{'scramble-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div>
+                                    <div :class="{'h-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div>
                                 </td>
                                 <td class="p-2 border-r text-gray-400">{{ getHolePar(hIdx * 9 + i - 1) }}</td>
                                 <td class="p-2 border-r font-black">
-                                    <div :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div>
+                                    <div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div>
                                 </td>
                                 <td class="p-2 border-r font-medium">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
                                 <td class="p-2 border-r font-bold">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
                                 <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
                                 <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
                                 <td class="p-2 border-r">
-                                    <template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><span :class="{'sand-save': isSandSave(hIdx*9 + i - 1)}">B</span></template>
+                                    <template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0">
+                                        <div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div>
+                                    </template>
                                     <template v-else>-</template>
                                 </td>
-                                <td class="p-1 text-left leading-tight">
-                                    <div class="flex flex-wrap gap-0.5">
-                                        <span v-for="(shot, sIdx) in getFilledShots(hIdx*9 + i - 1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] rounded">
-                                            {{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}{{ shot.direction }}{{ shot.errorType }}{{ shot.bunker ? 'Bk' : '' }}
-                                        </span>
-                                    </div>
-                                </td>
+                                <td class="p-1 text-left leading-tight"><div class="flex flex-wrap gap-0.5"><span v-for="(shot, sIdx) in getFilledShots(hIdx*9 + i - 1)" :key="sIdx" class="bg-gray-50 border px-1 text-[9px] rounded">{{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}{{ shot.direction }}{{ shot.errorType }}{{ shot.bunker ? 'Bk' : '' }}</span></div></td>
                             </tr>
                         </tbody>
-                        <tfoot class="bg-gray-100 font-bold text-center">
-                            <tr>
-                                <td class="p-2 border-r uppercase">Total</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).par }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).score }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).putts }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).fw }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).ob }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).pn }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).bk }}</td><td class="p-2 text-left italic">Totals</td>
-                            </tr>
-                        </tfoot>
+                        <tfoot class="bg-gray-100 font-bold text-center"><tr><td class="p-2 border-r uppercase">Total</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).par }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).score }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).putts }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).fw }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).ob }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).pn }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).bk }}</td><td class="p-2 text-left italic">Totals</td></tr></tfoot>
                     </table>
                 </div>
                 <div class="bg-black text-white p-6 rounded shadow-lg text-center">
@@ -253,37 +226,11 @@
                 const courses = ref(JSON.parse(localStorage.getItem('golf_courses') || '[]'));
                 const isRoundStarted = ref(false);
                 const clubMaster = ['1w', '3w', '5w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '48', '50', '52', '54', '56', '58', 'pt'];
-                const settings = ref({ 
-                    date: new Date().toISOString().substr(0, 10), 
-                    prefix: 'index', 
-                    courseId: '', 
-                    front: '', 
-                    back: '', 
-                    selectedClubs: ['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] 
-                });
-
+                const settings = ref({ date: new Date().toISOString().substr(0, 10), prefix: 'index', courseId: '', front: '', back: '', selectedClubs: ['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] });
                 const toggleClub = (c) => { const idx = settings.value.selectedClubs.indexOf(c); if (idx > -1) settings.value.selectedClubs.splice(idx, 1); else if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); };
-                
-                const orderedClubs = computed(() => { 
-                    return clubMaster.filter(c => settings.value.selectedClubs.includes(c));
-                });
-
+                const orderedClubs = computed(() => { return clubMaster.filter(c => settings.value.selectedClubs.includes(c)); });
                 const currentHoleIndex = ref(0), currentShotIdx = ref(0);
-                const holeResults = ref(Array.from({ length: 18 }, () => ({ 
-                    score: 0, 
-                    putts: 2, 
-                    fw: false, 
-                    shots: Array.from({ length: 7 }, () => ({ 
-                        club: '', 
-                        result: '○', 
-                        direction: '', 
-                        errorType: '',
-                        ob: false, 
-                        penalty: false, 
-                        bunker: false 
-                    })) 
-                })));
-
+                const holeResults = ref(Array.from({ length: 18 }, () => ({ score: 0, putts: 2, fw: false, shots: Array.from({ length: 7 }, () => ({ club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false })) })));
                 const displayName = (n) => n ? (n.includes('_') ? n.split('_')[1] : n) : '';
                 const importCsv = (e) => { const file = e.target.files[0]; if (!file) return; Papa.parse(file, { header: false, skipEmptyLines: true, complete: (res) => { const parsed = []; let cur = null; res.data.forEach(row => { if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections: [] }; parsed.push(cur); } else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); } }); courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); settings.value.prefix = 'index'; } }); };
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
@@ -294,49 +241,32 @@
                 const getHolePar = (idx) => { if (!selectedCourse.value || !settings.value.front || !settings.value.back) return 0; const sec = selectedCourse.value.sections.find(s => s.name === (idx < 9 ? settings.value.front : settings.value.back)); return sec ? sec.pars[idx % 9] : 0; };
                 const startRound = () => { for(let i=0; i<18; i++) holeResults.value[i].score = getHolePar(i); isRoundStarted.value = true; view.value = 'hole'; };
                 const currentHoleNum = computed(() => (currentHoleIndex.value % 9) + 1), currentSectionName = computed(() => currentHoleIndex.value < 9 ? settings.value.front : settings.value.back), currentPar = computed(() => getHolePar(currentHoleIndex.value)), currentShotData = computed(() => holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value]);
-                
-                const setResult = (r) => {
-                    const s = currentShotData.value;
-                    s.result = r;
-                    s.direction = '';
-                    s.errorType = '';
-                    s.ob = false;
-                    s.penalty = false;
-                };
-
-                const setErrorType = (e) => {
-                    const s = currentShotData.value;
-                    s.errorType = e;
-                    s.ob = (e === 'OB');
-                    s.penalty = (e === 'PN');
-                };
-
+                const setResult = (r) => { const s = currentShotData.value; s.result = r; s.direction = ''; s.errorType = ''; s.ob = false; s.penalty = false; };
+                const setErrorType = (e) => { const s = currentShotData.value; s.errorType = e; s.ob = (e === 'OB'); s.penalty = (e === 'PN'); };
                 const updateScore = (v) => { const n = holeResults.value[currentHoleIndex.value].score + v; if(n >= 1) holeResults.value[currentHoleIndex.value].score = n; }, updatePutt = (v) => { const n = holeResults.value[currentHoleIndex.value].putts + v; if(n >= 0) holeResults.value[currentHoleIndex.value].putts = n; };
                 const resetCurrentShot = () => { if(confirm('修正しますか？')) Object.assign(holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value], { club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false }); };
-                
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
                 
-                const isSandSave = (h) => {
-                    const s = holeResults.value[h].shots;
+                // Sand Save Logic: スコア(S) - 最後にバンカーに入った打数(i) <= 2
+                const isSandSave = (idx) => {
+                    const h = holeResults.value[idx];
+                    const s = h.shots;
                     let lastBunkerInIdx = 0;
-                    for (let i = 0; i < s.length; i++) {
-                        if (s[i].bunker) lastBunkerInIdx = i + 1;
-                    }
+                    for (let i = 0; i < s.length; i++) { if (s[i].bunker) lastBunkerInIdx = i + 1; }
                     if (lastBunkerInIdx === 0) return false;
-                    return (holeResults.value[h].score - lastBunkerInIdx) <= 2;
+                    return (h.score - lastBunkerInIdx <= 2);
                 };
 
-                // スクランブル達成判定：パーオンを逃して、パー以下で上がった場合
+                // Scramble Logic: パーオン失敗 かつ スコアがパー以下
                 const isScramble = (idx) => {
                     const h = holeResults.value[idx];
                     const p = getHolePar(idx);
-                    if (p === 0) return false;
+                    if (p === 0 || h.score === 0) return false;
                     const shotsToGreen = h.score - h.putts;
                     const isGIR = shotsToGreen <= (p - 2);
                     return !isGIR && h.score <= p;
                 };
 
-                // スコアの囲みCSSクラスを判定
                 const getScoreEnclosureClass = (idx) => {
                     const h = holeResults.value[idx];
                     const p = getHolePar(idx);
