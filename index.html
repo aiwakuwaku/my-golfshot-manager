@@ -28,18 +28,17 @@
         .nav-active svg { fill: #121212; }
         .nav-disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* スコア記号用スタイル */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
-        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } /* バーディ以下 */
-        .score-square { border: 1.5px solid #475569; color: #1e293b; } /* ダボ以上 */
+        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; }
+        .score-square { border: 1.5px solid #475569; color: #1e293b; }
         .score-triangle {
             position: relative; color: #2563eb;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: center;
-        } /* ボギー */
+        }
         
-        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; } /* 寄せワン */
-        .bk-circle { border: 1.5px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; } /* サンドセーブ */
+        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
         
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
@@ -50,7 +49,6 @@
         <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-center items-center">
             <h1 class="font-bold text-lg tracking-tight">
                 Golf Shot Manager
-                <!-- ml-6により2文字分右へ配置 -->
                 <span v-if="isRoundStarted" class="ml-6 text-sm font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
             </h1>
         </header>
@@ -71,7 +69,7 @@
                     </div>
                 </div>
 
-                <div v-if="courses.length > 0" class="space-y-4">
+                <div v-if="courses && courses.length > 0" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Index</label>
@@ -219,7 +217,7 @@
                 </div>
             </div>
 
-            <!-- 4. Stats Analysis Screen -->
+            <!-- 4. Analysis Screen -->
             <div v-if="view === 'analysis'" class="space-y-6 pb-20">
                 <h2 class="text-xl font-bold border-b pb-1">Performance Analysis</h2>
                 <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm">
@@ -269,11 +267,11 @@
         </main>
 
         <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto nav-bar z-30">
-            <button @click="view = 'settings'" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div><span class="nav-label">Set</span></button>
-            <button @click="isRoundStarted ? view = 'hole' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div><span class="nav-label">Input</span></button>
-            <button @click="isRoundStarted ? view = 'summary' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'summary' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></div><span class="nav-label">Card</span></button>
-            <button @click="isRoundStarted ? view = 'analysis' : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'analysis' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></div><span class="nav-label">Stats</span></button>
-            <button @click="view = 'history'" class="nav-item" :class="view === 'history' ? 'nav-active' : 'nav-inactive'"><div class="icon-container"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></div><span class="nav-label">Hist</span></button>
+            <button @click="changeView('settings')" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div><span class="nav-label">Set</span></button>
+            <button @click="isRoundStarted ? changeView('hole') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div><span class="nav-label">Input</span></button>
+            <button @click="isRoundStarted ? changeView('summary') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'summary' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></div><span class="nav-label">Card</span></button>
+            <button @click="isRoundStarted ? changeView('analysis') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'analysis' ? 'nav-active' : 'nav-inactive')]"><div class="icon-container"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg></div><span class="nav-label">Stats</span></button>
+            <button @click="changeView('history')" class="nav-item" :class="view === 'history' ? 'nav-active' : 'nav-inactive'"><div class="icon-container"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg></div><span class="nav-label">Hist</span></button>
         </nav>
     </div>
 
@@ -294,9 +292,16 @@
 
                 const toggleClub = (c) => { const idx = settings.value.selectedClubs.indexOf(c); if (idx > -1) settings.value.selectedClubs.splice(idx, 1); else if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); };
                 const orderedClubs = computed(() => clubMaster.filter(c => settings.value.selectedClubs.includes(c)));
-                const isPenaltyStroke = (h, s) => s > 0 && (holeResults.value[h].shots[s-1].errorType === 'OB' || holeResults.value[h].shots[s-1].errorType === 'PN');
-                const displayName = (n) => n?.includes('_') ? n.split('_')[1] : n;
                 
+                const isPenaltyStroke = (h, s) => {
+                    if (s === 0) return false;
+                    const prev = holeResults.value[h].shots[s-1];
+                    return prev && (prev.errorType === 'OB' || prev.errorType === 'PN');
+                };
+
+                const displayName = (n) => n?.includes('_') ? n.split('_')[1] : (n || '');
+                const changeView = (v) => { view.value = v; };
+
                 const processCsvData = (d) => { const parsed =[]; let cur = null; d.forEach(row => { if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections:[] }; parsed.push(cur); } else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); } }); courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); };
                 const importCsv = (e) => { if (!e.target.files[0]) return; Papa.parse(e.target.files[0], { header: false, skipEmptyLines: true, complete: (res) => processCsvData(res.data) }); };
                 const importFromServer = async () => { try { const r = await fetch('courses.csv'); if (!r.ok) throw new Error(); const t = await r.text(); Papa.parse(t, { header: false, skipEmptyLines: true, complete: (res) => { processCsvData(res.data); alert('Synced!'); } }); } catch (e) { alert('Sync failed: courses.csv not found'); } };
@@ -332,7 +337,7 @@
                 const relativeScoreColor = computed(() => { let d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); if(p > 0) d += (holeResults.value[i].score - p); } return d > 0 ? 'text-red-400' : (d < 0 ? 'text-blue-400' : 'text-gray-300'); });
 
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
-                const calculateHalfTotal = (hIdx) => { let par = 0, scr = 0, put = 0, fw = 0, ob = 0, pn = 0, bk = 0; for(let i=0; i<9; i++) { const idx = (hIdx * 9) + i, h = holeResults.value[idx]; const p = getHolePar(idx); par += p; scr += h.score; pt += h.putts; fw += (h.fw ? 1 : 0); ob += countStat(idx, 'ob'); pn += countStat(idx, 'penalty'); bk += countStat(idx, 'bunker'); } return { par, score: scr, putts: pt, fw, ob, pn, bk }; };
+                const calculateHalfTotal = (hIdx) => { let par = 0, scr = 0, pt = 0, fw = 0, ob = 0, pn = 0, bk = 0; for(let i=0; i<9; i++) { const idx = (hIdx * 9) + i, h = holeResults.value[idx]; const p = getHolePar(idx); par += p; scr += h.score; pt += h.putts; fw += (h.fw ? 1 : 0); ob += countStat(idx, 'ob'); pn += countStat(idx, 'penalty'); bk += countStat(idx, 'bunker'); } return { par, score: scr, putts: pt, fw, ob, pn, bk }; };
                 const grandTotals = computed(() => { let par = 0, pt = 0; for(let i=0; i<18; i++) { par += getHolePar(i); pt += holeResults.value[i].putts; } return { par, putts: pt }; });
 
                 const analysis = computed(() => {
@@ -363,7 +368,7 @@
                     const hIdx = currentHoleIndex.value;
                     const res = holeResults.value[hIdx];
                     let shotCount = 0;
-                    res.shots.forEach((s, sIdx) => { if (s.club !== '') shotCount++; if (isPenaltyStroke(hIdx, sIdx)) shotCount++; });
+                    res.shots.forEach((s, sIdx) => { if (s.club !== '' || s.errorType === 'OB' || s.errorType === 'PN') shotCount++; if (isPenaltyStroke(hIdx, sIdx)) shotCount++; });
                     const totalCalc = shotCount + res.putts;
                     if (totalCalc !== res.score) {
                         alert(`スコア不整合！\n打数(${shotCount}) + パット(${res.putts}) = ${totalCalc} 打\n現在の設定スコア: ${res.score} 打\n修正してください。`);
@@ -379,7 +384,7 @@
                 const confirmNewRound = () => { if (confirm('Reset current round?')) location.reload(); };
 
                 return { 
-                    view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, importFromServer, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, 
+                    view, settings, prefixes, filteredCourses, selectedCourse, displayName, changeView, importCsv, importFromServer, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, 
                     currentHoleIndex, currentShotIdx, currentHoleNum, currentSectionName, currentPar, currentShotData, 
                     holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, isScramble, getScoreEnclosureClass, totalScoreDisplay, relativeScoreDisplay, relativeScoreColor, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, 
                     setResult, setErrorType, isPenaltyStroke, analysis, saveRound, savedRounds, deleteRound, loadRoundData, exportAllToCSV, courses 
