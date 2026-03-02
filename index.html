@@ -40,6 +40,16 @@
             font-size: 10px;
             background-color: #fef3c7;
         }
+
+        /* 囲み記号用スタイル */
+        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #dc2626; }
+        .score-square { border: 1.5px solid #475569; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #1e293b; }
+        .score-triangle {
+            position: relative; width: 30px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #2563eb;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 26'%3E%3Cpolygon points='15,1 29,25 1,25' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: center;
+        }
+        .scramble-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
@@ -134,14 +144,13 @@
                         </div>
                         <div class="flex gap-1">
                             <button @click="holeResults[currentHoleIndex].fw = !holeResults[currentHoleIndex].fw" :class="['px-2 py-1 border rounded text-[10px] font-bold transition', holeResults[currentHoleIndex].fw ? 'bg-green-600 text-white' : 'bg-white text-gray-300']">Fw</button>
-                            <!-- Bk Button: Records if THIS shot ended in a bunker -->
                             <button @click="currentShotData.bunker = !currentShotData.bunker" :class="['px-2 py-1 border rounded text-[10px] font-bold transition', currentShotData.bunker ? 'bg-amber-600 text-white border-amber-800' : 'bg-white text-gray-300']">Bk</button>
                         </div>
                     </div>
 
-                    <!-- △ selected sub-options -->
+                    <!-- △ selected sub-options (L and R swapped) -->
                     <div v-if="currentShotData.result === '△'" class="flex gap-1 mb-4 animate-in fade-in duration-300">
-                        <button v-for="d in ['R','L','F','B']" :key="d" @click="currentShotData.direction = d"
+                        <button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d"
                             :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.direction === d ? 'bg-blue-500 text-white' : 'bg-gray-50 text-gray-400']">
                             {{ d }}
                         </button>
@@ -170,42 +179,60 @@
 
             <!-- 3. Card Screen -->
             <div v-if="view === 'summary'" class="space-y-6 pb-10">
-                <div class="flex justify-between items-end border-b pb-1"><div class="flex items-baseline gap-2"><h2 class="text-xl font-bold italic">Score Card</h2><span v-if="isRoundStarted" class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span></div><span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{{ settings.date }}</span></div>
+                <div class="flex justify-between items-end border-b pb-1">
+                    <div class="flex items-baseline gap-2">
+                        <h2 class="text-xl font-bold italic">Score Card</h2>
+                        <span v-if="isRoundStarted" class="text-xs text-gray-600 font-bold">{{ displayName(selectedCourse?.name) }}</span>
+                    </div>
+                    <span class="text-[12px] text-gray-500 font-bold uppercase tracking-widest">{{ settings.date }}</span>
+                </div>
                 <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="bg-white border rounded shadow-sm overflow-hidden overflow-x-auto">
-                    <div class="bg-gray-100 px-3 py-2 text-[10px] font-black border-b uppercase tracking-widest">{{ hIdx === 0 ? settings.front : settings.back }}</div>
-                    <table class="w-full text-[10px] border-collapse min-w-[440px]">
-                        <thead><tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter"><th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th></tr></thead>
+                    <div class="bg-gray-100 px-3 py-2 text-[12px] font-black border-b uppercase tracking-widest">{{ hIdx === 0 ? settings.front : settings.back }}</div>
+                    <table class="w-full text-[12px] border-collapse min-w-[440px]">
+                        <thead>
+                            <tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter">
+                                <th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr v-for="i in 9" :key="i" class="border-b text-center">
-                                <td class="p-2 border-r font-bold bg-gray-200 cursor-pointer" @click="jumpToHole(hIdx*9 + i - 1)">{{ i + (hIdx * 9) }}</td>
+                                <td class="p-2 border-r font-bold bg-gray-200 cursor-pointer" @click="jumpToHole(hIdx*9 + i - 1)">
+                                    <div :class="{'scramble-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div>
+                                </td>
                                 <td class="p-2 border-r text-gray-400">{{ getHolePar(hIdx * 9 + i - 1) }}</td>
-                                <td class="p-2 border-r font-black" :class="scoreColor(hIdx*9+i-1)">{{ holeResults[hIdx*9+i-1].score }}</td>
-                                <td class="p-2 border-r font-medium">{{ holeResults[hIdx*9+i-1].putts }}</td>
-                                <td class="p-2 border-r font-bold">{{ holeResults[hIdx*9+i-1].fw ? '○' : '-' }}</td>
-                                <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9+i-1, 'ob') || '-' }}</td>
-                                <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9+i-1, 'penalty') || '-' }}</td>
+                                <td class="p-2 border-r font-black">
+                                    <div :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div>
+                                </td>
+                                <td class="p-2 border-r font-medium">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
+                                <td class="p-2 border-r font-bold">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
+                                <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
+                                <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
                                 <td class="p-2 border-r">
-                                    <template v-if="countStat(hIdx*9+i-1, 'bunker') > 0"><span :class="{'sand-save': isSandSave(hIdx*9+i-1)}">B</span></template>
+                                    <template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><span :class="{'sand-save': isSandSave(hIdx*9 + i - 1)}">B</span></template>
                                     <template v-else>-</template>
                                 </td>
                                 <td class="p-1 text-left leading-tight">
                                     <div class="flex flex-wrap gap-0.5">
-                                        <span v-for="(shot, sIdx) in getFilledShots(hIdx*9+i-1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] rounded">
+                                        <span v-for="(shot, sIdx) in getFilledShots(hIdx*9 + i - 1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] rounded">
                                             {{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}{{ shot.direction }}{{ shot.errorType }}{{ shot.bunker ? 'Bk' : '' }}
                                         </span>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
-                        <tfoot class="bg-gray-100 font-bold text-center"><tr><td class="p-2 border-r uppercase">Total</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).par }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).score }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).putts }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).fw }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).ob }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).pn }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).bk }}</td><td class="p-2 text-left italic">Totals</td></tr></tfoot>
+                        <tfoot class="bg-gray-100 font-bold text-center">
+                            <tr>
+                                <td class="p-2 border-r uppercase">Total</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).par }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).score }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).putts }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).fw }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).ob }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).pn }}</td><td class="p-2 border-r">{{ calculateHalfTotal(hIdx).bk }}</td><td class="p-2 text-left italic">Totals</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
                 <div class="bg-black text-white p-6 rounded shadow-lg text-center">
-                    <div class="text-[10px] text-gray-500 uppercase mb-2 tracking-widest">Grand Total</div>
+                    <div class="text-[12px] text-gray-500 uppercase mb-2 tracking-widest">Grand Total</div>
                     <div class="grid grid-cols-3 gap-y-4">
-                        <div><div class="text-[9px] text-gray-500 uppercase">Par</div><div class="text-xl font-bold">{{ grandTotals.par }}</div></div>
-                        <div><div class="text-[9px] text-gray-500 uppercase">Score</div><div class="text-xl font-bold italic">{{ totalScoreDisplay }}</div></div>
-                        <div><div class="text-[9px] text-gray-500 uppercase">Putts</div><div class="text-xl font-bold">{{ grandTotals.putts }}</div></div>
+                        <div><div class="text-[10px] text-gray-500 uppercase">Par</div><div class="text-xl font-bold">{{ grandTotals.par }}</div></div>
+                        <div><div class="text-[10px] text-gray-500 uppercase">Score</div><div class="text-xl font-bold italic">{{ totalScoreDisplay }}</div></div>
+                        <div><div class="text-[10px] text-gray-500 uppercase">Putts</div><div class="text-xl font-bold">{{ grandTotals.putts }}</div></div>
                     </div>
                 </div>
                 <button @click="confirmNewRound" class="w-full text-red-500 text-[10px] py-4 font-bold opacity-30 uppercase tracking-widest">Reset Round Data</button>
@@ -289,19 +316,35 @@
                 
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
                 
-                // Sand Save Logic: 
-                // Bal entered bunker at shot i (shots[i-1].bunker = true)
-                // Hole finished at score S.
-                // Sand Save successful if strokes from bunker to hole <= 2 (Escape + Putt)
-                // In strokes: S - i <= 2
                 const isSandSave = (h) => {
                     const s = holeResults.value[h].shots;
                     let lastBunkerInIdx = 0;
                     for (let i = 0; i < s.length; i++) {
-                        if (s[i].bunker) lastBunkerInIdx = i + 1; // 1-based index of shot that resulted in bunker
+                        if (s[i].bunker) lastBunkerInIdx = i + 1;
                     }
                     if (lastBunkerInIdx === 0) return false;
                     return (holeResults.value[h].score - lastBunkerInIdx) <= 2;
+                };
+
+                // スクランブル達成判定：パーオンを逃して、パー以下で上がった場合
+                const isScramble = (idx) => {
+                    const h = holeResults.value[idx];
+                    const p = getHolePar(idx);
+                    if (p === 0) return false;
+                    const shotsToGreen = h.score - h.putts;
+                    const isGIR = shotsToGreen <= (p - 2);
+                    return !isGIR && h.score <= p;
+                };
+
+                // スコアの囲みCSSクラスを判定
+                const getScoreEnclosureClass = (idx) => {
+                    const h = holeResults.value[idx];
+                    const p = getHolePar(idx);
+                    if (p === 0 || h.score === 0) return '';
+                    if (h.score < p) return 'score-circle'; // バーディ以下
+                    if (h.score === p + 1) return 'score-triangle'; // ボギー
+                    if (h.score >= p + 2) return 'score-square'; // ダボ以上
+                    return '';
                 };
 
                 const totalScoreDisplay = computed(() => { let t = 0, d = 0; for(let i=0; i<18; i++) { t += holeResults.value[i].score; d += (holeResults.value[i].score - getHolePar(i)); } return `${t} (${d >= 0 ? '+'+d : d})`; });
@@ -311,7 +354,7 @@
                 const getFilledShots = (h) => holeResults.value[h].shots.map((s, i) => ({...s, idx: i})).filter((s) => s.club !== '' || s.bunker);
                 const scoreColor = (idx) => { const s = holeResults.value[idx].score, p = getHolePar(idx); return s < p ? 'text-red-600' : (s > p ? 'text-blue-600' : 'text-gray-900'); }, confirmNewRound = () => { if (confirm('Reset?')) location.reload(); };
                 
-                return { view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, currentHoleIndex, currentHoleNum, currentSectionName, currentPar, currentShotIdx, currentShotData, holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, courses, setResult, setErrorType };
+                return { view, settings, prefixes, filteredCourses, selectedCourse, displayName, importCsv, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, currentHoleIndex, currentHoleNum, currentSectionName, currentPar, currentShotIdx, currentShotData, holeResults, updateScore, updatePutt, resetCurrentShot, countStat, isSandSave, isScramble, getScoreEnclosureClass, totalScoreDisplay, grandTotals, calculateHalfTotal, nextHole, prevHole, jumpToHole, getHolePar, getFilledShots, scoreColor, confirmNewRound, courses, setResult, setErrorType };
             }
         }).mount('#app');
     </script>
