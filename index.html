@@ -48,17 +48,17 @@
 <body class="bg-gray-100 font-sans text-gray-900">
     <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative">
         <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-between items-center">
-            <!-- タイトル左側のガイドボタン -->
             <button @click="changeView('guide')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 active:bg-gray-700 transition">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
             </button>
 
             <h1 class="font-bold text-lg tracking-tight flex items-center">
                 Golf Shot Manager
-                <span v-if="isRoundStarted" class="ml-6 text-sm font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
+                <!-- ml-10 (右へさらに配置) および text-base (サイズ拡大) -->
+                <span v-if="isRoundStarted" class="ml-10 text-base font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
             </h1>
 
-            <div class="w-8"></div> <!-- バランス調整用スペーサー -->
+            <div class="w-8"></div>
         </header>
 
         <main class="p-4 flex-grow pb-24 overflow-y-auto">
@@ -68,46 +68,22 @@
                     <h2 class="text-xl font-bold">Guide & Glossary</h2>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" class="text-sm font-bold text-blue-600">Close</button>
                 </div>
-
                 <section class="space-y-4 text-sm leading-relaxed">
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <h3 class="font-black text-blue-600 mb-2 border-b">基本的な使い方</h3>
                         <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                            <li><span class="font-bold">ラウンド設定:</span> 日付・コース・使用クラブを選びます。</li>
-                            <li><span class="font-bold">入力:</span> クラブ、結果(◯△☓)、方向などを記録します。</li>
-                            <li><span class="font-bold">自動計算:</span> 入力内容からスコア不整合がないか自動チェックします。</li>
-                            <li><span class="font-bold">保存・分析:</span> 「Save Round」で履歴に残し、スタッツで弱点を分析します。</li>
+                            <li>ラウンド設定で日付・コース・クラブを選択。</li>
+                            <li>入力画面でショット結果を記録。</li>
+                            <li>保存ボタンで履歴に残し、分析画面で弱点を把握。</li>
                         </ol>
                     </div>
-
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
-                        <h3 class="font-black text-orange-600 mb-2 border-b">判定（◯△☓）の定義</h3>
-                        <ul class="space-y-3">
-                            <li><span class="inline-block w-6 h-6 text-center rounded-full bg-gray-800 text-white font-bold text-xs pt-0.5 mr-1">○</span> 狙った範囲内に打てた。</li>
-                            <li><span class="inline-block w-6 h-6 text-center rounded-full bg-gray-300 text-gray-800 font-bold text-xs pt-0.5 mr-1">△</span> 想定外だがリカバリーは可能。</li>
-                            <li><span class="inline-block w-6 h-6 text-center rounded-full bg-red-600 text-white font-bold text-xs pt-0.5 mr-1">☓</span> 確実に1打以上ロスする結果。</li>
+                        <h3 class="font-black text-orange-600 mb-2 border-b">判定の定義</h3>
+                        <ul class="space-y-2">
+                            <li>◯: 狙った範囲内に打てた。</li>
+                            <li>△: 想定外だがリカバリーは可能。</li>
+                            <li>☓: 確実に1打以上ロスする結果。</li>
                         </ul>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
-                        <h3 class="font-black text-green-600 mb-2 border-b">用語説明</h3>
-                        <dl class="space-y-3">
-                            <dt class="font-bold text-gray-900 underline">GIR (パーオン率)</dt>
-                            <dd class="pl-2 text-gray-600">規定打数マイナス2打以下でグリーンに乗せた割合。</dd>
-                            <dt class="font-bold text-gray-900 underline">Scramble (寄せワン率)</dt>
-                            <dd class="pl-2 text-gray-600">パーオンに失敗した後、パー以下で上がる確率。カードのホール番号が◯で囲まれます。</dd>
-                            <dt class="font-bold text-gray-900 underline">Sand Save (砂イチ)</dt>
-                            <dd class="pl-2 text-gray-600">バンカーに入れた後、2打以内でホールアウトすること。カードの「B」が◯で囲まれます。</dd>
-                            <dt class="font-bold text-gray-900 underline">Relative Score (相対スコア)</dt>
-                            <dd class="pl-2 text-gray-600">現在のトータルパーに対するオーバー/アンダー数。</dd>
-                        </dl>
-                    </div>
-
-                    <div class="bg-gray-100 p-4 rounded-xl border border-gray-200">
-                        <h3 class="font-black mb-2 border-b text-gray-600">特殊ルール</h3>
-                        <p class="text-xs text-gray-500 italic">
-                            OBまたはPNを入力すると、次のショットボタンは自動的に入力不可（ペナルティ打として予約）になります。例えば1打目OBなら、次は3打目から入力を開始します。
-                        </p>
                     </div>
                 </section>
             </div>
@@ -126,7 +102,6 @@
                         <button @click="importFromServer" class="bg-blue-600 text-white px-2 py-2 rounded text-xs font-bold active:scale-95 transition">Sync Server</button>
                     </div>
                 </div>
-
                 <div v-if="courses && courses.length > 0" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -179,36 +154,19 @@
                     </div>
                     <button @click="nextHole" class="text-xl px-2">▶</button>
                 </div>
-
                 <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-xs font-black text-blue-800 uppercase tracking-widest">Shot {{ currentShotIdx + 1 }}</span>
                         <div class="flex gap-1 overflow-x-auto pb-1">
-                            <button v-for="n in 7" :key="n" 
-                                @click="!isPenaltyStroke(currentHoleIndex, n-1) ? currentShotIdx = n-1 : null" 
-                                :disabled="isPenaltyStroke(currentHoleIndex, n-1)"
-                                :class="['w-8 h-8 flex-shrink-0 rounded-full border text-xs font-black transition', 
-                                         currentShotIdx === n-1 ? 'bg-blue-600 border-blue-800 text-white' : 
-                                         (isPenaltyStroke(currentHoleIndex, n-1) ? 'bg-gray-200 text-gray-400 border-gray-300 opacity-50 cursor-not-allowed' : 'bg-white text-gray-400')]">
-                                {{ n }}
-                            </button>
+                            <button v-for="n in 7" :key="n" @click="!isPenaltyStroke(currentHoleIndex, n-1) ? currentShotIdx = n-1 : null" :disabled="isPenaltyStroke(currentHoleIndex, n-1)" :class="['w-8 h-8 flex-shrink-0 rounded-full border text-xs font-black transition', currentShotIdx === n-1 ? 'bg-blue-600 border-blue-800 text-white' : (isPenaltyStroke(currentHoleIndex, n-1) ? 'bg-gray-200 text-gray-400 border-gray-300 opacity-50 cursor-not-allowed' : 'bg-white text-gray-400')]">{{ n }}</button>
                         </div>
                     </div>
-                    
                     <div class="grid grid-cols-1 gap-3 mb-4">
-                        <div class="relative">
-                            <input v-model="currentShotData.club" list="club-options" @focus="currentShotData.club = ''" class="w-full border p-2 rounded bg-white font-bold h-[38px]" placeholder="Select Club">
-                            <datalist id="club-options">
-                                <option v-for="c in orderedClubs" :key="c" :value="c">{{ c }}</option>
-                            </datalist>
-                        </div>
+                        <div class="relative"><input v-model="currentShotData.club" list="club-options" @focus="currentShotData.club = ''" class="w-full border p-2 rounded bg-white font-bold h-[38px]" placeholder="Select Club"><datalist id="club-options"><option v-for="c in orderedClubs" :key="c" :value="c">{{ c }}</option></datalist></div>
                     </div>
-                    
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
-                            <div class="flex gap-1">
-                                <button v-for="r in ['○', '△', '☓']" :key="r" @click="setResult(r)" :class="['w-12 py-2 border rounded-lg font-bold transition', currentShotData.result === r ? 'bg-gray-800 text-white' : 'bg-white text-gray-300']">{{ r }}</button>
-                            </div>
+                            <div class="flex gap-1"><button v-for="r in ['○', '△', '☓']" :key="r" @click="setResult(r)" :class="['w-12 py-2 border rounded-lg font-bold transition', currentShotData.result === r ? 'bg-gray-800 text-white' : 'bg-white text-gray-300']">{{ r }}</button></div>
                             <div class="flex gap-1">
                                 <button @click="holeResults[currentHoleIndex].fw = !holeResults[currentHoleIndex].fw" :class="['px-3 py-2 border rounded text-xs font-bold transition', holeResults[currentHoleIndex].fw ? 'bg-green-600 text-white' : 'bg-white text-gray-300']">Fw</button>
                                 <button @click="currentShotData.bunker = !currentShotData.bunker" :class="['px-3 py-2 border rounded text-xs font-bold transition', currentShotData.bunker ? 'bg-amber-600 text-white border-amber-800' : 'bg-white text-gray-300']">Bk</button>
@@ -216,15 +174,9 @@
                         </div>
                         <div class="text-[9px] text-gray-500 italic bg-gray-50 p-1 rounded px-2">○:狙い通り / △:ミスだがリカバリー可 / ☓:1打ロス確定</div>
                     </div>
-
-                    <div v-if="currentShotData.result === '△'" class="flex gap-1 mt-3 animate-in fade-in duration-300">
-                        <button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.direction === d ? 'bg-blue-500 text-white' : 'bg-gray-50 text-gray-400']">{{ d }}</button>
-                    </div>
-                    <div v-if="currentShotData.result === '☓'" class="flex gap-1 mt-3 animate-in fade-in duration-300">
-                        <button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.errorType === e ? 'bg-red-600 text-white' : 'bg-gray-50 text-gray-400']">{{ e }}</button>
-                    </div>
+                    <div v-if="currentShotData.result === '△'" class="flex gap-1 mt-3 animate-in fade-in duration-300"><button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.direction === d ? 'bg-blue-500 text-white' : 'bg-gray-50 text-gray-400']">{{ d }}</button></div>
+                    <div v-if="currentShotData.result === '☓'" class="flex gap-1 mt-3 animate-in fade-in duration-300"><button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.errorType === e ? 'bg-red-600 text-white' : 'bg-gray-50 text-gray-400']">{{ e }}</button></div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-4 text-center">
                     <div class="bg-gray-50 p-4 rounded-xl border">
                         <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest">Score</label>
@@ -247,21 +199,14 @@
                         <thead><tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter"><th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th></tr></thead>
                         <tbody>
                             <tr v-for="i in 9" :key="i" class="border-b text-center">
-                                <td class="p-2 border-r font-bold bg-gray-200 cursor-pointer" @click="jumpToHole(hIdx*9 + i - 1)">
-                                    <div :class="{'h-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div>
-                                </td>
+                                <td class="p-2 border-r font-bold bg-gray-200 cursor-pointer" @click="jumpToHole(hIdx*9 + i - 1)"><div :class="{'h-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div></td>
                                 <td class="p-2 border-r text-gray-400">{{ getHolePar(hIdx * 9 + i - 1) }}</td>
-                                <td class="p-2 border-r">
-                                    <div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div>
-                                </td>
+                                <td class="p-2 border-r"><div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div></td>
                                 <td class="p-2 border-r font-medium">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
                                 <td class="p-2 border-r font-bold">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
                                 <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
                                 <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
-                                <td class="p-2 border-r">
-                                    <template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div></template>
-                                    <template v-else>-</template>
-                                </td>
+                                <td class="p-2 border-r"><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div></template><template v-else>-</template></td>
                                 <td class="p-1 text-left leading-tight"><div class="flex flex-wrap gap-0.5"><span v-for="(shot, sIdx) in getFilledShots(hIdx*9 + i - 1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] rounded">{{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}{{ shot.direction }}{{ shot.errorType }}{{ shot.bunker ? 'Bk' : '' }}</span></div></td>
                             </tr>
                         </tbody>
@@ -299,7 +244,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm">
                     <h3 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>Score Loss Analysis</h3>
                     <div class="grid grid-cols-3 gap-2 text-center">
@@ -372,7 +316,8 @@
 
                 const toggleClub = (c) => { const idx = settings.value.selectedClubs.indexOf(c); if (idx > -1) settings.value.selectedClubs.splice(idx, 1); else if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); };
                 const orderedClubs = computed(() => clubMaster.filter(c => settings.value.selectedClubs.includes(c)));
-                const isPenaltyStroke = (h, s) => s > 0 && (holeResults.value[h].shots[s-1].errorType === 'OB' || holeResults.value[h].shots[s-1].errorType === 'PN');
+                
+                const isPenaltyStroke = (h, s) => { if (s === 0) return false; const prev = holeResults.value[h].shots[s-1]; return prev && (prev.errorType === 'OB' || prev.errorType === 'PN'); };
                 const displayName = (n) => n?.includes('_') ? n.split('_')[1] : (n || '');
                 const changeView = (v) => { view.value = v; };
 
@@ -383,6 +328,7 @@
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
                 const filteredCourses = computed(() => courses.value.filter(c => c.name.startsWith(settings.value.prefix === 'index' ? '' : settings.value.prefix)));
                 const selectedCourse = computed(() => courses.value.find(c => c.id === settings.value.courseId));
+                
                 const autoSelectSections = () => { if (!selectedCourse.value) return; const names = selectedCourse.value.sections.map(s => s.name); if (names.includes('OUT') && names.includes('IN')) { settings.value.front = 'OUT'; settings.value.back = 'IN'; } else if (names.length >= 2) { settings.value.front = names[0]; settings.value.back = names[1]; } };
                 const syncSections = (t) => { if (selectedCourse.value && selectedCourse.value.sections.length === 2) { const names = selectedCourse.value.sections.map(s => s.name); if (t === 'front') settings.value.back = names.find(n => n !== settings.value.front); else settings.value.front = names.find(n => n !== settings.value.back); } };
 
