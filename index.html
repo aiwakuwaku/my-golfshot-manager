@@ -28,7 +28,6 @@
         .nav-active svg { fill: #121212; }
         .nav-disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* スコア記号用スタイル */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
         .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } 
         .score-square { border: 1.5px solid #475569; color: #1e293b; } 
@@ -39,7 +38,7 @@
         }
         
         .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
+        .bk-circle { border: 1.5px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
         
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
@@ -47,6 +46,7 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
     <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative">
+        <!-- Header -->
         <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-between items-center h-16">
             <button @click="changeView('guide')" class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-800 active:bg-gray-700 transition">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -61,30 +61,78 @@
         </header>
 
         <main class="p-4 flex-grow pb-24 overflow-y-auto">
-            <!-- 0. Guide Screen -->
-            <div v-if="view === 'guide'" class="space-y-6">
+            <!-- 0. Guide & Glossary Screen -->
+            <div v-if="view === 'guide'" class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
                 <div class="flex justify-between items-center border-b pb-1">
                     <h2 class="text-xl font-bold">Guide & Glossary</h2>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" class="text-sm font-bold text-blue-600">Close</button>
                 </div>
-                <section class="space-y-4 text-sm leading-relaxed text-gray-700">
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
-                        <h3 class="font-black text-blue-600 mb-2 border-b">基本的な使い方</h3>
-                        <ol class="list-decimal list-inside space-y-2 text-xs">
-                            <li>設定画面で日付・コース・クラブを選択。</li>
-                            <li>入力画面で1打ごとのクラブと結果を記録。</li>
-                            <li>保存したデータは履歴や統計で分析可能。</li>
-                        </ol>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border shadow-sm">
-                        <h3 class="font-black text-orange-600 mb-2 border-b">判定の定義</h3>
-                        <ul class="space-y-2 text-xs">
-                            <li><span class="font-bold">◯:</span> 自分が狙った範囲内に打てた。</li>
-                            <li><span class="font-bold">△:</span> 想定の範囲外に打ったがリカバリーは可能。</li>
-                            <li><span class="font-bold">☓:</span> 確実に１打以上ロスする結果となる所に打ち込んだ。</li>
-                        </ul>
-                    </div>
-                </section>
+
+                <div class="space-y-6 pb-10">
+                    <!-- Basic Workflow -->
+                    <section class="space-y-3">
+                        <h3 class="font-black text-blue-600 flex items-center gap-2"><span class="bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span>操作の流れ</h3>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-xs leading-relaxed space-y-2">
+                            <p><span class="font-bold">① 設定:</span> 日付・コースを選択し、その日使う14本以内のクラブを確定させ「Start Round」で開始します。</p>
+                            <p><span class="font-bold">② 入力:</span> 各ホールの「使用クラブ」「結果」「方向/ミス種別」を選択。パット数と合計スコアを入力します。</p>
+                            <p><span class="font-bold">③ 整合性:</span> 「打数＋罰打＋パット数」が合計スコアと合わない場合、次ホールへ進めないバリデーションが作動します。</p>
+                            <p><span class="font-bold">④ 振り返り:</span> 統計(Stats)画面で自分のミスの傾向を把握し、履歴(Hist)で過去の記録を管理します。</p>
+                        </div>
+                    </section>
+
+                    <!-- Shot Definitions -->
+                    <section class="space-y-3">
+                        <h3 class="font-black text-orange-600 flex items-center gap-2"><span class="bg-orange-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span>ショット判定の定義</h3>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-xs space-y-3">
+                            <div class="flex gap-3">
+                                <span class="bg-gray-800 text-white w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">◯</span>
+                                <div><p class="font-bold">狙った範囲内に打てた</p><p class="text-gray-500">自分が意図したターゲットエリア、フェアウェイ、グリーン等にボールを置けた状態。</p></div>
+                            </div>
+                            <div class="flex gap-3 border-t pt-3">
+                                <span class="bg-gray-300 text-gray-800 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">△</span>
+                                <div><p class="font-bold">想定外だがリカバリー可能</p><p class="text-gray-500">ラフやカラーなど狙いは外したが、次のショットでグリーンやピンを狙える状態。</p></div>
+                            </div>
+                            <div class="flex gap-3 border-t pt-3">
+                                <span class="bg-red-600 text-white w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">☓</span>
+                                <div><p class="font-bold">確実に１打以上ロスする</p><p class="text-gray-500">OB、PN、林、脱出に専念が必要な深いラフ、ハザードなど、スコアを直接損なう状態。</p></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Glossary -->
+                    <section class="space-y-3">
+                        <h3 class="font-black text-green-600 flex items-center gap-2"><span class="bg-green-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span>用語と記号の解説</h3>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-[11px] space-y-4">
+                            <div>
+                                <h4 class="font-bold border-b mb-1">スコアカードの記号</h4>
+                                <ul class="list-disc list-inside space-y-1 text-gray-600">
+                                    <li><span class="text-red-600 font-bold">◯囲みスコア:</span> バーディ以下（Parより少ない）</li>
+                                    <li><span class="text-blue-600 font-bold">△囲みスコア:</span> ボギー（Par + 1）</li>
+                                    <li><span class="text-gray-900 font-bold">□囲みスコア:</span> ダブルボギー以上（Par + 2以上）</li>
+                                    <li><span class="text-green-600 font-bold">Hの◯囲み:</span> <span class="font-bold italic">Scramble(寄せワン)</span> 成功。パーオンを逃したが、パー以下で上がった場合。</li>
+                                    <li><span class="font-bold italic">Bの◯囲み:</span> <span class="font-bold italic">Sand Save</span> 成功。バンカーに入ったショットから2打以内でホールアウトした場合。</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold border-b mb-1">統計メトリクス</h4>
+                                <ul class="list-disc list-inside space-y-1 text-gray-600">
+                                    <li><span class="font-bold text-gray-800">GIR (パーオン率):</span> パーより2打少ない打数（Par 4なら2打目）までにグリーンに乗せたホールの割合。</li>
+                                    <li><span class="font-bold text-gray-800">Bogey-on率:</span> パーより1打少ない打数までに乗せたホールの割合。</li>
+                                    <li><span class="font-bold text-gray-800">Score Loss:</span> OB(2打失)、PN/☓(1打失)として、「もしミスがなければ」をシミュレーションした合計打数。</li>
+                                    <li><span class="font-bold text-gray-800">Club Bias:</span> 特定クラブで△/☓を打った際の方向(LRFB)の偏り。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Rules -->
+                    <section class="space-y-3">
+                        <h3 class="font-black text-purple-600 flex items-center gap-2"><span class="bg-purple-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span>入力制限ルール</h3>
+                        <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 text-xs text-purple-900 leading-relaxed">
+                            ショット結果で<span class="font-bold">「OB」</span>または<span class="font-bold">「PN（ペナルティ）」</span>を選択すると、次の1打分はルール上の罰打として予約され、ボタンがグレーアウトして入力できなくなります。これは実際のゴルフの打数計算を正しく反映させるための仕様です。
+                        </div>
+                    </section>
+                </div>
             </div>
 
             <!-- 1. Settings Screen -->
@@ -202,8 +250,8 @@
                                 <td class="p-2 border-r"><div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div></td>
                                 <td class="p-2 border-r">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
                                 <td class="p-2 border-r">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
-                                <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
-                                <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
+                                <td class="p-2 border-r text-red-500">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
+                                <td class="p-2 border-r text-orange-500">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
                                 <td class="p-2 border-r"><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div></template><template v-else>-</template></td>
                                 <td class="p-1 text-left leading-tight"><div class="flex flex-wrap gap-0.5"><span v-for="(shot, sIdx) in getFilledShots(hIdx*9 + i - 1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] rounded">{{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}{{ shot.direction }}{{ shot.errorType }}{{ shot.bunker ? 'Bk' : '' }}</span></div></td>
                             </tr>
@@ -228,8 +276,8 @@
             <!-- 4. Stats Analysis Screen -->
             <div v-if="view === 'analysis'" class="space-y-6 pb-20">
                 <h2 class="text-xl font-bold border-b pb-1">Performance Analysis</h2>
-                
-                <!-- Score Loss Analysis (復元) -->
+
+                <!-- Score Loss Analysis -->
                 <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm">
                     <h3 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
@@ -240,10 +288,9 @@
                         <div class="p-2 bg-red-50 rounded"><div class="text-[9px] text-gray-500 uppercase">Mistake(☓)</div><div class="text-xl font-black text-red-600">{{ analysis.criticalMissCount }}</div></div>
                         <div class="p-2 bg-red-50 rounded"><div class="text-[9px] text-gray-500 uppercase">3-Putts</div><div class="text-xl font-black text-red-600">{{ analysis.threePutts }}</div></div>
                     </div>
-                    <p class="text-[10px] text-gray-400 mt-2 italic text-center">※これらを防ぐだけで 70台への道が開けます</p>
                 </div>
 
-                <!-- PAR別パフォーマンス (維持) -->
+                <!-- PAR別パフォーマンス -->
                 <div class="bg-white p-4 rounded-xl border shadow-sm">
                     <h3 class="text-sm font-bold mb-3 flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>PAR別パフォーマンス</h3>
                     <div v-for="p in [3,4,5]" :key="p" class="border-b pb-3 last:border-0 mb-3">
@@ -257,7 +304,6 @@
                     </div>
                 </div>
 
-                <!-- スキルカテゴリ (復元) -->
                 <div class="bg-white p-4 rounded-xl border shadow-sm">
                     <h3 class="text-sm font-bold mb-3">Skill Categories (Success Rate)</h3>
                     <div class="space-y-4">
@@ -268,7 +314,6 @@
                     </div>
                 </div>
 
-                <!-- クラブパフォーマンス (復元) -->
                 <div class="bg-white p-4 rounded-xl border shadow-sm overflow-x-auto">
                     <h3 class="text-sm font-bold mb-3">Club Performance & Bias</h3>
                     <table class="w-full text-[11px]">
@@ -318,6 +363,7 @@
                 const isRoundStarted = ref(false);
                 const clubMaster =['1w', '3w', '5w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '48', '50', '52', '54', '56', '58', 'pt'];
                 const settings = ref({ date: new Date().toISOString().substr(0, 10), prefix: 'index', courseId: '', front: '', back: '', selectedClubs:['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] });
+                
                 const currentHoleIndex = ref(0), currentShotIdx = ref(0);
                 const holeResults = ref(Array.from({ length: 18 }, () => ({ score: 0, putts: 2, fw: false, shots: Array.from({ length: 7 }, () => ({ club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false })) })));
 
@@ -364,7 +410,11 @@
                     holeResults.value.forEach((h, idx) => {
                         if (h.putts >= 3) tP++; const p = getHolePar(idx);
                         if (parPerf[p]) { parPerf[p].count++; parPerf[p].score += h.score; if (h.score - p >= 2) parPerf[p].db++; const sG = h.score - h.putts; if (p > 0 && sG <= (p - 2)) parPerf[p].gir++; if (p > 0 && sG <= (p - 1)) parPerf[p].bo++; }
-                        h.shots.forEach((s, sIdx) => { if (!s.club) return; if (s.errorType === 'OB') pL += 2; if (s.errorType === 'PN') pL += 1; if (s.result === '☓') cM++; if (!cMap[s.club]) cMap[s.club] = { ok: 0, t: 0, m: [] }; cMap[s.club].t++; if (s.result === '○') cMap[s.club].ok++; else if (s.direction) cMap[s.club].m.push(s.direction); if (sIdx === 0) { cat["ティーショット"].t++; if (s.result === '○') cat["ティーショット"].ok++; } else if (['pw','48','50','52','54','56','58'].includes(s.club.toLowerCase())) { cat["アプローチ(Wedge)"].t++; if (s.result === '○') cat["アプローチ(Wedge)"].ok++; } if (sIdx > 0 && (h.shots[sIdx-1].result === '△' || h.shots[sIdx-1].result === '☓')) { cat["リカバリー"].t++; if (s.result === '○') cat["リカバリー"].ok++; } });
+                        h.shots.forEach((s, sIdx) => { if (!s.club) return; if (s.errorType === 'OB') pL += 2; if (s.errorType === 'PN') pL += 1; if (s.result === '☓') cM++; if (!cMap[s.club]) cMap[s.club] = { ok: 0, t: 0, m: [] }; cMap[s.club].t++; if (s.result === '○') cMap[s.club].ok++; else if (s.direction) cMap[s.club].m.push(s.direction); 
+                            if (sIdx === 0) { cat["ティーショット"].t++; if (s.result === '○') cat["ティーショット"].ok++; } 
+                            else if (['pw','48','50','52','54','56','58'].includes(s.club.toLowerCase())) { cat["アプローチ(Wedge)"].t++; if (s.result === '○') cat["アプローチ(Wedge)"].ok++; } 
+                            if (sIdx > 0 && (h.shots[sIdx-1].result === '△' || h.shots[sIdx-1].result === '☓')) { cat["リカバリー"].t++; if (s.result === '○') cat["リカバリー"].ok++; } 
+                        });
                     });
                     const cStats = Object.keys(cMap).map(n => { const m = cMap[n], cts = m.m.reduce((a, b) => (a[b] = (a[b] || 0) + 1, a), {}); const bias = Object.keys(cts).sort((a,b) => cts[b] - cts[a]).slice(0, 2); return { name: n, count: m.t, successRate: Math.round((m.ok / m.t) * 100), bias: bias.length ? bias : null }; }).sort((a, b) => clubMaster.indexOf(a.name) - clubMaster.indexOf(b.name));
                     const cats = {}; Object.keys(cat).forEach(k => { cats[k] = cat[k].t ? Math.round((cat[k].ok / cat[k].t) * 100) : 0; });
