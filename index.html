@@ -47,18 +47,17 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
     <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative">
-        <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-between items-center">
-            <button @click="changeView('guide')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 active:bg-gray-700 transition">
+        <header class="bg-black text-white p-4 sticky top-0 z-20 flex justify-between items-center h-16">
+            <button @click="changeView('guide')" class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-gray-800 active:bg-gray-700 transition">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
             </button>
 
-            <!-- ml-4によりタイトルとスコアを一文字分右へ移動 -->
-            <h1 class="font-bold text-lg tracking-tight flex items-center ml-4">
+            <h1 class="font-bold text-lg tracking-tight flex items-center ml-4 whitespace-nowrap overflow-hidden">
                 Golf Shot Manager
-                <span v-if="isRoundStarted" class="ml-10 text-base font-black" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
+                <span v-if="isRoundStarted" class="ml-10 text-base font-black flex-shrink-0" :class="relativeScoreColor">{{ relativeScoreDisplay }}</span>
             </h1>
 
-            <div class="w-8"></div>
+            <div class="w-8 flex-shrink-0"></div>
         </header>
 
         <main class="p-4 flex-grow pb-24 overflow-y-auto">
@@ -68,21 +67,21 @@
                     <h2 class="text-xl font-bold">Guide & Glossary</h2>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" class="text-sm font-bold text-blue-600">Close</button>
                 </div>
-                <section class="space-y-4 text-sm leading-relaxed">
+                <section class="space-y-4 text-sm leading-relaxed text-gray-700">
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <h3 class="font-black text-blue-600 mb-2 border-b">基本的な使い方</h3>
-                        <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                            <li>ラウンド設定で日付・コース・クラブを選択。</li>
-                            <li>入力画面でショット結果を記録。</li>
-                            <li>保存ボタンで履歴に残し、分析画面で弱点を把握。</li>
+                        <ol class="list-decimal list-inside space-y-2 text-xs">
+                            <li>設定画面で日付・コース・クラブを選択。</li>
+                            <li>入力画面で1打ごとのクラブと結果を記録。</li>
+                            <li>保存したデータは履歴や統計で分析可能。</li>
                         </ol>
                     </div>
                     <div class="bg-white p-4 rounded-xl border shadow-sm">
                         <h3 class="font-black text-orange-600 mb-2 border-b">判定の定義</h3>
-                        <ul class="space-y-2">
-                            <li>◯: 狙った範囲内に打てた。</li>
-                            <li>△: 想定外だがリカバリーは可能。</li>
-                            <li>☓: 確実に1打以上ロスする結果。</li>
+                        <ul class="space-y-2 text-xs">
+                            <li><span class="font-bold">◯:</span> 自分が狙った範囲内に打てた。</li>
+                            <li><span class="font-bold">△:</span> 想定の範囲外に打ったがリカバリーは可能。</li>
+                            <li><span class="font-bold">☓:</span> 確実に１打以上ロスする結果となる所に打ち込んだ。</li>
                         </ul>
                     </div>
                 </section>
@@ -172,7 +171,6 @@
                                 <button @click="currentShotData.bunker = !currentShotData.bunker" :class="['px-3 py-2 border rounded text-xs font-bold transition', currentShotData.bunker ? 'bg-amber-600 text-white border-amber-800' : 'bg-white text-gray-300']">Bk</button>
                             </div>
                         </div>
-                        <div class="text-[9px] text-gray-500 italic bg-gray-50 p-1 rounded px-2">○:狙い通り / △:ミスだがリカバリー可 / ☓:1打ロス確定</div>
                     </div>
                     <div v-if="currentShotData.result === '△'" class="flex gap-1 mt-3 animate-in fade-in duration-300"><button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.direction === d ? 'bg-blue-500 text-white' : 'bg-gray-50 text-gray-400']">{{ d }}</button></div>
                     <div v-if="currentShotData.result === '☓'" class="flex gap-1 mt-3 animate-in fade-in duration-300"><button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :class="['flex-1 py-1 border rounded font-black text-xs transition', currentShotData.errorType === e ? 'bg-red-600 text-white' : 'bg-gray-50 text-gray-400']">{{ e }}</button></div>
@@ -202,8 +200,8 @@
                                 <td class="p-2 border-r font-bold bg-gray-200 cursor-pointer" @click="jumpToHole(hIdx*9 + i - 1)"><div :class="{'h-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div></td>
                                 <td class="p-2 border-r text-gray-400">{{ getHolePar(hIdx * 9 + i - 1) }}</td>
                                 <td class="p-2 border-r"><div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div></td>
-                                <td class="p-2 border-r font-medium">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
-                                <td class="p-2 border-r font-bold">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
+                                <td class="p-2 border-r">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
+                                <td class="p-2 border-r">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
                                 <td class="p-2 border-r text-red-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
                                 <td class="p-2 border-r text-orange-500 font-bold">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
                                 <td class="p-2 border-r"><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div></template><template v-else>-</template></td>
@@ -230,30 +228,38 @@
             <!-- 4. Stats Analysis Screen -->
             <div v-if="view === 'analysis'" class="space-y-6 pb-20">
                 <h2 class="text-xl font-bold border-b pb-1">Performance Analysis</h2>
-                <div class="bg-white p-4 rounded-xl border shadow-sm">
-                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>PAR別パフォーマンス</h3>
-                    <div class="space-y-4">
-                        <div v-for="p in [3,4,5]" :key="p" class="border-b pb-3 last:border-0 last:pb-0">
-                            <div class="text-xs font-black text-gray-400 mb-2 uppercase">PAR {{ p }}</div>
-                            <div class="grid grid-cols-2 gap-2 text-center">
-                                <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">平均Score</div><div class="text-sm font-bold">{{ analysis.parStats[p].avgScore }}</div></div>
-                                <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">DB数 (worse)</div><div class="text-sm font-bold text-red-500">{{ analysis.parStats[p].dbCount }}</div></div>
-                                <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">パーオン率</div><div class="text-sm font-bold text-green-600">{{ analysis.parStats[p].girRate }}%</div></div>
-                                <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">ボギーオン率</div><div class="text-sm font-bold text-blue-600">{{ analysis.parStats[p].bogeyOnRate }}%</div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
+                <!-- Score Loss Analysis (復元) -->
                 <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm">
-                    <h3 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>Score Loss Analysis</h3>
+                    <h3 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
+                        Score Loss Analysis (減らせる打数)
+                    </h3>
                     <div class="grid grid-cols-3 gap-2 text-center">
                         <div class="p-2 bg-red-50 rounded"><div class="text-[9px] text-gray-500 uppercase">Penalty</div><div class="text-xl font-black text-red-600">{{ analysis.penaltyLoss }}</div></div>
                         <div class="p-2 bg-red-50 rounded"><div class="text-[9px] text-gray-500 uppercase">Mistake(☓)</div><div class="text-xl font-black text-red-600">{{ analysis.criticalMissCount }}</div></div>
                         <div class="p-2 bg-red-50 rounded"><div class="text-[9px] text-gray-500 uppercase">3-Putts</div><div class="text-xl font-black text-red-600">{{ analysis.threePutts }}</div></div>
                     </div>
+                    <p class="text-[10px] text-gray-400 mt-2 italic text-center">※これらを防ぐだけで 70台への道が開けます</p>
                 </div>
+
+                <!-- PAR別パフォーマンス (維持) -->
                 <div class="bg-white p-4 rounded-xl border shadow-sm">
-                    <h3 class="text-sm font-bold mb-3">Skill Categories</h3>
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>PAR別パフォーマンス</h3>
+                    <div v-for="p in [3,4,5]" :key="p" class="border-b pb-3 last:border-0 mb-3">
+                        <div class="text-xs font-black text-gray-400 mb-2 uppercase">PAR {{ p }}</div>
+                        <div class="grid grid-cols-2 gap-2 text-center">
+                            <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">平均Score</div><div class="text-sm font-bold">{{ analysis.parStats[p].avgScore }}</div></div>
+                            <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">DB数 (worse)</div><div class="text-sm font-bold text-red-500">{{ analysis.parStats[p].dbCount }}</div></div>
+                            <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">パーオン率</div><div class="text-sm font-bold text-green-600">{{ analysis.parStats[p].girRate }}%</div></div>
+                            <div class="bg-gray-50 p-2 rounded"><div class="text-[8px] text-gray-500 uppercase">ボギーオン率</div><div class="text-sm font-bold text-blue-600">{{ analysis.parStats[p].bogeyOnRate }}%</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- スキルカテゴリ (復元) -->
+                <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <h3 class="text-sm font-bold mb-3">Skill Categories (Success Rate)</h3>
                     <div class="space-y-4">
                         <div v-for="(val, label) in analysis.categories" :key="label">
                             <div class="flex justify-between text-xs mb-1"><span class="font-bold">{{ label }}</span><span>{{ val }}%</span></div>
@@ -261,6 +267,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- クラブパフォーマンス (復元) -->
                 <div class="bg-white p-4 rounded-xl border shadow-sm overflow-x-auto">
                     <h3 class="text-sm font-bold mb-3">Club Performance & Bias</h3>
                     <table class="w-full text-[11px]">
@@ -310,7 +318,6 @@
                 const isRoundStarted = ref(false);
                 const clubMaster =['1w', '3w', '5w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '48', '50', '52', '54', '56', '58', 'pt'];
                 const settings = ref({ date: new Date().toISOString().substr(0, 10), prefix: 'index', courseId: '', front: '', back: '', selectedClubs:['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] });
-                
                 const currentHoleIndex = ref(0), currentShotIdx = ref(0);
                 const holeResults = ref(Array.from({ length: 18 }, () => ({ score: 0, putts: 2, fw: false, shots: Array.from({ length: 7 }, () => ({ club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false })) })));
 
@@ -322,15 +329,13 @@
 
                 const processCsvData = (d) => { const parsed =[]; let cur = null; d.forEach(row => { if (row[1] === 'H1') { cur = { id: row[0], name: row[0], sections:[] }; parsed.push(cur); } else if (cur && row[0] && row[1]?.match(/^\d+$/)) { cur.sections.push({ name: row[0], pars: row.slice(1, 10).map(Number) }); } }); courses.value = parsed; localStorage.setItem('golf_courses', JSON.stringify(parsed)); settings.value.prefix = 'index'; };
                 const importCsv = (e) => { if (!e.target.files[0]) return; Papa.parse(e.target.files[0], { header: false, skipEmptyLines: true, complete: (res) => processCsvData(res.data) }); };
-                const importFromServer = async () => { try { const r = await fetch('courses.csv'); if (!r.ok) throw new Error(); const t = await r.text(); Papa.parse(t, { header: false, skipEmptyLines: true, complete: (res) => { processCsvData(res.data); alert('Synced!'); } }); } catch (e) { alert('Sync failed: courses.csv not found'); } };
+                const importFromServer = async () => { try { const r = await fetch('courses.csv'); if (!r.ok) throw new Error(); const t = await r.text(); Papa.parse(t, { header: false, skipEmptyLines: true, complete: (res) => { processCsvData(res.data); alert('Synced!'); } }); } catch (e) { alert('Sync failed'); } };
 
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
                 const filteredCourses = computed(() => courses.value.filter(c => c.name.startsWith(settings.value.prefix === 'index' ? '' : settings.value.prefix)));
                 const selectedCourse = computed(() => courses.value.find(c => c.id === settings.value.courseId));
-                
                 const autoSelectSections = () => { if (!selectedCourse.value) return; const names = selectedCourse.value.sections.map(s => s.name); if (names.includes('OUT') && names.includes('IN')) { settings.value.front = 'OUT'; settings.value.back = 'IN'; } else if (names.length >= 2) { settings.value.front = names[0]; settings.value.back = names[1]; } };
                 const syncSections = (t) => { if (selectedCourse.value && selectedCourse.value.sections.length === 2) { const names = selectedCourse.value.sections.map(s => s.name); if (t === 'front') settings.value.back = names.find(n => n !== settings.value.front); else settings.value.front = names.find(n => n !== settings.value.back); } };
-
                 const getHolePar = (idx) => { if (!selectedCourse.value || !settings.value.front || !settings.value.back) return 0; const sec = selectedCourse.value.sections.find(s => s.name === (idx < 9 ? settings.value.front : settings.value.back)); return sec ? sec.pars[idx % 9] : 0; };
                 const startRound = () => { for(let i=0; i<18; i++) holeResults.value[i].score = getHolePar(i); isRoundStarted.value = true; view.value = 'hole'; };
                 
@@ -341,93 +346,52 @@
                 
                 const setResult = (r) => { const s = currentShotData.value; s.result = r; s.direction = ''; s.errorType = ''; s.ob = false; s.penalty = false; };
                 const setErrorType = (e) => { const s = currentShotData.value; s.errorType = e; s.ob = (e === 'OB'); s.penalty = (e === 'PN'); if ((e === 'OB' || e === 'PN') && currentShotIdx.value < 6) { const nextShot = holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value + 1]; Object.assign(nextShot, { club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false }); } };
-                
-                const updateScore = (v) => { const n = holeResults.value[currentHoleIndex.value].score + v; if(n >= 1) holeResults.value[currentHoleIndex.value].score = n; };
-                const updatePutt = (v) => { const n = holeResults.value[currentHoleIndex.value].putts + v; if(n >= 0) holeResults.value[currentHoleIndex.value].putts = n; };
+                const updateScore = (v) => { const n = holeResults.value[currentHoleIndex.value].score + v; if(n >= 1) holeResults.value[currentHoleIndex.value].score = n; }, updatePutt = (v) => { const n = holeResults.value[currentHoleIndex.value].putts + v; if(n >= 0) holeResults.value[currentHoleIndex.value].putts = n; };
                 const resetCurrentShot = () => { if(confirm('修正しますか？')) Object.assign(holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value], { club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false }); };
-                
                 const isSandSave = (idx) => { const h = holeResults.value[idx], s = h.shots; let lastB = 0; for (let i = 0; i < s.length; i++) { if (s[i].bunker) lastB = i + 1; } return lastB !== 0 && (h.score - lastB <= 2) && (h.putts <= 1); };
                 const isScramble = (idx) => { const h = holeResults.value[idx], p = getHolePar(idx); if (p === 0 || h.score === 0) return false; const sG = h.score - h.putts; return sG > (p - 2) && h.score <= p; };
                 const getScoreEnclosureClass = (idx) => { const h = holeResults.value[idx], p = getHolePar(idx); if (p === 0 || h.score === 0) return ''; if (h.score < p) return 'score-circle'; if (h.score === p + 1) return 'score-triangle'; if (h.score >= p + 2) return 'score-square'; return ''; };
-                
                 const totalScoreDisplay = computed(() => { let t = 0, d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); t += holeResults.value[i].score; if(p > 0) d += (holeResults.value[i].score - p); } return `${t} (${d >= 0 ? '+'+d : d})`; });
                 const relativeScoreDisplay = computed(() => { let d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); if(p > 0) d += (holeResults.value[i].score - p); } return d === 0 ? 'E' : (d > 0 ? `+${d}` : d); });
                 const relativeScoreColor = computed(() => { let d = 0; for(let i=0; i<18; i++) { const p = getHolePar(i); if(p > 0) d += (holeResults.value[i].score - p); } return d > 0 ? 'text-red-400' : (d < 0 ? 'text-blue-400' : 'text-gray-300'); });
-
                 const countStat = (h, k) => holeResults.value[h].shots.filter(s => s[k]).length;
                 const calculateHalfTotal = (hIdx) => { let par = 0, scr = 0, pt = 0, fw = 0, ob = 0, pn = 0, bk = 0; for(let i=0; i<9; i++) { const idx = (hIdx * 9) + i, h = holeResults.value[idx]; const p = getHolePar(idx); par += p; scr += h.score; pt += h.putts; fw += (h.fw ? 1 : 0); ob += countStat(idx, 'ob'); pn += countStat(idx, 'penalty'); bk += countStat(idx, 'bunker'); } return { par, score: scr, putts: pt, fw, ob, pn, bk }; };
                 const grandTotals = computed(() => { let par = 0, pt = 0; for(let i=0; i<18; i++) { par += getHolePar(i); pt += holeResults.value[i].putts; } return { par, putts: pt }; });
 
                 const analysis = computed(() => {
-                    let pL = 0, cM = 0, tP = 0; 
-                    const cat = { "ティーショット": { ok: 0, t: 0 }, "アプローチ(Wedge)": { ok: 0, t: 0 }, "リカバリー": { ok: 0, t: 0 } }; 
-                    const cMap = {};
+                    let pL = 0, cM = 0, tP = 0; const cat = { "ティーショット": { ok: 0, t: 0 }, "アプローチ(Wedge)": { ok: 0, t: 0 }, "リカバリー": { ok: 0, t: 0 } }; const cMap = {};
                     const parPerf = { 3: { score: 0, gir: 0, bo: 0, db: 0, count: 0 }, 4: { score: 0, gir: 0, bo: 0, db: 0, count: 0 }, 5: { score: 0, gir: 0, bo: 0, db: 0, count: 0 } };
-
                     holeResults.value.forEach((h, idx) => {
-                        if (h.putts >= 3) tP++;
-                        const par = getHolePar(idx);
-                        if (parPerf[par]) {
-                            parPerf[par].count++; parPerf[par].score += h.score; if (h.score - par >= 2) parPerf[par].db++;
-                            const sG = h.score - h.putts; if (par > 0 && sG <= (par - 2)) parPerf[par].gir++; if (par > 0 && sG <= (par - 1)) parPerf[par].bo++;
-                        }
-                        h.shots.forEach((s, sIdx) => {
-                            if (!s.club) return;
-                            if (s.errorType === 'OB') pL += 2; if (s.errorType === 'PN') pL += 1; if (s.result === '☓') cM++;
-                            if (!cMap[s.club]) cMap[s.club] = { ok: 0, t: 0, m: [] };
-                            cMap[s.club].t++; if (s.result === '○') cMap[s.club].ok++; else if (s.direction) cMap[s.club].m.push(s.direction);
-                            if (sIdx === 0) { cat["ティーショット"].t++; if (s.result === '○') cat["ティーショット"].ok++; }
-                            else if (['pw','52','58'].includes(s.club.toLowerCase())) { cat["アプローチ(Wedge)"].t++; if (s.result === '○') cat["アプローチ(Wedge)"].ok++; }
-                            if (sIdx > 0 && (h.shots[sIdx-1].result === '△' || h.shots[sIdx-1].result === '☓')) { cat["リカバリー"].t++; if (s.result === '○') cat["リカバリー"].ok++; }
-                        });
+                        if (h.putts >= 3) tP++; const p = getHolePar(idx);
+                        if (parPerf[p]) { parPerf[p].count++; parPerf[p].score += h.score; if (h.score - p >= 2) parPerf[p].db++; const sG = h.score - h.putts; if (p > 0 && sG <= (p - 2)) parPerf[p].gir++; if (p > 0 && sG <= (p - 1)) parPerf[p].bo++; }
+                        h.shots.forEach((s, sIdx) => { if (!s.club) return; if (s.errorType === 'OB') pL += 2; if (s.errorType === 'PN') pL += 1; if (s.result === '☓') cM++; if (!cMap[s.club]) cMap[s.club] = { ok: 0, t: 0, m: [] }; cMap[s.club].t++; if (s.result === '○') cMap[s.club].ok++; else if (s.direction) cMap[s.club].m.push(s.direction); if (sIdx === 0) { cat["ティーショット"].t++; if (s.result === '○') cat["ティーショット"].ok++; } else if (['pw','48','50','52','54','56','58'].includes(s.club.toLowerCase())) { cat["アプローチ(Wedge)"].t++; if (s.result === '○') cat["アプローチ(Wedge)"].ok++; } if (sIdx > 0 && (h.shots[sIdx-1].result === '△' || h.shots[sIdx-1].result === '☓')) { cat["リカバリー"].t++; if (s.result === '○') cat["リカバリー"].ok++; } });
                     });
-
                     const cStats = Object.keys(cMap).map(n => { const m = cMap[n], cts = m.m.reduce((a, b) => (a[b] = (a[b] || 0) + 1, a), {}); const bias = Object.keys(cts).sort((a,b) => cts[b] - cts[a]).slice(0, 2); return { name: n, count: m.t, successRate: Math.round((m.ok / m.t) * 100), bias: bias.length ? bias : null }; }).sort((a, b) => clubMaster.indexOf(a.name) - clubMaster.indexOf(b.name));
                     const cats = {}; Object.keys(cat).forEach(k => { cats[k] = cat[k].t ? Math.round((cat[k].ok / cat[k].t) * 100) : 0; });
-                    const parStats = {}; [3,4,5].forEach(p => { const d = parPerf[p]; parStats[p] = { avgScore: d.count ? (d.score / d.count).toFixed(2) : "-", girRate: d.count ? Math.round((d.gir / d.count) * 100) : 0, bogeyOnRate: d.count ? Math.round((d.bo / d.count) * 100) : 0, dbCount: d.db }; });
-                    return { penaltyLoss: pL, criticalMissCount: cM, threePutts: tP, clubStats: cStats, categories: cats, parStats };
+                    const pStats = {}; [3,4,5].forEach(p => { const d = parPerf[p]; pStats[p] = { avgScore: d.count ? (d.score / d.count).toFixed(2) : "-", girRate: d.count ? Math.round((d.gir / d.count) * 100) : 0, bogeyOnRate: d.count ? Math.round((d.bo / d.count) * 100) : 0, dbCount: d.db }; });
+                    return { penaltyLoss: pL, criticalMissCount: cM, threePutts: tP, clubStats: cStats, categories: cats, parStats: pStats };
                 });
 
-                const saveRound = () => {
-                    const roundData = { date: settings.value.date, course: displayName(selectedCourse.value?.name) || 'Unknown', totalScore: holeResults.value.reduce((a,b) => a + b.score, 0), totalPutts: holeResults.value.reduce((a,b) => a + b.putts, 0), holeResults: JSON.parse(JSON.stringify(holeResults.value)), courseSettings: { front: settings.value.front, back: settings.value.back, id: settings.value.courseId } };
-                    savedRounds.value.unshift(roundData); localStorage.setItem('golf_saved_rounds', JSON.stringify(savedRounds.value)); alert('Round saved!');
-                };
-                const deleteRound = (idx) => { if(confirm('Delete this round?')) { savedRounds.value.splice(idx, 1); localStorage.setItem('golf_saved_rounds', JSON.stringify(savedRounds.value)); } };
-                const loadRoundData = (round) => { if(confirm('Load this round data?')) { settings.value.date = round.date; holeResults.value = JSON.parse(JSON.stringify(round.holeResults)); isRoundStarted.value = true; view.value = 'summary'; } };
+                const saveRound = () => { const rD = { date: settings.value.date, course: displayName(selectedCourse.value?.name) || 'Unknown', totalScore: holeResults.value.reduce((a,b) => a + b.score, 0), totalPutts: holeResults.value.reduce((a,b) => a + b.putts, 0), holeResults: JSON.parse(JSON.stringify(holeResults.value)), courseSettings: { front: settings.value.front, back: settings.value.back, id: settings.value.courseId } }; savedRounds.value.unshift(rD); localStorage.setItem('golf_saved_rounds', JSON.stringify(savedRounds.value)); alert('Round saved!'); };
+                const deleteRound = (idx) => { if(confirm('Delete?')) { savedRounds.value.splice(idx, 1); localStorage.setItem('golf_saved_rounds', JSON.stringify(savedRounds.value)); } };
+                const loadRoundData = (r) => { if(confirm('Load?')) { settings.value.date = r.date; holeResults.value = JSON.parse(JSON.stringify(r.holeResults)); isRoundStarted.value = true; view.value = 'summary'; } };
                 const exportAllToCSV = () => {
                     let csv = "Date,Course,TotalScore,TotalPutts,FW_Hit,GIR_Hit,Scramble_Hit,SandSave_Hit";
                     for(let i=1; i<=18; i++) { csv += `,H${i}_Par,H${i}_Score,H${i}_FW,H${i}_BK,H${i}_OB,H${i}_PN`; }
                     csv += "\n";
                     savedRounds.value.forEach(r => {
                         let fwC = 0, girC = 0, scmC = 0, ssC = 0, hDS = "";
-                        r.holeResults.forEach((h, idx) => {
-                            let par = 0; const course = courses.value.find(c => c.id === r.courseSettings?.id);
-                            if (course) { const sec = course.sections.find(s => s.name === (idx < 9 ? r.courseSettings.front : r.courseSettings.back)); if (sec) par = sec.pars[idx % 9]; }
-                            if (h.fw) fwC++; if (par > 0 && (h.score - h.putts <= par - 2)) girC++; else if (par > 0 && h.score <= par) scmC++;
-                            let lastB = 0; h.shots.forEach((s, i) => { if(s.bunker) lastB = i+1; }); if (lastB !== 0 && h.score - lastB <= 2 && h.putts <= 1) ssC++;
-                            hDS += `,${par},${h.score},${h.fw ? 1 : 0},${h.shots.filter(s=>s.bunker).length},${h.shots.filter(s=>s.errorType==='OB').length},${h.shots.filter(s=>s.errorType==='PN').length}`;
-                        });
+                        r.holeResults.forEach((h, idx) => { let p = 0; const c = courses.value.find(c => c.id === r.courseSettings?.id); if (c) { const s = c.sections.find(s => s.name === (idx < 9 ? r.courseSettings.front : r.courseSettings.back)); if (s) p = s.pars[idx % 9]; } if (h.fw) fwC++; if (p > 0 && (h.score - h.putts <= p - 2)) girC++; else if (p > 0 && h.score <= p) scmC++; let lastB = 0; h.shots.forEach((s, i) => { if(s.bunker) lastB = i+1; }); if (lastB !== 0 && h.score - lastB <= 2 && h.putts <= 1) ssC++; hDS += `,${p},${h.score},${h.fw ? 1 : 0},${h.shots.filter(s=>s.bunker).length},${h.shots.filter(s=>s.errorType==='OB').length},${h.shots.filter(s=>s.errorType==='PN').length}`; });
                         csv += `${r.date},${r.course},${r.totalScore},${r.totalPutts},${fwC},${girC},${scmC},${ssC}${hDS}\n`;
                     });
-                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", `golf_history_pro_${new Date().toISOString().slice(0,10)}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", `golf_history_pro_${new Date().toISOString().slice(0,10)}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
-
-                const nextHole = () => { 
-                    const hIdx = currentHoleIndex.value; const res = holeResults.value[hIdx];
-                    let sC = 0; res.shots.forEach((s, sI) => { if (s.club !== '' || s.errorType === 'OB' || s.errorType === 'PN') sC++; if (isPenaltyStroke(hIdx, sI)) sC++; });
-                    const tC = sC + res.putts;
-                    if (tC !== res.score) { alert(`スコア不整合！\n打数(${sC}) + パット(${res.putts}) = ${tC} 打\n現在の設定スコア: ${res.score} 打\n修正してください。`); return; }
-                    if (currentHoleIndex.value < 17) { currentHoleIndex.value++; currentShotIdx.value = 0; } else view.value = 'summary'; 
-                };
-
+                const nextHole = () => { const hI = currentHoleIndex.value; const res = holeResults.value[hI]; let sC = 0; res.shots.forEach((s, sIdx) => { if (s.club !== '' || s.errorType === 'OB' || s.errorType === 'PN') sC++; if (isPenaltyStroke(hI, sIdx)) sC++; }); if (sC + res.putts !== res.score) { alert(`不整合！打数(${sC})+パット(${res.putts})=${sC+res.putts} 打 / 設定:${res.score} 打`); return; } if (currentHoleIndex.value < 17) { currentHoleIndex.value++; currentShotIdx.value = 0; } else view.value = 'summary'; };
                 const prevHole = () => { if (currentHoleIndex.value > 0) { currentHoleIndex.value--; currentShotIdx.value = 0; } };
                 const jumpToHole = (idx) => { currentHoleIndex.value = idx; currentShotIdx.value = 0; view.value = 'hole'; };
                 const getFilledShots = (h) => holeResults.value[h].shots.map((s, i) => ({...s, idx: i})).filter((s) => s.club !== '' || s.bunker);
                 const scoreColor = (idx) => { const s = holeResults.value[idx].score, p = getHolePar(idx); return s < p ? 'text-red-600' : (s > p ? 'text-blue-600' : 'text-gray-900'); };
-                const confirmNewRound = () => { if (confirm('Reset current round?')) location.reload(); };
-
-                const changeView = (v) => { view.value = v; };
+                const confirmNewRound = () => { if (confirm('Reset?')) location.reload(); };
 
                 return { 
                     view, settings, prefixes, filteredCourses, selectedCourse, displayName, changeView, importCsv, importFromServer, autoSelectSections, syncSections, startRound, isRoundStarted, clubMaster, toggleClub, orderedClubs, 
