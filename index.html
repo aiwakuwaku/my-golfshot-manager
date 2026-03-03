@@ -28,17 +28,18 @@
         .nav-active svg { fill: #121212; }
         .nav-disabled { opacity: 0.3; cursor: not-allowed; }
 
+        /* スコア記号用スタイル */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
-        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; }
-        .score-square { border: 1.5px solid #475569; color: #1e293b; }
+        .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } /* バーディ以下 */
+        .score-square { border: 1.5px solid #475569; color: #1e293b; } /* ダボ以上 */
         .score-triangle {
             position: relative; color: #2563eb;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: center;
-        }
+        } /* ボギー */
         
-        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
+        .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; } /* 寄せワン */
+        .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; } /* サンドセーブ */
         
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
@@ -217,9 +218,41 @@
                 </div>
             </div>
 
-            <!-- 4. Analysis Screen -->
+            <!-- 4. Stats Analysis Screen -->
             <div v-if="view === 'analysis'" class="space-y-6 pb-20">
                 <h2 class="text-xl font-bold border-b pb-1">Performance Analysis</h2>
+                
+                <!-- PAR別パフォーマンス -->
+                <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7v-7zm4-3h2v10h-2V7zm4 6h2v4h-2v-4z"/></svg>
+                        PAR別パフォーマンス
+                    </h3>
+                    <div class="space-y-4">
+                        <div v-for="p in [3,4,5]" :key="p" class="border-b pb-3 last:border-0 last:pb-0">
+                            <div class="text-xs font-black text-gray-400 mb-2 uppercase">PAR {{ p }}</div>
+                            <div class="grid grid-cols-2 gap-2 text-center">
+                                <div class="bg-gray-50 p-2 rounded">
+                                    <div class="text-[8px] text-gray-500 uppercase">平均Score</div>
+                                    <div class="text-sm font-bold">{{ analysis.parStats[p].avgScore }}</div>
+                                </div>
+                                <div class="bg-gray-50 p-2 rounded">
+                                    <div class="text-[8px] text-gray-500 uppercase">DB数 (worse)</div>
+                                    <div class="text-sm font-bold text-red-500">{{ analysis.parStats[p].dbCount }}</div>
+                                </div>
+                                <div class="bg-gray-50 p-2 rounded">
+                                    <div class="text-[8px] text-gray-500 uppercase">パーオン率</div>
+                                    <div class="text-sm font-bold text-green-600">{{ analysis.parStats[p].girRate }}%</div>
+                                </div>
+                                <div class="bg-gray-50 p-2 rounded">
+                                    <div class="text-[8px] text-gray-500 uppercase">ボギーオン率</div>
+                                    <div class="text-sm font-bold text-blue-600">{{ analysis.parStats[p].bogeyOnRate }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm">
                     <h3 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>Score Loss Analysis</h3>
                     <div class="grid grid-cols-3 gap-2 text-center">
@@ -293,12 +326,7 @@
                 const toggleClub = (c) => { const idx = settings.value.selectedClubs.indexOf(c); if (idx > -1) settings.value.selectedClubs.splice(idx, 1); else if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); };
                 const orderedClubs = computed(() => clubMaster.filter(c => settings.value.selectedClubs.includes(c)));
                 
-                const isPenaltyStroke = (h, s) => {
-                    if (s === 0) return false;
-                    const prev = holeResults.value[h].shots[s-1];
-                    return prev && (prev.errorType === 'OB' || prev.errorType === 'PN');
-                };
-
+                const isPenaltyStroke = (h, s) => { if (s === 0) return false; const prev = holeResults.value[h].shots[s-1]; return prev && (prev.errorType === 'OB' || prev.errorType === 'PN'); };
                 const displayName = (n) => n?.includes('_') ? n.split('_')[1] : (n || '');
                 const changeView = (v) => { view.value = v; };
 
@@ -341,27 +369,105 @@
                 const grandTotals = computed(() => { let par = 0, pt = 0; for(let i=0; i<18; i++) { par += getHolePar(i); pt += holeResults.value[i].putts; } return { par, putts: pt }; });
 
                 const analysis = computed(() => {
-                    let pL = 0, cM = 0, tP = 0; const cat = { "ティーショット": { ok: 0, t: 0 }, "アプローチ(Wedge)": { ok: 0, t: 0 }, "リカバリー": { ok: 0, t: 0 } }; const cMap = {};
-                    holeResults.value.forEach((h) => { if (h.putts >= 3) tP++; h.shots.forEach((s, sIdx) => { if (!s.club) return; if (s.errorType === 'OB') pL += 2; if (s.errorType === 'PN') pL += 1; if (s.result === '☓') cM++; if (!cMap[s.club]) cMap[s.club] = { ok: 0, t: 0, m: [] }; cMap[s.club].t++; if (s.result === '○') cMap[s.club].ok++; else if (s.direction) cMap[s.club].m.push(s.direction); if (sIdx === 0) { cat["ティーショット"].t++; if (s.result === '○') cat["ティーショット"].ok++; } else if (['pw','52','58'].includes(s.club.toLowerCase())) { cat["アプローチ(Wedge)"].t++; if (s.result === '○') cat["アプローチ(Wedge)"].ok++; } if (sIdx > 0 && (h.shots[sIdx-1].result === '△' || h.shots[sIdx-1].result === '☓')) { cat["リカバリー"].t++; if (s.result === '○') cat["リカバリー"].ok++; } }); });
+                    let pL = 0, cM = 0, tP = 0; 
+                    const cat = { "ティーショット": { ok: 0, t: 0 }, "アプローチ(Wedge)": { ok: 0, t: 0 }, "リカバリー": { ok: 0, t: 0 } }; 
+                    const cMap = {};
+                    const parPerf = { 
+                        3: { score: 0, gir: 0, bo: 0, db: 0, count: 0 }, 
+                        4: { score: 0, gir: 0, bo: 0, db: 0, count: 0 }, 
+                        5: { score: 0, gir: 0, bo: 0, db: 0, count: 0 } 
+                    };
+
+                    holeResults.value.forEach((h, idx) => {
+                        if (h.putts >= 3) tP++;
+                        const par = getHolePar(idx);
+                        
+                        if (parPerf[par]) {
+                            parPerf[par].count++;
+                            parPerf[par].score += h.score;
+                            // ダブルボギー以上の数
+                            if (h.score - par >= 2) parPerf[par].db++;
+                            const shotsToGreen = h.score - h.putts;
+                            if (shotsToGreen <= (par - 2)) parPerf[par].gir++;
+                            if (shotsToGreen <= (par - 1)) parPerf[par].bo++;
+                        }
+
+                        h.shots.forEach((s, sIdx) => {
+                            if (!s.club) return;
+                            if (s.errorType === 'OB') pL += 2; if (s.errorType === 'PN') pL += 1; if (s.result === '☓') cM++;
+                            if (!cMap[s.club]) cMap[s.club] = { ok: 0, t: 0, m: [] };
+                            cMap[s.club].t++; if (s.result === '○') cMap[s.club].ok++; else if (s.direction) cMap[s.club].m.push(s.direction);
+                            if (sIdx === 0) { cat["ティーショット"].t++; if (s.result === '○') cat["ティーショット"].ok++; }
+                            else if (['pw','52','58'].includes(s.club.toLowerCase())) { cat["アプローチ(Wedge)"].t++; if (s.result === '○') cat["アプローチ(Wedge)"].ok++; }
+                            if (sIdx > 0 && (h.shots[sIdx-1].result === '△' || h.shots[sIdx-1].result === '☓')) { cat["リカバリー"].t++; if (s.result === '○') cat["リカバリー"].ok++; }
+                        });
+                    });
+
                     const cStats = Object.keys(cMap).map(n => { const m = cMap[n], cts = m.m.reduce((a, b) => (a[b] = (a[b] || 0) + 1, a), {}); const bias = Object.keys(cts).sort((a,b) => cts[b] - cts[a]).slice(0, 2); return { name: n, count: m.t, successRate: Math.round((m.ok / m.t) * 100), bias: bias.length ? bias : null }; }).sort((a, b) => clubMaster.indexOf(a.name) - clubMaster.indexOf(b.name));
-                    const cats = {}; Object.keys(cat).forEach(k => { cats[k] = cat[k].t ? Math.round((cat[k].ok / cat[k].t) * 100) : 0; }); return { penaltyLoss: pL, criticalMissCount: cM, threePutts: tP, clubStats: cStats, categories: cats };
+                    const cats = {}; Object.keys(cat).forEach(k => { cats[k] = cat[k].t ? Math.round((cat[k].ok / cat[k].t) * 100) : 0; });
+                    
+                    const parStats = {};
+                    [3,4,5].forEach(p => {
+                        const d = parPerf[p];
+                        parStats[p] = {
+                            avgScore: d.count ? (d.score / d.count).toFixed(2) : "-",
+                            girRate: d.count ? Math.round((d.gir / d.count) * 100) : 0,
+                            bogeyOnRate: d.count ? Math.round((d.bo / d.count) * 100) : 0,
+                            dbCount: d.db
+                        };
+                    });
+
+                    return { penaltyLoss: pL, criticalMissCount: cM, threePutts: tP, clubStats: cStats, categories: cats, parStats };
                 });
 
                 const saveRound = () => {
-                    const roundData = { date: settings.value.date, course: displayName(selectedCourse.value?.name) || 'Unknown', totalScore: holeResults.value.reduce((a,b) => a + b.score, 0), totalPutts: holeResults.value.reduce((a,b) => a + b.putts, 0), holeResults: JSON.parse(JSON.stringify(holeResults.value)) };
+                    const roundData = { 
+                        date: settings.value.date, 
+                        course: displayName(selectedCourse.value?.name) || 'Unknown', 
+                        totalScore: holeResults.value.reduce((a,b) => a + b.score, 0), 
+                        totalPutts: holeResults.value.reduce((a,b) => a + b.putts, 0), 
+                        holeResults: JSON.parse(JSON.stringify(holeResults.value)),
+                        courseSettings: { front: settings.value.front, back: settings.value.back, id: settings.value.courseId }
+                    };
                     savedRounds.value.unshift(roundData); localStorage.setItem('golf_saved_rounds', JSON.stringify(savedRounds.value)); alert('Round saved!');
                 };
                 const deleteRound = (idx) => { if(confirm('Delete this round?')) { savedRounds.value.splice(idx, 1); localStorage.setItem('golf_saved_rounds', JSON.stringify(savedRounds.value)); } };
                 const loadRoundData = (round) => { if(confirm('Load this round data?')) { settings.value.date = round.date; holeResults.value = JSON.parse(JSON.stringify(round.holeResults)); isRoundStarted.value = true; view.value = 'summary'; } };
+                
                 const exportAllToCSV = () => {
-                    let csv = "Date,Course,TotalScore,TotalPutts,FW_Hit,GIR_Hit,Scramble_Hit,SandSave_Hit\n";
+                    let csv = "Date,Course,TotalScore,TotalPutts,FW_Hit,GIR_Hit,Scramble_Hit,SandSave_Hit";
+                    for(let i=1; i<=18; i++) {
+                        csv += `,H${i}_Par,H${i}_Score,H${i}_FW,H${i}_BK,H${i}_OB,H${i}_PN`;
+                    }
+                    csv += "\n";
+
                     savedRounds.value.forEach(r => {
-                        let fw = 0, gir = 0, scm = 0, ss = 0;
-                        r.holeResults.forEach((h, idx) => { const p = getHolePar(idx); if (h.fw) fw++; if (p > 0 && (h.score - h.putts <= p - 2)) gir++; else if (p > 0 && h.score <= p) scm++; let lastB = 0; h.shots.forEach((s, i) => { if(s.bunker) lastB = i+1; }); if (lastB !== 0 && h.score - lastB <= 2 && h.putts <= 1) ss++; });
-                        csv += `${r.date},${r.course},${r.totalScore},${r.totalPutts},${fw},${gir},${scm},${ss}\n`;
+                        let fwCount = 0, girCount = 0, scmCount = 0, ssCount = 0;
+                        let holeDataString = "";
+
+                        r.holeResults.forEach((h, idx) => {
+                            let par = 0;
+                            const course = courses.value.find(c => c.id === r.courseSettings?.id);
+                            if (course) {
+                                const sec = course.sections.find(s => s.name === (idx < 9 ? r.courseSettings.front : r.courseSettings.back));
+                                if (sec) par = sec.pars[idx % 9];
+                            }
+
+                            if (h.fw) fwCount++;
+                            if (par > 0 && (h.score - h.putts <= par - 2)) girCount++; else if (par > 0 && h.score <= par) scmCount++;
+                            let lastB = 0; h.shots.forEach((s, i) => { if(s.bunker) lastB = i+1; });
+                            if (lastB !== 0 && h.score - lastB <= 2 && h.putts <= 1) ssCount++;
+
+                            const ob = h.shots.filter(s => s.errorType === 'OB').length;
+                            const pn = h.shots.filter(s => s.errorType === 'PN').length;
+                            const bk = h.shots.filter(s => s.bunker).length;
+                            holeDataString += `,${par},${h.score},${h.fw ? 1 : 0},${bk},${ob},${pn}`;
+                        });
+                        
+                        csv += `${r.date},${r.course},${r.totalScore},${r.totalPutts},${fwCount},${girCount},${scmCount},${ssCount}${holeDataString}\n`;
                     });
                     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", `golf_history_${new Date().toISOString().slice(0,10)}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", `golf_history_pro_${new Date().toISOString().slice(0,10)}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
 
                 const nextHole = () => { 
