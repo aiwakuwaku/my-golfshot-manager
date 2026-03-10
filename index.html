@@ -82,10 +82,10 @@
 
         <main class="p-4 flex-grow pb-24 overflow-y-auto">
             
-            <!-- 0. Guide & Glossary (完全版・スクリーンショット表記反映) -->
+            <!-- 0. Guide & Glossary (完全版・記号説明左詰め) -->
             <div v-if="view === 'guide'" class="space-y-6 fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 text-gray-800 text-left">
-                    <h2 class="text-2xl font-black italic font-serif text-left text-left">Guide & Glossary</h2>
+                    <h2 class="text-2xl font-black italic font-serif text-left">Guide & Glossary</h2>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" class="bg-gray-100 px-4 py-1 rounded-full text-sm font-bold text-blue-600 shadow-sm">Close</button>
                 </div>
 
@@ -167,7 +167,7 @@
                                 </ul>
                             </div>
                             <div class="border-t pt-4 text-left">
-                                <h4 class="font-bold text-green-700 border-b mb-2 uppercase text-[10px] tracking-widest text-left text-left">統計メトリクス</h4>
+                                <h4 class="font-bold text-green-700 border-b mb-2 uppercase text-[10px] tracking-widest text-left">統計メトリクス</h4>
                                 <ul class="space-y-2 text-[11px] text-left">
                                     <li><span class="font-black">GIR (パーオン率):</span> 規定打数マイナス2打以下で乗せた割合。</li>
                                     <li><span class="font-black">Bogey-on率:</span> パーより1打少ない打数までに乗せた割合。</li>
@@ -206,37 +206,41 @@
                 <h2 class="text-xl font-bold border-b pb-1 italic text-gray-800 text-left">Round Settings</h2>
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left">Round Date</label>
-                    <input type="date" v-model="settings.date" class="w-full border p-3 rounded-lg bg-white text-base">
+                    <input type="date" v-model="settings.date" class="w-full border p-3 rounded-lg bg-white text-base text-left">
                 </div>
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-center space-y-3 text-[11px]">
                     <input type="file" id="csvFile" class="hidden" accept=".csv" @change="importCsv">
-                    <div class="grid grid-cols-2 gap-2 text-gray-800">
-                        <label for="csvFile" class="inline-block bg-black text-white px-2 py-2 rounded text-xs font-bold cursor-pointer active:scale-95 transition">Local CSV</label>
+                    <div class="grid grid-cols-2 gap-2 text-gray-800 text-left">
+                        <label for="csvFile" class="inline-block bg-black text-white px-2 py-2 rounded text-xs font-bold cursor-pointer active:scale-95 transition text-center">Local CSV</label>
                         <button @click="importFromServer" class="bg-blue-600 text-white px-2 py-2 rounded text-xs font-bold active:scale-95 transition">Sync Server</button>
                     </div>
                 </div>
                 <div v-if="courses && courses.length > 0" class="space-y-4 text-left">
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase text-left">Index</label><select v-model="settings.prefix" class="w-full border p-3 rounded bg-white font-bold text-gray-800"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
-                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase text-left">Course</label><select v-model="settings.courseId" class="w-full border p-3 rounded bg-white font-bold text-gray-800" @change="autoSelectSections"><option value="">Select Course...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase text-left">Index</label><select v-model="settings.prefix" class="w-full border p-3 rounded bg-white font-bold text-gray-800 text-left"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase text-left">Course</label><select v-model="settings.courseId" class="w-full border p-3 rounded bg-white font-bold text-gray-800 text-left" @change="autoSelectSections"><option value="">Select Course...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
                     </div>
                     <div v-if="selectedCourse" class="grid grid-cols-2 gap-4 text-left">
-                        <div><label class="block text-[10px] font-bold text-gray-400 mb-1">Front</label><select v-model="settings.front" class="w-full border p-3 rounded bg-white text-sm font-bold text-gray-800" @change="syncSections('front')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
-                        <div><label class="block text-[10px] font-bold text-gray-400 mb-1">Back</label><select v-model="settings.back" class="w-full border p-3 rounded bg-white text-sm font-bold text-gray-800" @change="syncSections('back')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 mb-1 text-left">Front</label><select v-model="settings.front" class="w-full border p-3 rounded bg-white text-sm font-bold text-gray-800 text-left" @change="syncSections('front')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 mb-1 text-left">Back</label><select v-model="settings.back" class="w-full border p-3 rounded bg-white text-sm font-bold text-gray-800 text-left" @change="syncSections('back')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
                     </div>
                     <div class="space-y-2 text-left">
                         <label class="block text-[10px] font-bold text-gray-400 uppercase text-left">Select Clubs (Max 14)</label>
-                        <div class="flex flex-wrap gap-1"><button v-for="c in clubMaster" :key="c" @click="toggleClub(c)" :class="['px-2 py-1 text-xs border rounded font-bold transition', settings.selectedClubs.includes(c) ? 'bg-green-500 text-white border-green-600 shadow-sm' : 'bg-gray-50 text-gray-400 border-gray-200']">{{ c }}</button></div>
+                        <div class="flex flex-wrap gap-1 text-left"><button v-for="c in clubMaster" :key="c" @click="toggleClub(c)" :class="['px-2 py-1 text-xs border rounded font-bold transition', settings.selectedClubs.includes(c) ? 'bg-green-500 text-white border-green-600 shadow-sm' : 'bg-gray-50 text-gray-400 border-gray-200']">{{ c }}</button></div>
                     </div>
-                    <button @click="startRound" :disabled="!settings.front || !settings.back || settings.front === settings.back" class="w-full bg-green-500 text-white font-black py-4 rounded-xl shadow-lg disabled:bg-gray-200 active:scale-95 transition">Start Round</button>
+                    <button @click="startRound" :disabled="!settings.front || !settings.back || settings.front === settings.back" class="w-full bg-green-500 text-white font-black py-4 rounded-xl shadow-lg disabled:bg-gray-200 active:scale-95 transition text-center">Start Round</button>
                 </div>
             </div>
 
-            <!-- 2. Hole Input Screen -->
+            <!-- 2. Hole Input Screen (OUT等の中央配置修正済み) -->
             <div v-if="view === 'hole'" class="space-y-4 fade-in text-left">
-                <div class="flex justify-between items-center bg-gray-100 p-3 rounded border">
+                <div class="flex justify-between items-center bg-gray-100 p-3 rounded border text-left">
                     <button @click="prevHole" class="text-xl px-2">◀</button>
-                    <div class="text-center text-gray-800 text-left"><span class="text-[10px] block text-gray-500 uppercase font-black tracking-widest text-left text-left">{{ currentSectionName }}</span><span class="text-lg font-black italic">Hole {{ currentHoleNum }}</span><span class="ml-2 px-2 bg-black text-white text-xs py-0.5 rounded font-bold uppercase italic font-black">Par {{ currentPar }}</span></div>
+                    <div class="text-center text-gray-800 flex-grow">
+                        <span class="text-[10px] block text-gray-500 uppercase font-black tracking-widest">{{ currentSectionName }}</span>
+                        <span class="text-lg font-black italic">Hole {{ currentHoleNum }}</span>
+                        <span class="ml-2 px-2 bg-black text-white text-xs py-0.5 rounded font-bold uppercase italic font-black">Par {{ currentPar }}</span>
+                    </div>
                     <button @click="nextHole" class="text-xl px-2">▶</button>
                 </div>
                 <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm text-gray-800 text-left">
@@ -258,14 +262,14 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="currentShotData.result === '△'" class="flex gap-1 mt-3 transition text-left text-left"><button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" :class="['flex-1 py-2 border rounded font-black text-xs transition shadow-sm', currentShotData.direction === d ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-300']">{{ d }}</button></div>
-                    <div v-if="currentShotData.result === '☓'" class="flex gap-1 mt-3 transition text-left text-left"><button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :class="['flex-1 py-2 border rounded font-black text-xs transition shadow-sm', currentShotData.errorType === e ? 'bg-red-600 text-white shadow-md' : 'bg-white text-gray-300']">{{ e }}</button></div>
+                    <div v-if="currentShotData.result === '△'" class="flex gap-1 mt-3 transition text-left"><button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" :class="['flex-1 py-2 border rounded font-black text-xs transition shadow-sm', currentShotData.direction === d ? 'bg-blue-500 text-white shadow-md' : 'bg-white text-gray-300']">{{ d }}</button></div>
+                    <div v-if="currentShotData.result === '☓'" class="flex gap-1 mt-3 transition text-left"><button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :class="['flex-1 py-2 border rounded font-black text-xs transition shadow-sm', currentShotData.errorType === e ? 'bg-red-600 text-white shadow-md' : 'bg-white text-gray-300']">{{ e }}</button></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 text-center text-left">
-                    <div class="bg-gray-50 p-4 rounded-xl border shadow-sm text-gray-800 text-left"><label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Score</label><div class="flex items-center justify-center gap-4 text-left"><button @click="updateScore(-1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">－</button><span class="text-4xl font-black w-10 text-gray-800">{{ holeResults[currentHoleIndex].score }}</span><button @click="updateScore(1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">＋</button></div></div>
-                    <div class="bg-gray-50 p-4 rounded-xl border shadow-sm text-gray-800 text-left"><label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Putts</label><div class="flex items-center justify-center gap-4 text-left"><button @click="updatePutt(-1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">－</button><span class="text-4xl font-black w-10 text-gray-800">{{ holeResults[currentHoleIndex].putts }}</span><button @click="updatePutt(1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">＋</button></div></div>
+                    <div class="bg-gray-50 p-4 rounded-xl border shadow-sm text-gray-800 text-left"><label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Score</label><div class="flex items-center justify-center gap-4 text-left"><button @click="updateScore(-1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">－</button><span class="text-4xl font-black w-10 text-gray-800 text-center">{{ holeResults[currentHoleIndex].score }}</span><button @click="updateScore(1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">＋</button></div></div>
+                    <div class="bg-gray-50 p-4 rounded-xl border shadow-sm text-gray-800 text-left"><label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 text-left">Putts</label><div class="flex items-center justify-center gap-4 text-left"><button @click="updatePutt(-1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">－</button><span class="text-4xl font-black w-10 text-gray-800 text-center">{{ holeResults[currentHoleIndex].putts }}</span><button @click="updatePutt(1)" class="w-10 h-10 bg-white border rounded-full font-bold shadow-sm text-xl active:scale-90 transition">＋</button></div></div>
                 </div>
-                <button @click="resetCurrentShot" class="w-full py-4 bg-gray-200 text-gray-700 font-bold rounded-lg text-sm uppercase active:bg-gray-300 transition shadow-sm">修正</button>
+                <button @click="resetCurrentShot" class="w-full py-4 bg-gray-200 text-gray-700 font-bold rounded-lg text-sm uppercase active:bg-gray-300 transition shadow-sm text-center">修正</button>
             </div>
 
             <!-- 3. Card Screen -->
@@ -275,15 +279,15 @@
                     <table class="w-full text-[12px] border-collapse min-w-[440px]">
                         <thead><tr class="bg-gray-50 border-b font-bold text-gray-400 text-center uppercase tracking-tighter"><th class="p-2 border-r w-8">H</th><th class="p-2 border-r w-8">Par</th><th class="p-2 border-r w-10">Scr</th><th class="p-2 border-r w-8">Put</th><th class="p-2 border-r w-8">FW</th><th class="p-2 border-r w-8">OB</th><th class="p-2 border-r w-8">Pn</th><th class="p-2 border-r w-8">Bk</th><th class="p-2">Details</th></tr></thead>
                         <tbody>
-                            <tr v-for="i in 9" :key="i" class="border-b text-center">
+                            <tr v-for="i in 9" :key="i" class="border-b text-center text-center">
                                 <td class="p-2 border-r font-black bg-gray-50 cursor-pointer active:bg-gray-100" @click="jumpToHole(hIdx*9 + i - 1)"><div :class="{'h-circle': isScramble(hIdx*9 + i - 1)}">{{ i + (hIdx * 9) }}</div></td>
-                                <td class="p-2 border-r text-gray-400 font-bold">{{ getHolePar(hIdx * 9 + i - 1) }}</td>
-                                <td class="p-2 border-r"><div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div></td>
-                                <td class="p-2 border-r text-gray-600 font-medium">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
-                                <td class="p-2 border-r font-bold text-gray-600">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
-                                <td class="p-2 border-r text-red-500 font-black">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
-                                <td class="p-2 border-r text-orange-500 font-black">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
-                                <td class="p-2 border-r"><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div></template><template v-else>-</template></td>
+                                <td class="p-2 border-r text-gray-400 font-bold text-center">{{ getHolePar(hIdx * 9 + i - 1) }}</td>
+                                <td class="p-2 border-r text-center"><div class="score-box" :class="getScoreEnclosureClass(hIdx*9 + i - 1)">{{ holeResults[hIdx*9 + i - 1].score }}</div></td>
+                                <td class="p-2 border-r text-gray-600 font-medium text-center">{{ holeResults[hIdx*9 + i - 1].putts }}</td>
+                                <td class="p-2 border-r font-bold text-gray-600 text-center">{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
+                                <td class="p-2 border-r text-red-500 font-black text-center">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
+                                <td class="p-2 border-r text-orange-500 font-black text-center">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
+                                <td class="p-2 border-r text-center"><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div :class="{'bk-circle': isSandSave(hIdx*9 + i - 1)}">B</div></template><template v-else>-</template></td>
                                 <td class="p-1 text-left leading-tight"><div class="flex flex-wrap gap-0.5"><span v-for="(shot, sIdx) in getFilledShots(hIdx*9 + i - 1)" :key="sIdx" class="bg-gray-50 border px-1 text-[8px] rounded text-gray-500 font-bold italic">{{ shot.idx+1 }}:{{ shot.club }}{{ shot.result }}{{ shot.direction }}{{ shot.errorType }}{{ shot.bunker ? 'Bk' : '' }}</span></div></td>
                             </tr>
                         </tbody>
@@ -291,14 +295,14 @@
                     </table>
                 </div>
                 <div class="bg-black text-white p-6 rounded-2xl shadow-xl text-center font-bold text-left">
-                    <div class="text-[12px] text-gray-500 uppercase mb-2 tracking-widest font-black italic text-left">18 Holes Grand Total</div>
-                    <div class="grid grid-cols-3 gap-y-4 text-left">
-                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic text-left text-left">Par</div><div class="text-xl font-black text-gray-100 text-left">{{ grandTotals.par }}</div></div>
-                        <div><div class="text-[10px] text-blue-300 uppercase font-bold tracking-tight italic text-left text-left">Score</div><div class="text-xl font-black italic text-green-400 text-left">{{ totalScoreDisplay }}</div></div>
-                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic text-left text-left">Putts</div><div class="text-xl font-black text-gray-100 text-left">{{ grandTotals.putts }}</div></div>
+                    <div class="text-[12px] text-gray-500 uppercase mb-2 tracking-widest font-black italic text-center">18 Holes Grand Total</div>
+                    <div class="grid grid-cols-3 gap-y-4 text-center">
+                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic">Par</div><div class="text-xl font-black text-gray-100">{{ grandTotals.par }}</div></div>
+                        <div><div class="text-[10px] text-blue-300 uppercase font-bold tracking-tight italic">Score</div><div class="text-xl font-black italic text-green-400">{{ totalScoreDisplay }}</div></div>
+                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic">Putts</div><div class="text-xl font-black text-gray-100">{{ grandTotals.putts }}</div></div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 text-left"><button @click="saveRound" class="bg-green-600 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition uppercase tracking-widest">Save Round</button><button @click="confirmNewRound" class="bg-gray-200 text-red-500 font-black py-5 rounded-2xl shadow-lg active:scale-95 transition uppercase tracking-widest">Reset All</button></div>
+                <div class="grid grid-cols-2 gap-4 text-center"><button @click="saveRound" class="bg-green-600 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition uppercase tracking-widest">Save Round</button><button @click="confirmNewRound" class="bg-gray-200 text-red-500 font-black py-5 rounded-2xl shadow-lg active:scale-95 transition uppercase tracking-widest">Reset All</button></div>
             </div>
 
             <!-- 4. Stats Analysis Screen -->
@@ -306,29 +310,29 @@
                 <h2 class="text-xl font-bold border-b pb-1 italic font-serif text-left">Performance Analysis</h2>
                 
                 <div v-if="historyStats" class="grid grid-cols-2 gap-4 text-left">
-                    <div class="bg-white p-4 rounded-xl border shadow-sm text-center text-left"><div class="text-[10px] font-black text-gray-400 uppercase mb-1 text-left">平均Score</div><div class="text-2xl font-black text-blue-600 italic tracking-tighter text-left">{{ historyStats.avgScore }}</div><div class="text-[8px] text-gray-400 mt-1 font-bold text-center w-full text-left">Best:{{ historyStats.bestScore }} / Worst:{{ historyStats.worstScore }}</div></div>
-                    <div class="bg-white p-4 rounded-xl border shadow-sm text-center text-left"><div class="text-[10px] font-black text-gray-400 uppercase mb-1 text-left">平均Putts</div><div class="text-2xl font-black text-gray-800 italic tracking-tighter text-left">{{ historyStats.avgPutts }}</div><div class="text-[8px] text-orange-500 mt-1 font-bold italic uppercase text-center w-full text-left">3P+ 平均: {{ historyStats.avgThreePutts }}回</div></div>
+                    <div class="bg-white p-4 rounded-xl border shadow-sm text-center text-left"><div class="text-[10px] font-black text-gray-400 uppercase mb-1 text-center">平均Score</div><div class="text-2xl font-black text-blue-600 italic tracking-tighter text-center">{{ historyStats.avgScore }}</div><div class="text-[8px] text-gray-400 mt-1 font-bold text-center w-full">Best:{{ historyStats.bestScore }} / Worst:{{ historyStats.worstScore }}</div></div>
+                    <div class="bg-white p-4 rounded-xl border shadow-sm text-center text-left"><div class="text-[10px] font-black text-gray-400 uppercase mb-1 text-center">平均Putts</div><div class="text-2xl font-black text-gray-800 italic tracking-tighter text-center">{{ historyStats.avgPutts }}</div><div class="text-[8px] text-orange-500 mt-1 font-bold italic uppercase text-center w-full">3P+ 平均: {{ historyStats.avgThreePutts }}回</div></div>
                 </div>
 
                 <div v-if="analysis" class="space-y-6 text-left">
-                    <div class="bg-white p-5 rounded-2xl border border-red-100 shadow-sm text-xs font-bold text-left">
+                    <div class="bg-white p-5 rounded-2xl border border-red-100 shadow-sm text-xs font-bold text-left text-left">
                         <h3 class="text-sm font-black text-red-600 mb-4 flex items-center gap-2 uppercase italic font-black text-left"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.45L19.53 19H4.47L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>Score Loss Analysis</h3>
                         <div class="grid grid-cols-3 gap-3 text-center text-left">
-                            <div class="p-3 bg-red-50 rounded-xl border border-red-100 font-bold text-left"><div class="text-[8px] text-gray-500 uppercase tracking-tight text-left">Penalty</div><div class="text-2xl font-black text-red-600 italic tracking-tighter text-left">{{ analysis.penaltyLoss }}</div></div>
-                            <div class="p-3 bg-red-50 rounded-xl border border-red-100 font-bold text-left"><div class="text-[8px] text-gray-500 uppercase tracking-tight text-left">Mistake(☓)</div><div class="text-2xl font-black text-red-600 italic tracking-tighter text-left">{{ analysis.criticalMissCount }}</div></div>
-                            <div class="p-3 bg-red-50 rounded-xl border border-red-100 font-bold text-left"><div class="text-[8px] text-gray-500 uppercase tracking-tight text-left">3-Putts</div><div class="text-2xl font-black text-red-600 italic tracking-tighter text-left">{{ analysis.threePutts }}</div></div>
+                            <div class="p-3 bg-red-50 rounded-xl border border-red-100 font-bold text-left"><div class="text-[8px] text-gray-500 uppercase tracking-tight text-center">Penalty</div><div class="text-2xl font-black text-red-600 italic tracking-tighter text-center">{{ analysis.penaltyLoss }}</div></div>
+                            <div class="p-3 bg-red-50 rounded-xl border border-red-100 font-bold text-left"><div class="text-[8px] text-gray-500 uppercase tracking-tight text-center">Mistake(☓)</div><div class="text-2xl font-black text-red-600 italic tracking-tighter text-center">{{ analysis.criticalMissCount }}</div></div>
+                            <div class="p-3 bg-red-50 rounded-xl border border-red-100 font-bold text-left"><div class="text-[8px] text-gray-500 uppercase tracking-tight text-center">3-Putts</div><div class="text-2xl font-black text-red-600 italic tracking-tighter text-center">{{ analysis.threePutts }}</div></div>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-4 font-bold text-xs text-left">
                         <h3 class="text-sm font-black text-gray-800 uppercase tracking-tighter text-left">PAR別パフォーマンス</h3>
-                        <div v-for="p in [3,4,5]" :key="p" class="border-b pb-4 last:border-0 mb-4 tracking-tighter text-left text-left">
-                            <div class="font-black text-gray-400 mb-2 uppercase text-[10px] tracking-widest italic font-bold text-left text-left">PAR {{ p }} HOLES</div>
-                            <div class="grid grid-cols-2 gap-3 text-center font-bold text-left text-left">
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-gray-600 text-left text-left">平均Score: {{ analysis.parStats[p].avgScore }}</div>
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-red-500 text-left text-left">DB数(+): {{ analysis.parStats[p].dbCount }}</div>
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-green-600 font-black italic text-[11px] text-left text-left">GIR: {{ analysis.parStats[p].girRate }}%</div>
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-blue-600 font-black italic text-[11px] text-left text-left">ボギーオン: {{ analysis.parStats[p].bogeyOnRate }}%</div>
+                        <div v-for="p in [3,4,5]" :key="p" class="border-b pb-4 last:border-0 mb-4 tracking-tighter text-left">
+                            <div class="font-black text-gray-400 mb-2 uppercase text-[10px] tracking-widest italic font-bold text-left">PAR {{ p }} HOLES</div>
+                            <div class="grid grid-cols-2 gap-3 text-center font-bold text-left">
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-gray-600 text-center">平均Score: {{ analysis.parStats[p].avgScore }}</div>
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-red-500 text-center">DB数(+): {{ analysis.parStats[p].dbCount }}</div>
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-green-600 font-black italic text-[11px] text-center">GIR: {{ analysis.parStats[p].girRate }}%</div>
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-blue-600 font-black italic text-[11px] text-center">ボギーオン: {{ analysis.parStats[p].bogeyOnRate }}%</div>
                             </div>
                         </div>
                     </div>
@@ -336,16 +340,16 @@
                     <div class="bg-white p-5 rounded-2xl border shadow-sm text-xs font-bold text-gray-600 uppercase text-left">
                         <h3 class="text-sm font-black text-gray-800 mb-4 uppercase italic tracking-tighter text-left">Skill Categories</h3>
                         <div v-for="(val, label) in analysis.categories" :key="label" class="mb-5 font-bold text-left">
-                            <div class="flex justify-between mb-1.5 font-black uppercase tracking-tighter text-gray-600 text-left text-left"><span>{{ label }}</span><span>{{ val }}%</span></div>
+                            <div class="flex justify-between mb-1.5 font-black uppercase tracking-tighter text-gray-600 text-left"><span>{{ label }}</span><span>{{ val }}%</span></div>
                             <div class="progress-bar text-left"><div class="progress-fill shadow-inner text-left" :style="{ width: val + '%', backgroundColor: val > 60 ? '#10b981' : val > 40 ? '#fbbf24' : '#ef4444' }"></div></div>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-2xl border shadow-sm overflow-x-auto text-gray-700 font-bold text-left">
-                        <h3 class="text-sm font-black mb-4 italic uppercase tracking-tighter underline underline-offset-4 decoration-gray-200 text-left text-left">Club Performance & Bias</h3>
-                        <table class="w-full text-[11px] font-bold">
-                            <thead><tr class="text-gray-400 border-b font-black text-center text-left"><th class="text-left pb-3 uppercase text-left">Club</th><th class="pb-3 uppercase text-left">Success</th><th class="pb-3 uppercase text-left">Miss Bias</th></tr></thead>
-                            <tbody><tr v-for="c in analysis.clubStats" :key="c.name" class="border-b last:border-0 text-left"><td class="py-4 text-sm font-black text-black text-left italic font-bold text-gray-800 text-left">{{ c.name }}</td><td class="text-center font-black text-gray-800 text-left">{{ c.successRate }}%<br><span class="text-[8px] text-gray-400 font-normal italic text-left">({{ c.count }} shots)</span></td><td class="text-center py-2 text-left"><div v-if="c.bias" class="flex justify-center gap-1.5 text-left"><span v-for="b in c.bias" :key="b" class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 font-black text-[9px] uppercase font-bold text-left text-left text-left">{{ b }}</span></div><div v-else class="text-gray-300 font-normal font-bold text-left text-left">-</div></td></tr></tbody>
+                        <h3 class="text-sm font-black mb-4 italic uppercase tracking-tighter underline underline-offset-4 decoration-gray-200 text-left">Club Performance & Bias</h3>
+                        <table class="w-full text-[11px] font-bold text-left">
+                            <thead><tr class="text-gray-400 border-b font-black text-center text-left"><th class="text-left pb-3 uppercase text-left">Club</th><th class="pb-3 uppercase text-center">Success</th><th class="pb-3 uppercase text-center">Miss Bias</th></tr></thead>
+                            <tbody><tr v-for="c in analysis.clubStats" :key="c.name" class="border-b last:border-0 text-left"><td class="py-4 text-sm font-black text-black text-left italic font-bold text-gray-800 text-left">{{ c.name }}</td><td class="text-center font-black text-gray-800 text-center">{{ c.successRate }}%<br><span class="text-[8px] text-gray-400 font-normal italic">({{ c.count }} shots)</span></td><td class="text-center py-2"><div v-if="c.bias" class="flex justify-center gap-1.5 text-left"><span v-for="b in c.bias" :key="b" class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 font-black text-[9px] uppercase font-bold text-center">{{ b }}</span></div><div v-else class="text-gray-300 font-normal font-bold text-center">-</div></td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -353,10 +357,10 @@
 
             <!-- 5. History Screen -->
             <div v-if="view === 'history'" class="space-y-6 pb-20 fade-in text-gray-800 text-left">
-                <div class="flex justify-between items-center border-b pb-2 text-gray-800 text-left text-left"><h2 class="text-xl font-bold italic font-serif tracking-tight text-left text-left text-left">Round History</h2><button @click="exportAllToCSV" v-if="savedRounds.length" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-black shadow-md active:scale-95 transition">Export CSV</button></div>
-                <div v-if="!savedRounds.length" class="text-center py-16 text-gray-400 text-sm italic font-serif w-full text-left text-left">No rounds saved yet.</div>
+                <div class="flex justify-between items-center border-b pb-2 text-gray-800 text-left"><h2 class="text-xl font-bold italic font-serif tracking-tight text-left">Round History</h2><button @click="exportAllToCSV" v-if="savedRounds.length" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-black shadow-md active:scale-95 transition text-center">Export CSV</button></div>
+                <div v-if="!savedRounds.length" class="text-center py-16 text-gray-400 text-sm italic font-serif w-full text-center">No rounds saved yet.</div>
                 <div v-else class="space-y-3 text-left">
-                    <div v-for="(round, index) in savedRounds" :key="index" class="bg-white p-5 rounded-2xl border shadow-sm flex justify-between items-center text-left font-bold text-left text-left text-left"><div @click="loadRoundData(round)" class="flex-grow cursor-pointer group text-left text-left text-left"><div class="text-[10px] text-gray-400 font-black uppercase mb-0.5 tracking-widest italic text-left text-left text-left">{{ round.date }}</div><div class="text-sm font-black text-gray-800 group-hover:text-blue-600 transition text-left tracking-tight text-left text-left text-left">{{ round.course }}</div><div class="text-xs text-gray-500 font-bold mt-1 text-left text-left text-left text-left">Score: <span class="text-blue-600 font-black text-sm text-left text-left">{{ round.totalScore }}</span> | Putts: {{ round.totalPutts }}</div></div><button @click="deleteRound(index)" class="text-red-400 p-3 hover:bg-red-50 rounded-full active:scale-90 transition shadow-sm text-left"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button></div>
+                    <div v-for="(round, index) in savedRounds" :key="index" class="bg-white p-5 rounded-2xl border shadow-sm flex justify-between items-center text-left font-bold text-left text-left"><div @click="loadRoundData(round)" class="flex-grow cursor-pointer group text-left text-left"><div class="text-[10px] text-gray-400 font-black uppercase mb-0.5 tracking-widest italic text-left">{{ round.date }}</div><div class="text-sm font-black text-gray-800 group-hover:text-blue-600 transition text-left tracking-tight">{{ round.course }}</div><div class="text-xs text-gray-500 font-bold mt-1 text-left">Score: <span class="text-blue-600 font-black text-sm">{{ round.totalScore }}</span> | Putts: {{ round.totalPutts }}</div></div><button @click="deleteRound(index)" class="text-red-400 p-3 hover:bg-red-50 rounded-full active:scale-90 transition shadow-sm text-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button></div>
                 </div>
             </div>
         </main>
@@ -405,11 +409,18 @@
 
                 const changeView = (v) => { view.value = v; };
                 const displayName = (n) => n?.includes('_') ? n.split('_')[1] : (n || '');
-                const toggleClub = (c) => { const idx = settings.value.selectedClubs.indexOf(c); if (idx > -1) settings.value.selectedClubs.splice(idx, 1); else if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); };
+                const toggleClub = (c) => { 
+                    const idx = settings.value.selectedClubs.indexOf(c); 
+                    if (idx > -1) settings.value.selectedClubs.splice(idx, 1); 
+                    else if (settings.value.selectedClubs.length < 14) settings.value.selectedClubs.push(c); 
+                };
                 
                 const orderedClubs = computed(() => clubMaster.filter(c => settings.value.selectedClubs.includes(c)));
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
-                const filteredCourses = computed(() => { const p = settings.value.prefix === 'index' ? '' : settings.value.prefix; return courses.value.filter(c => c.name.startsWith(p)).sort((a,b) => a.name.localeCompare(b.name, 'ja')); });
+                const filteredCourses = computed(() => { 
+                    const p = settings.value.prefix === 'index' ? '' : settings.value.prefix; 
+                    return courses.value.filter(c => c.name.startsWith(p)).sort((a,b) => a.name.localeCompare(b.name, 'ja')); 
+                });
                 const selectedCourse = computed(() => courses.value.find(c => c.id === settings.value.courseId));
                 
                 const autoSelectSections = () => { if (!selectedCourse.value) return; const ns = selectedCourse.value.sections.map(s => s.name); if (ns.includes('OUT') && ns.includes('IN')) { settings.value.front = 'OUT'; settings.value.back = 'IN'; } else if (ns.length >= 2) { settings.value.front = ns[0]; settings.value.back = ns[1]; } };
