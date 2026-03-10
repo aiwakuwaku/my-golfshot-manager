@@ -63,7 +63,7 @@
     </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900 text-left">
-    <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative text-gray-900 text-left text-left">
+    <div id="app" v-cloak class="max-w-md mx-auto min-h-screen bg-white shadow-lg flex flex-col relative text-gray-900 text-left">
         <!-- Header -->
         <header class="header-grid shadow-lg">
             <div class="flex justify-center">
@@ -82,15 +82,15 @@
 
         <main class="p-4 flex-grow pb-24 overflow-y-auto">
             
-            <!-- 0. Guide & Glossary (完全版・内容維持) -->
+            <!-- 0. Guide & Glossary (完全版・スクリーンショット表記反映) -->
             <div v-if="view === 'guide'" class="space-y-6 fade-in">
-                <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 text-gray-800">
-                    <h2 class="text-2xl font-black italic font-serif text-left">Guide & Glossary</h2>
+                <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 text-gray-800 text-left">
+                    <h2 class="text-2xl font-black italic font-serif text-left text-left">Guide & Glossary</h2>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" class="bg-gray-100 px-4 py-1 rounded-full text-sm font-bold text-blue-600 shadow-sm">Close</button>
                 </div>
 
                 <div class="space-y-8 pb-10 text-gray-700 text-[12px] leading-relaxed text-left">
-                    <!-- 1. 操作フロー -->
+                    <!-- 1. 基本操作フロー -->
                     <section class="space-y-3">
                         <h3 class="font-black text-blue-600 border-l-4 border-blue-600 pl-2 uppercase tracking-tighter text-sm">1. 基本操作の流れ</h3>
                         <div class="bg-white p-4 rounded-xl border shadow-sm space-y-3 text-left">
@@ -137,37 +137,37 @@
                         </div>
                     </section>
 
-                    <!-- 4. 用語解説 (左詰め維持) -->
+                    <!-- 4. 用語と記号の解説 (スクリーンショット準拠) -->
                     <section class="space-y-3 text-left">
                         <h3 class="font-black text-green-600 border-l-4 border-green-600 pl-2 uppercase tracking-tighter text-sm">4. 用語と記号の解説</h3>
                         <div class="bg-white p-4 rounded-xl border shadow-sm space-y-6">
                             <div>
-                                <h4 class="font-bold text-green-700 border-b mb-3 uppercase text-[10px] tracking-widest text-left">スコアカードの記号</h4>
-                                <ul class="space-y-3 text-left">
-                                    <li class="flex items-center gap-4 justify-start text-left">
-                                        <div class="w-8 flex-shrink-0 flex justify-start"><div class="score-box score-circle text-[10px] m-0">○</div></div>
-                                        <div><span class="font-bold">バーディ以下：</span> パーより良いスコア</div>
+                                <h4 class="font-bold text-green-700 border-b mb-3 text-[13px] text-left">スコアカードの記号</h4>
+                                <ul class="space-y-2 text-left">
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-gray-500 mt-1 flex-shrink-0">•</span>
+                                        <div class="text-[12px]"><span class="text-red-600 font-bold">◯囲みスコア:</span> バーディ以下</div>
                                     </li>
-                                    <li class="flex items-center gap-4 justify-start text-left">
-                                        <div class="w-8 flex-shrink-0 flex justify-start"><div class="score-box score-triangle text-[10px] m-0">△</div></div>
-                                        <div><span class="font-bold">ボギー：</span> パー＋1打</div>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-gray-500 mt-1 flex-shrink-0">•</span>
+                                        <div class="text-[12px]"><span class="text-blue-600 font-bold">△囲みスコア:</span> ボギー</div>
                                     </li>
-                                    <li class="flex items-center gap-4 justify-start text-left">
-                                        <div class="w-8 flex-shrink-0 flex justify-start"><div class="score-box score-square text-[10px] m-0">□</div></div>
-                                        <div><span class="font-bold">ダブルボギー以上：</span> パー＋2打以上</div>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-gray-500 mt-1 flex-shrink-0">•</span>
+                                        <div class="text-[12px]"><span class="text-gray-900 font-bold">□囲みスコア:</span> ダブルボギー以上</div>
                                     </li>
-                                    <li class="flex items-center gap-4 justify-start text-left">
-                                        <div class="w-8 flex-shrink-0 flex justify-start"><div class="h-circle text-[10px] m-0 scale-90">H</div></div>
-                                        <div><span class="font-bold">Scramble：</span> パーオン失敗からの寄せワン成功</div>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-gray-500 mt-1 flex-shrink-0">•</span>
+                                        <div class="text-[12px]"><span class="text-green-600 font-bold italic">Hの◯囲み:</span> <span class="font-bold text-gray-800">Scramble</span> 成功。寄せワン。</div>
                                     </li>
-                                    <li class="flex items-center gap-4 justify-start text-left">
-                                        <div class="w-8 flex-shrink-0 flex justify-start"><div class="bk-circle text-[10px] m-0 scale-90">B</div></div>
-                                        <div><span class="font-bold">Sand Save：</span> バンカーから2打以内でホールアウト</div>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-gray-500 mt-1 flex-shrink-0">•</span>
+                                        <div class="text-[12px]"><span class="font-bold italic text-gray-800">Bの◯囲み:</span> <span class="font-bold text-gray-800">Sand Save</span> 成功。バンカーから2打以内。</div>
                                     </li>
                                 </ul>
                             </div>
                             <div class="border-t pt-4 text-left">
-                                <h4 class="font-bold text-green-700 border-b mb-2 uppercase text-[10px] tracking-widest text-left">統計メトリクス</h4>
+                                <h4 class="font-bold text-green-700 border-b mb-2 uppercase text-[10px] tracking-widest text-left text-left">統計メトリクス</h4>
                                 <ul class="space-y-2 text-[11px] text-left">
                                     <li><span class="font-black">GIR (パーオン率):</span> 規定打数マイナス2打以下で乗せた割合。</li>
                                     <li><span class="font-black">Bogey-on率:</span> パーより1打少ない打数までに乗せた割合。</li>
@@ -193,7 +193,7 @@
                     <!-- 6. 中断手順 -->
                     <section class="space-y-3 text-left">
                         <h3 class="font-black text-gray-600 border-l-4 border-gray-600 pl-2 uppercase tracking-tighter text-sm">6. 中断と過去データの確認</h3>
-                        <div class="bg-gray-100 p-4 rounded-xl border border-gray-200 text-[11px] space-y-2 text-left">
+                        <div class="bg-gray-100 p-4 rounded-xl border border-gray-200 text-[11px] space-y-2 text-left text-left">
                             <p class="font-bold text-gray-900">【入力途中に過去データを見る】</p>
                             <p>1. 「Card」タブで「Save Round」をして現在データを一時保存。<br>2. 「Hist」で過去データを確認。<br>3. 入力を再開する時は「Hist」で中断したデータを選び読み込みます。</p>
                         </div>
@@ -232,19 +232,18 @@
                 </div>
             </div>
 
-            <!-- 2. Hole Input Screen (クラブ選択をセレクトボックスに変更) -->
+            <!-- 2. Hole Input Screen -->
             <div v-if="view === 'hole'" class="space-y-4 fade-in text-left">
                 <div class="flex justify-between items-center bg-gray-100 p-3 rounded border">
                     <button @click="prevHole" class="text-xl px-2">◀</button>
-                    <div class="text-center text-gray-800 text-left"><span class="text-[10px] block text-gray-500 uppercase font-black tracking-widest">{{ currentSectionName }}</span><span class="text-lg font-black italic">Hole {{ currentHoleNum }}</span><span class="ml-2 px-2 bg-black text-white text-xs py-0.5 rounded font-bold uppercase italic font-black">Par {{ currentPar }}</span></div>
+                    <div class="text-center text-gray-800 text-left"><span class="text-[10px] block text-gray-500 uppercase font-black tracking-widest text-left text-left">{{ currentSectionName }}</span><span class="text-lg font-black italic">Hole {{ currentHoleNum }}</span><span class="ml-2 px-2 bg-black text-white text-xs py-0.5 rounded font-bold uppercase italic font-black">Par {{ currentPar }}</span></div>
                     <button @click="nextHole" class="text-xl px-2">▶</button>
                 </div>
                 <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm text-gray-800 text-left">
                     <div class="flex justify-between items-center mb-4 text-left"><span class="text-xs font-black text-blue-800 uppercase italic">Shot {{ currentShotIdx + 1 }}</span><div class="flex gap-1 overflow-x-auto pb-1 text-left"><button v-for="n in 7" :key="n" @click="selectShot(n-1)" :disabled="isPenaltyStroke(currentHoleIndex, n-1)" :class="['w-8 h-8 flex-shrink-0 rounded-full border text-xs font-black transition shadow-sm', currentShotIdx === n-1 ? 'bg-blue-600 border-blue-800 text-white' : (isPenaltyStroke(currentHoleIndex, n-1) ? 'bg-gray-200 text-gray-400 border-gray-300 opacity-50' : 'bg-white text-gray-400')]">{{ n }}</button></div></div>
                     
-                    <!-- クラブ選択ドロップダウン形式 -->
                     <div class="grid grid-cols-1 gap-3 mb-4 text-left">
-                        <select v-model="currentShotData.club" class="w-full border p-2 rounded bg-white font-bold h-[42px] shadow-sm text-gray-800 appearance-none">
+                        <select v-model="currentShotData.club" class="w-full border p-2 rounded bg-white font-bold h-[42px] shadow-sm text-gray-800 appearance-none text-left">
                             <option value="" disabled selected>Select Club</option>
                             <option v-for="c in orderedClubs" :key="c" :value="c">{{ c }}</option>
                         </select>
@@ -294,16 +293,16 @@
                 <div class="bg-black text-white p-6 rounded-2xl shadow-xl text-center font-bold text-left">
                     <div class="text-[12px] text-gray-500 uppercase mb-2 tracking-widest font-black italic text-left">18 Holes Grand Total</div>
                     <div class="grid grid-cols-3 gap-y-4 text-left">
-                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic text-left">Par</div><div class="text-xl font-black text-gray-100 text-left">{{ grandTotals.par }}</div></div>
-                        <div><div class="text-[10px] text-blue-300 uppercase font-bold tracking-tight italic text-left">Score</div><div class="text-xl font-black italic text-green-400 text-left">{{ totalScoreDisplay }}</div></div>
-                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic text-left">Putts</div><div class="text-xl font-black text-gray-100 text-left">{{ grandTotals.putts }}</div></div>
+                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic text-left text-left">Par</div><div class="text-xl font-black text-gray-100 text-left">{{ grandTotals.par }}</div></div>
+                        <div><div class="text-[10px] text-blue-300 uppercase font-bold tracking-tight italic text-left text-left">Score</div><div class="text-xl font-black italic text-green-400 text-left">{{ totalScoreDisplay }}</div></div>
+                        <div><div class="text-[10px] text-gray-400 uppercase font-bold tracking-tight italic text-left text-left">Putts</div><div class="text-xl font-black text-gray-100 text-left">{{ grandTotals.putts }}</div></div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 text-left"><button @click="saveRound" class="bg-green-600 text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition uppercase tracking-widest">Save Round</button><button @click="confirmNewRound" class="bg-gray-200 text-red-500 font-black py-5 rounded-2xl shadow-lg active:scale-95 transition uppercase tracking-widest">Reset All</button></div>
             </div>
 
             <!-- 4. Stats Analysis Screen -->
-            <div v-if="view === 'analysis'" class="space-y-6 pb-20 fade-in text-gray-800 text-left text-left">
+            <div v-if="view === 'analysis'" class="space-y-6 pb-20 fade-in text-gray-800 text-left">
                 <h2 class="text-xl font-bold border-b pb-1 italic font-serif text-left">Performance Analysis</h2>
                 
                 <div v-if="historyStats" class="grid grid-cols-2 gap-4 text-left">
@@ -323,13 +322,13 @@
 
                     <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-4 font-bold text-xs text-left">
                         <h3 class="text-sm font-black text-gray-800 uppercase tracking-tighter text-left">PAR別パフォーマンス</h3>
-                        <div v-for="p in [3,4,5]" :key="p" class="border-b pb-4 last:border-0 mb-4 tracking-tighter text-left">
-                            <div class="font-black text-gray-400 mb-2 uppercase text-[10px] tracking-widest italic font-bold text-left">PAR {{ p }} HOLES</div>
-                            <div class="grid grid-cols-2 gap-3 text-center font-bold text-left">
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-gray-600 text-left">平均Score: {{ analysis.parStats[p].avgScore }}</div>
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-red-500 text-left">DB数(+): {{ analysis.parStats[p].dbCount }}</div>
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-green-600 font-black italic text-[11px] text-left">GIR: {{ analysis.parStats[p].girRate }}%</div>
-                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-blue-600 font-black italic text-[11px] text-left">ボギーオン: {{ analysis.parStats[p].bogeyOnRate }}%</div>
+                        <div v-for="p in [3,4,5]" :key="p" class="border-b pb-4 last:border-0 mb-4 tracking-tighter text-left text-left">
+                            <div class="font-black text-gray-400 mb-2 uppercase text-[10px] tracking-widest italic font-bold text-left text-left">PAR {{ p }} HOLES</div>
+                            <div class="grid grid-cols-2 gap-3 text-center font-bold text-left text-left">
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-gray-600 text-left text-left">平均Score: {{ analysis.parStats[p].avgScore }}</div>
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-red-500 text-left text-left">DB数(+): {{ analysis.parStats[p].dbCount }}</div>
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-green-600 font-black italic text-[11px] text-left text-left">GIR: {{ analysis.parStats[p].girRate }}%</div>
+                                <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-blue-600 font-black italic text-[11px] text-left text-left">ボギーオン: {{ analysis.parStats[p].bogeyOnRate }}%</div>
                             </div>
                         </div>
                     </div>
@@ -337,27 +336,27 @@
                     <div class="bg-white p-5 rounded-2xl border shadow-sm text-xs font-bold text-gray-600 uppercase text-left">
                         <h3 class="text-sm font-black text-gray-800 mb-4 uppercase italic tracking-tighter text-left">Skill Categories</h3>
                         <div v-for="(val, label) in analysis.categories" :key="label" class="mb-5 font-bold text-left">
-                            <div class="flex justify-between mb-1.5 font-black uppercase tracking-tighter text-gray-600 text-left"><span>{{ label }}</span><span>{{ val }}%</span></div>
+                            <div class="flex justify-between mb-1.5 font-black uppercase tracking-tighter text-gray-600 text-left text-left"><span>{{ label }}</span><span>{{ val }}%</span></div>
                             <div class="progress-bar text-left"><div class="progress-fill shadow-inner text-left" :style="{ width: val + '%', backgroundColor: val > 60 ? '#10b981' : val > 40 ? '#fbbf24' : '#ef4444' }"></div></div>
                         </div>
                     </div>
 
                     <div class="bg-white p-5 rounded-2xl border shadow-sm overflow-x-auto text-gray-700 font-bold text-left">
-                        <h3 class="text-sm font-black mb-4 italic uppercase tracking-tighter underline underline-offset-4 decoration-gray-200 text-left">Club Performance & Bias</h3>
+                        <h3 class="text-sm font-black mb-4 italic uppercase tracking-tighter underline underline-offset-4 decoration-gray-200 text-left text-left">Club Performance & Bias</h3>
                         <table class="w-full text-[11px] font-bold">
-                            <thead><tr class="text-gray-400 border-b font-black text-center"><th class="text-left pb-3 uppercase">Club</th><th class="pb-3 uppercase">Success</th><th class="pb-3 uppercase">Miss Bias</th></tr></thead>
-                            <tbody><tr v-for="c in analysis.clubStats" :key="c.name" class="border-b last:border-0"><td class="py-4 text-sm font-black text-black text-left italic font-bold text-gray-800">{{ c.name }}</td><td class="text-center font-black text-gray-800">{{ c.successRate }}%<br><span class="text-[8px] text-gray-400 font-normal italic">({{ c.count }} shots)</span></td><td class="text-center py-2"><div v-if="c.bias" class="flex justify-center gap-1.5"><span v-for="b in c.bias" :key="b" class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 font-black text-[9px] uppercase font-bold text-left text-left">{{ b }}</span></div><div v-else class="text-gray-300 font-normal font-bold text-left">-</div></td></tr></tbody>
+                            <thead><tr class="text-gray-400 border-b font-black text-center text-left"><th class="text-left pb-3 uppercase text-left">Club</th><th class="pb-3 uppercase text-left">Success</th><th class="pb-3 uppercase text-left">Miss Bias</th></tr></thead>
+                            <tbody><tr v-for="c in analysis.clubStats" :key="c.name" class="border-b last:border-0 text-left"><td class="py-4 text-sm font-black text-black text-left italic font-bold text-gray-800 text-left">{{ c.name }}</td><td class="text-center font-black text-gray-800 text-left">{{ c.successRate }}%<br><span class="text-[8px] text-gray-400 font-normal italic text-left">({{ c.count }} shots)</span></td><td class="text-center py-2 text-left"><div v-if="c.bias" class="flex justify-center gap-1.5 text-left"><span v-for="b in c.bias" :key="b" class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded border border-blue-100 font-black text-[9px] uppercase font-bold text-left text-left text-left">{{ b }}</span></div><div v-else class="text-gray-300 font-normal font-bold text-left text-left">-</div></td></tr></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
             <!-- 5. History Screen -->
-            <div v-if="view === 'history'" class="space-y-6 pb-20 fade-in text-gray-800 text-left text-left">
-                <div class="flex justify-between items-center border-b pb-2 text-gray-800 text-left"><h2 class="text-xl font-bold italic font-serif tracking-tight text-left">Round History</h2><button @click="exportAllToCSV" v-if="savedRounds.length" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-black shadow-md active:scale-95 transition">Export CSV</button></div>
-                <div v-if="!savedRounds.length" class="text-center py-16 text-gray-400 text-sm italic font-serif w-full text-left">No rounds saved yet.</div>
+            <div v-if="view === 'history'" class="space-y-6 pb-20 fade-in text-gray-800 text-left">
+                <div class="flex justify-between items-center border-b pb-2 text-gray-800 text-left text-left"><h2 class="text-xl font-bold italic font-serif tracking-tight text-left text-left text-left">Round History</h2><button @click="exportAllToCSV" v-if="savedRounds.length" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-black shadow-md active:scale-95 transition">Export CSV</button></div>
+                <div v-if="!savedRounds.length" class="text-center py-16 text-gray-400 text-sm italic font-serif w-full text-left text-left">No rounds saved yet.</div>
                 <div v-else class="space-y-3 text-left">
-                    <div v-for="(round, index) in savedRounds" :key="index" class="bg-white p-5 rounded-2xl border shadow-sm flex justify-between items-center text-left font-bold text-left"><div @click="loadRoundData(round)" class="flex-grow cursor-pointer group text-left text-left"><div class="text-[10px] text-gray-400 font-black uppercase mb-0.5 tracking-widest italic text-left text-left">{{ round.date }}</div><div class="text-sm font-black text-gray-800 group-hover:text-blue-600 transition text-left tracking-tight text-left">{{ round.course }}</div><div class="text-xs text-gray-500 font-bold mt-1 text-left text-left">Score: <span class="text-blue-600 font-black text-sm text-left">{{ round.totalScore }}</span> | Putts: {{ round.totalPutts }}</div></div><button @click="deleteRound(index)" class="text-red-400 p-3 hover:bg-red-50 rounded-full active:scale-90 transition shadow-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button></div>
+                    <div v-for="(round, index) in savedRounds" :key="index" class="bg-white p-5 rounded-2xl border shadow-sm flex justify-between items-center text-left font-bold text-left text-left text-left"><div @click="loadRoundData(round)" class="flex-grow cursor-pointer group text-left text-left text-left"><div class="text-[10px] text-gray-400 font-black uppercase mb-0.5 tracking-widest italic text-left text-left text-left">{{ round.date }}</div><div class="text-sm font-black text-gray-800 group-hover:text-blue-600 transition text-left tracking-tight text-left text-left text-left">{{ round.course }}</div><div class="text-xs text-gray-500 font-bold mt-1 text-left text-left text-left text-left">Score: <span class="text-blue-600 font-black text-sm text-left text-left">{{ round.totalScore }}</span> | Putts: {{ round.totalPutts }}</div></div><button @click="deleteRound(index)" class="text-red-400 p-3 hover:bg-red-50 rounded-full active:scale-90 transition shadow-sm text-left"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button></div>
                 </div>
             </div>
         </main>
