@@ -1,6 +1,6 @@
 {
   "name": "Golf Shot Manager",
-  "short_name": "ShotLog",
+  "short_name": "GSM",
   "id": "golf-shot-mgr-final",
   "start_url": "./index.html",
   "display": "standalone",
