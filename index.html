@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icon-512.png">
     <link rel="manifest" href="manifest.json">
 
-    <!-- ライブラリ -->
+    <!-- ライブラリ (sw.jsでキャッシュ) -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -20,7 +20,7 @@
     <style>
         [v-cloak] { display: none; }
         
-        /* === オフライン動作厳守CSS === */
+        /* === オフライン動作厳守：Tailwindなしでも動作するCSS === */
         body { margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, sans-serif; color: #111827; }
         #app { max-width: 448px; margin: 0 auto; min-height: 100vh; background-color: white; display: flex; flex-direction: column; position: relative; }
         main { flex-grow: 1; padding: 16px; padding-bottom: 90px; overflow-y: auto; text-align: left; }
@@ -40,35 +40,47 @@
 
         /* コンポーネント */
         .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); text-align: left; }
-        .hole-nav { display: flex; justify-content: space-between; align-items: center; background-color: #f3f4f6; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 16px; }
-        .btn-green { width: 100%; background-color: #10b981; color: white; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; }
+        .btn-green { width: 100%; background-color: #10b981; color: white; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; font-size: 14px; }
         .btn-gray { width: 100%; background-color: #e5e7eb; color: #4b5563; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; }
         .input-select { width: 100%; border: 1px solid #d1d5db; padding: 10px; border-radius: 8px; background: white; font-weight: bold; height: 42px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
 
-        /* 記号 */
-        .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
+        /* Shot表示部分のデザイン (スクリーンショット再現) */
+        .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .shot-label { font-size: 16px; font-weight: 900; font-style: italic; color: #2563eb; text-transform: uppercase; }
+        .shot-btn-container { display: flex; gap: 6px; }
+        .shot-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; padding: 0; }
+        .shot-btn-active { background: #2563eb; color: white; border-color: #1e40af; }
+
+        /* Score/Putts入力エリア修正 (はみ出し防止) */
+        .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 8px; text-align: center; }
+        .score-ctrl-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .score-display { font-size: 28px; font-weight: 900; min-width: 32px; }
+
+        /* スコア記号 */
+        .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; font-size: 14px; }
         .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } 
         .score-square { border: 1.5px solid #475569; color: #1e293b; } 
         .score-triangle { position: relative; color: #2563eb; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
         .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #10b981; font-weight: bold; }
         .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
 
-        /* リスト */
+        /* その他スタイル */
         .glossary-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; text-align: left; }
         .glossary-dot { color: #9ca3af; flex-shrink: 0; padding-top: 2px; }
-
-        /* 統計 */
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
-        
         .fade-in { animation: fadeIn 0.2s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .border-l-4 { border-left-width: 4px; }
+        .space-y-6 > * + * { margin-top: 24px; }
+        .space-y-3 > * + * { margin-top: 12px; }
     </style>
 </head>
 <body>
     <div id="app" v-cloak>
         <!-- Header -->
-        <header class="header-grid shadow-lg">
+        <header class="header-grid">
             <div class="flex justify-center">
                 <button @click="changeView('guide')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 border-none cursor-pointer">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -84,7 +96,7 @@
         </header>
 
         <main>
-            <!-- 0. Guide & Glossary (完全復元版) -->
+            <!-- 0. Guide & Glossary (内容完全維持・記号左寄せ) -->
             <div v-if="view === 'guide'" class="fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 mb-4">
                     <h2 class="text-xl font-black italic font-serif">Guide & Glossary</h2>
@@ -165,7 +177,7 @@
                     <section>
                         <h3 class="font-black text-red-600 border-l-4 border-red-600 pl-2 uppercase mb-2">5. オフラインでの利用</h3>
                         <div class="card" style="background:#fef2f2; border-color:#fee2e2; color:#991b1b;">
-                            <p class="font-bold">本アプリは電波のない山間部のコースでも動作します。</p>
+                            <p class="font-bold">本アプリはPWA対応です。山間部でも動作します。</p>
                             <p>データはブラウザのLocal Storageに保存されるため、定期的にHistoryタブからCSV出力（バックアップ）を行ってください。</p>
                         </div>
                     </section>
@@ -181,7 +193,7 @@
             </div>
 
             <!-- 1. Settings Screen -->
-            <div v-if="view === 'settings'" class="space-y-6 fade-in">
+            <div v-if="view === 'settings'" class="space-y-6 fade-in text-left">
                 <h2 class="text-xl font-bold border-b pb-1 italic text-gray-800">Round Settings</h2>
                 <div class="space-y-4">
                     <div>
@@ -191,11 +203,11 @@
                     <div class="card text-center space-y-3" style="background:#f9fafb">
                         <input type="file" id="csvFile" @change="importCsv" style="display:none">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
-                            <label for="csvFile" class="bg-black text-white px-2 py-2 rounded text-xs font-bold cursor-pointer transition text-center">Local CSV</label>
+                            <label for="csvFile" class="bg-black text-white py-2 rounded text-xs font-bold cursor-pointer transition text-center">Local CSV</label>
                             <button @click="importFromServer" class="bg-blue-600 text-white px-2 py-2 rounded text-xs font-bold border-none cursor-pointer">Sync Server</button>
                         </div>
                     </div>
-                    <div v-if="courses && courses.length > 0" class="space-y-4">
+                    <div v-if="courses && courses.length > 0" class="space-y-4 text-left">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
                             <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Index</label><select v-model="settings.prefix" class="input-select"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
                             <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Course</label><select v-model="settings.courseId" class="input-select" @change="autoSelectSections"><option value="">Select...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
@@ -217,9 +229,9 @@
                 </div>
             </div>
 
-            <!-- 2. Hole Input Screen (OUT中央・ドロップダウン形式) -->
+            <!-- 2. Hole Input Screen (OUT中央・Shot部分復元・はみ出し修正) -->
             <div v-if="view === 'hole'" class="space-y-4 fade-in">
-                <div class="hole-nav">
+                <div class="card" style="background:#f3f4f6; padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
                     <button @click="prevHole" class="text-xl px-2 border-none bg-transparent" style="cursor:pointer">◀</button>
                     <div style="text-align:center; flex-grow:1">
                         <span style="font-size:10px; font-weight:900; color:#9ca3af; display:block; text-transform:uppercase">{{ currentSectionName }}</span>
@@ -230,12 +242,12 @@
                 </div>
 
                 <div class="card" style="border-color:#bfdbfe">
-                    <div class="flex justify-between items-center mb-4">
-                        <span style="font-size:12px; font-weight:900; color:#1e40af; font-style:italic">SHOT {{ currentShotIdx + 1 }}</span>
-                        <div style="display:flex; gap:4px">
+                    <div class="shot-row">
+                        <span class="shot-label">SHOT {{ currentShotIdx + 1 }}</span>
+                        <div class="shot-btn-container">
                             <button v-for="n in 7" :key="n" @click="selectShot(n-1)" :disabled="isPenaltyStroke(currentHoleIndex, n-1)" 
-                                class="shot-dot" :class="{'shot-dot-active': currentShotIdx === n-1}"
-                                :style="isPenaltyStroke(currentHoleIndex, n-1) ? 'opacity:0.3; background:#f3f4f6' : ''">{{ n }}</button>
+                                class="shot-btn" :class="{'shot-btn-active': currentShotIdx === n-1}"
+                                :style="isPenaltyStroke(currentHoleIndex, n-1) ? 'opacity:0.3; background:#f3f4f6; cursor:default' : ''">{{ n }}</button>
                         </div>
                     </div>
                     
@@ -274,25 +286,26 @@
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
-                    <div class="card text-center" style="background:#f9fafb; margin-bottom:0">
-                        <label style="font-size:10px; font-weight:900; color:#9ca3af; display:block; margin-bottom:8px">SCORE</label>
-                        <div style="display:flex; align-items:center; justify-content:center; gap:16px">
-                            <button @click="updateScore(-1)" style="width:40px; height:40px; border-radius:50%; border:1px solid #d1d5db; background:white; font-size:20px; cursor:pointer">-</button>
-                            <span style="font-size:32px; font-weight:900; min-width:40px">{{ holeResults[currentHoleIndex].score }}</span>
-                            <button @click="updateScore(1)" style="width:40px; height:40px; border-radius:50%; border:1px solid #d1d5db; background:white; font-size:20px; cursor:pointer">+</button>
+                <!-- スコア・パット入力部分 (はみ出し修正版) -->
+                <div class="score-input-grid">
+                    <div class="score-input-card">
+                        <label style="font-size:10px; font-weight:900; color:#9ca3af; display:block; margin-bottom:6px">SCORE</label>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px">
+                            <button @click="updateScore(-1)" class="score-ctrl-btn">-</button>
+                            <span class="score-display">{{ holeResults[currentHoleIndex].score }}</span>
+                            <button @click="updateScore(1)" class="score-ctrl-btn">+</button>
                         </div>
                     </div>
-                    <div class="card text-center" style="background:#f9fafb; margin-bottom:0">
-                        <label style="font-size:10px; font-weight:900; color:#9ca3af; display:block; margin-bottom:8px">PUTTS</label>
-                        <div style="display:flex; align-items:center; justify-content:center; gap:16px">
-                            <button @click="updatePutt(-1)" style="width:40px; height:40px; border-radius:50%; border:1px solid #d1d5db; background:white; font-size:20px; cursor:pointer">-</button>
-                            <span style="font-size:32px; font-weight:900; min-width:40px">{{ holeResults[currentHoleIndex].putts }}</span>
-                            <button @click="updatePutt(1)" style="width:40px; height:40px; border-radius:50%; border:1px solid #d1d5db; background:white; font-size:20px; cursor:pointer">+</button>
+                    <div class="score-input-card">
+                        <label style="font-size:10px; font-weight:900; color:#9ca3af; display:block; margin-bottom:6px">PUTTS</label>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px">
+                            <button @click="updatePutt(-1)" class="score-ctrl-btn">-</button>
+                            <span class="score-display">{{ holeResults[currentHoleIndex].putts }}</span>
+                            <button @click="updatePutt(1)" class="score-ctrl-btn">+</button>
                         </div>
                     </div>
                 </div>
-                <button @click="resetCurrentShot" class="btn-gray" style="margin-top:16px; font-size:14px">修正</button>
+                <button @click="resetCurrentShot" class="btn-gray" style="margin-top:12px; padding:12px; font-size:12px">修正</button>
             </div>
 
             <!-- 3. Card Screen -->
@@ -312,10 +325,10 @@
                                 <td>{{ holeResults[hIdx*9 + i - 1].fw ? '○' : '-' }}</td>
                                 <td style="color:#ef4444; font-weight:900">{{ countStat(hIdx*9 + i - 1, 'ob') || '-' }}</td>
                                 <td style="color:#f59e0b; font-weight:900">{{ countStat(hIdx*9 + i - 1, 'penalty') || '-' }}</td>
-                                <td><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div class="bk-circle" :style="isSandSave(hIdx*9 + i - 1) ? 'background:#fef3c7' : ''">B</div></template><template v-else>-</template></td>
+                                <td><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div class="bk-circle">B</div></template><template v-else>-</template></td>
                                 <td style="padding:4px; font-size:8px; font-style:italic; color:#6b7280; text-align:left">
                                     <div style="display:flex; flex-wrap:wrap; gap:2px">
-                                        <span v-for="s in getFilledShots(hIdx*9 + i - 1)" style="background:#f3f4f6; border:1px solid #e5e7eb; padding:1px 2px; border-radius:2px">{{ s.idx+1 }}:{{ s.club }}{{ s.result }}</span>
+                                        <span v-for="s in getFilledShots(hIdx*9 + i - 1)">{{ s.idx+1 }}:{{ s.club }}{{ s.result }}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -337,11 +350,10 @@
                 </div>
             </div>
 
-            <!-- 4. Stats Analysis Screen (完全復元版) -->
+            <!-- 4. Performance Analysis (完全復元版) -->
             <div v-if="view === 'analysis'" class="fade-in text-left">
                 <h2 class="text-xl font-bold border-b pb-1 italic font-serif">Performance Analysis</h2>
                 
-                <!-- History Summary -->
                 <div v-if="historyStats" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
                     <div class="card text-center" style="margin-bottom:0">
                         <div style="font-size:10px; color:#9ca3af; font-weight:900">平均 SCORE</div>
@@ -356,7 +368,6 @@
                 </div>
 
                 <div v-if="analysis" class="space-y-6 mt-6">
-                    <!-- Score Loss -->
                     <div class="card" style="border-color:#fee2e2">
                         <h3 style="font-size:14px; font-weight:900; color:#dc2626; text-transform:uppercase; margin-bottom:12px; font-style:italic">Score Loss Analysis</h3>
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px">
@@ -375,7 +386,6 @@
                         </div>
                     </div>
 
-                    <!-- Par Performance -->
                     <div class="card">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px">PAR別パフォーマンス</h3>
                         <div v-for="p in [3,4,5]" :key="p" style="border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:12px">
@@ -389,7 +399,6 @@
                         </div>
                     </div>
 
-                    <!-- Skill Categories -->
                     <div class="card">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px; font-style:italic">Skill Categories</h3>
                         <div v-for="(val, label) in analysis.categories" :key="label" style="margin-bottom:16px">
@@ -398,7 +407,6 @@
                         </div>
                     </div>
 
-                    <!-- Club Bias Table -->
                     <div class="card" style="overflow-x:auto; padding:0">
                         <h3 style="font-size:14px; font-weight:900; padding:16px; border-bottom:1px solid #eee; font-style:italic">Club Performance & Bias</h3>
                         <table style="width:100%; font-size:11px; border-collapse:collapse">
@@ -418,7 +426,6 @@
                         </table>
                     </div>
                 </div>
-                <div v-else style="text-align:center; padding:60px 0; color:#9ca3af; font-style:italic">No current round data to analyze.</div>
             </div>
 
             <!-- 5. History Screen -->
@@ -481,7 +488,6 @@
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
                 const filteredCourses = computed(() => { const p = settings.value.prefix === 'index' ? '' : settings.value.prefix; return courses.value.filter(c => c.name.startsWith(p)).sort((a,b) => a.name.localeCompare(b.name, 'ja')); });
                 const selectedCourse = computed(() => courses.value.find(c => c.id === settings.value.courseId));
-                
                 const autoSelectSections = () => { if (!selectedCourse.value) return; const ns = selectedCourse.value.sections.map(s => s.name); if (ns.includes('OUT') && ns.includes('IN')) { settings.value.front = 'OUT'; settings.value.back = 'IN'; } else if (ns.length >= 2) { settings.value.front = ns[0]; settings.value.back = ns[1]; } };
                 const syncSections = (t) => { if (selectedCourse.value && selectedCourse.value.sections.length === 2) { const ns = selectedCourse.value.sections.map(s => s.name); if (t === 'front') settings.value.back = ns.find(n => n !== settings.value.front); else settings.value.front = ns.find(n => n !== settings.value.back); } };
                 const getHolePar = (idx) => { if (!selectedCourse.value || !settings.value.front || !settings.value.back) return 0; const sec = selectedCourse.value.sections.find(s => s.name === (idx < 9 ? settings.value.front : settings.value.back)); return sec ? sec.pars[idx % 9] : 0; };
