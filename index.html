@@ -38,20 +38,21 @@
         .nav-inactive svg { fill: #757575; }
         .nav-disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* コンポーネント */
+        /* カードパーツ */
         .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); text-align: left; }
         .btn-green { width: 100%; background-color: #10b981; color: white; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; font-size: 14px; }
         .btn-gray { width: 100%; background-color: #e5e7eb; color: #4b5563; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; }
         .input-select { width: 100%; border: 1px solid #d1d5db; padding: 10px; border-radius: 8px; background: white; font-weight: bold; height: 42px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
 
-        /* Shot表示部分のデザイン (スクリーンショット再現) */
-        .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .shot-label { font-size: 16px; font-weight: 900; font-style: italic; color: #2563eb; text-transform: uppercase; }
-        .shot-btn-container { display: flex; gap: 6px; }
-        .shot-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; padding: 0; }
+        /* Shot表示部分のデザイン (左右スライド対応) */
+        .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; overflow: hidden; }
+        .shot-label { font-size: 16px; font-weight: 900; font-style: italic; color: #2563eb; text-transform: uppercase; flex-shrink: 0; margin-right: 12px; }
+        .shot-btn-container { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+        .shot-btn-container::-webkit-scrollbar { display: none; } /* スクロールバー非表示 */
+        .shot-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; padding: 0; }
         .shot-btn-active { background: #2563eb; color: white; border-color: #1e40af; }
 
-        /* Score/Putts入力エリア修正 (はみ出し防止) */
+        /* Score/Putts入力エリア (はみ出し防止) */
         .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 8px; text-align: center; }
         .score-ctrl-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -82,8 +83,8 @@
         <!-- Header -->
         <header class="header-grid">
             <div class="flex justify-center">
-                <button @click="changeView('guide')" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 border-none cursor-pointer">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <button @click="changeView('guide')" class="w-8 h-8 flex items-center justify-center bg-transparent border-none cursor-pointer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 </button>
             </div>
             <div class="header-center">
@@ -96,7 +97,7 @@
         </header>
 
         <main>
-            <!-- 0. Guide & Glossary (内容完全維持・記号左寄せ) -->
+            <!-- 0. Guide & Glossary (完全復元版) -->
             <div v-if="view === 'guide'" class="fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 mb-4">
                     <h2 class="text-xl font-black italic font-serif">Guide & Glossary</h2>
@@ -193,11 +194,11 @@
             </div>
 
             <!-- 1. Settings Screen -->
-            <div v-if="view === 'settings'" class="space-y-6 fade-in text-left">
+            <div v-if="view === 'settings'" class="space-y-6 fade-in">
                 <h2 class="text-xl font-bold border-b pb-1 italic text-gray-800">Round Settings</h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Round Date</label>
+                        <label class="block text-[8.5px] font-bold text-gray-400 uppercase tracking-widest mb-1">Round Date</label>
                         <input type="date" v-model="settings.date" class="input-select">
                     </div>
                     <div class="card text-center space-y-3" style="background:#f9fafb">
@@ -207,17 +208,17 @@
                             <button @click="importFromServer" class="bg-blue-600 text-white px-2 py-2 rounded text-xs font-bold border-none cursor-pointer">Sync Server</button>
                         </div>
                     </div>
-                    <div v-if="courses && courses.length > 0" class="space-y-4 text-left">
+                    <div v-if="courses && courses.length > 0" class="space-y-4">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
-                            <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Index</label><select v-model="settings.prefix" class="input-select"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
-                            <div><label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Course</label><select v-model="settings.courseId" class="input-select" @change="autoSelectSections"><option value="">Select...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
+                            <div><label class="block text-[8.5px] font-bold text-gray-400 uppercase mb-1">Index</label><select v-model="settings.prefix" class="input-select"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
+                            <div><label class="block text-[8.5px] font-bold text-gray-400 uppercase mb-1">Course</label><select v-model="settings.courseId" class="input-select" @change="autoSelectSections"><option value="">Select...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
                         </div>
                         <div v-if="selectedCourse" style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
-                            <div><label class="block text-[10px] font-bold text-gray-400 mb-1">Front</label><select v-model="settings.front" class="input-select" @change="syncSections('front')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
-                            <div><label class="block text-[10px] font-bold text-gray-400 mb-1">Back</label><select v-model="settings.back" class="input-select" @change="syncSections('back')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
+                            <div><label class="block text-[8.5px] font-bold text-gray-400 mb-1">Front</label><select v-model="settings.front" class="input-select" @change="syncSections('front')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
+                            <div><label class="block text-[8.5px] font-bold text-gray-400 mb-1">Back</label><select v-model="settings.back" class="input-select" @change="syncSections('back')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase">Selected Clubs</label>
+                            <label class="block text-[8.5px] font-bold text-gray-400 uppercase">Selected Clubs</label>
                             <div style="display:flex; flex-wrap:wrap; gap:4px">
                                 <button v-for="c in clubMaster" :key="c" @click="toggleClub(c)" 
                                     :style="settings.selectedClubs.includes(c) ? 'background:#10b981; color:white; border-color:#059669' : 'background:#f9fafb; color:#9ca3af; border:1px solid #e5e7eb'"
@@ -229,7 +230,7 @@
                 </div>
             </div>
 
-            <!-- 2. Hole Input Screen (OUT中央・Shot部分復元・はみ出し修正) -->
+            <!-- 2. Hole Input Screen -->
             <div v-if="view === 'hole'" class="space-y-4 fade-in">
                 <div class="card" style="background:#f3f4f6; padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
                     <button @click="prevHole" class="text-xl px-2 border-none bg-transparent" style="cursor:pointer">◀</button>
@@ -286,7 +287,6 @@
                     </div>
                 </div>
 
-                <!-- スコア・パット入力部分 (はみ出し修正版) -->
                 <div class="score-input-grid">
                     <div class="score-input-card">
                         <label style="font-size:10px; font-weight:900; color:#9ca3af; display:block; margin-bottom:6px">SCORE</label>
@@ -350,7 +350,7 @@
                 </div>
             </div>
 
-            <!-- 4. Performance Analysis (完全復元版) -->
+            <!-- 4. Performance Analysis -->
             <div v-if="view === 'analysis'" class="fade-in text-left">
                 <h2 class="text-xl font-bold border-b pb-1 italic font-serif">Performance Analysis</h2>
                 
@@ -488,6 +488,7 @@
                 const prefixes = computed(() => Array.from(new Set(courses.value.map(c => c.name.charAt(0)))).sort());
                 const filteredCourses = computed(() => { const p = settings.value.prefix === 'index' ? '' : settings.value.prefix; return courses.value.filter(c => c.name.startsWith(p)).sort((a,b) => a.name.localeCompare(b.name, 'ja')); });
                 const selectedCourse = computed(() => courses.value.find(c => c.id === settings.value.courseId));
+                
                 const autoSelectSections = () => { if (!selectedCourse.value) return; const ns = selectedCourse.value.sections.map(s => s.name); if (ns.includes('OUT') && ns.includes('IN')) { settings.value.front = 'OUT'; settings.value.back = 'IN'; } else if (ns.length >= 2) { settings.value.front = ns[0]; settings.value.back = ns[1]; } };
                 const syncSections = (t) => { if (selectedCourse.value && selectedCourse.value.sections.length === 2) { const ns = selectedCourse.value.sections.map(s => s.name); if (t === 'front') settings.value.back = ns.find(n => n !== settings.value.front); else settings.value.front = ns.find(n => n !== settings.value.back); } };
                 const getHolePar = (idx) => { if (!selectedCourse.value || !settings.value.front || !settings.value.back) return 0; const sec = selectedCourse.value.sections.find(s => s.name === (idx < 9 ? settings.value.front : settings.value.back)); return sec ? sec.pars[idx % 9] : 0; };
