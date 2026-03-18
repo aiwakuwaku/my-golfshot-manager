@@ -1,10 +1,9 @@
-const CACHE_NAME = 'golf-mgr-v101-offline'; // バージョンを上げる
+const CACHE_NAME = 'golf-mgr-v501-offline';
 const assets = [
   './',
   './index.html',
   './manifest.json',
-  // アイコンファイルが実際に存在することを確認してください。なければリストから消すか作成してください。
-  './icon-192.png', 
+  './icon-192.png',
   './icon-512.png',
   'https://unpkg.com/vue@3/dist/vue.global.js',
   'https://cdn.tailwindcss.com',
@@ -14,7 +13,6 @@ const assets = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(c => {
-      // 途中で失敗しても残りをキャッシュできるように一つずつ追加する
       return Promise.allSettled(assets.map(url => c.add(url)));
     })
   );
@@ -31,7 +29,6 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // 外部CDNも含めてキャッシュから優先的に読み込む
   e.respondWith(
     caches.match(e.request).then(res => res || fetch(e.request))
   );
