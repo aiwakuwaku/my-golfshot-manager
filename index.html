@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="icon-512.png">
     <link rel="manifest" href="manifest.json">
 
-    <!-- ライブラリ (sw.jsでキャッシュ) -->
+    <!-- ライブラリ (sw.jsによりキャッシュされます) -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
@@ -20,18 +20,18 @@
     <style>
         [v-cloak] { display: none; }
         
-        /* === オフライン動作厳守：Tailwindなしでも動作するCSS === */
+        /* === オフライン完全動作のための内部デザイン定義 === */
         body { margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, sans-serif; color: #111827; }
         #app { max-width: 448px; margin: 0 auto; min-height: 100vh; background-color: white; display: flex; flex-direction: column; position: relative; }
         main { flex-grow: 1; padding: 16px; padding-bottom: 90px; overflow-y: auto; text-align: left; }
 
         /* ヘッダー・相対スコア */
-        .header-grid { display: grid; grid-template-columns: 60px 1fr 60px; align-items: center; height: 64px; background-color: black; color: white; position: sticky; top: 0; z-index: 40; }
+        .header-grid { display: grid; grid-template-columns: 60px 1fr 60px; align-items: center; height: 64px; background-color: black; color: white; position: sticky; top: 0; z-index: 100; }
         .header-center { position: relative; display: flex; align-items: center; justify-content: center; }
         .relative-score-box { position: absolute; left: 100%; margin-left: 8px; font-weight: 900; font-size: 16px; white-space: nowrap; }
 
         /* ナビゲーション */
-        .nav-bar { background-color: #121212; height: 70px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #222; position: fixed; bottom: 0; width: 100%; max-width: 448px; z-index: 50; }
+        .nav-bar { background-color: #121212; height: 70px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #222; position: fixed; bottom: 0; width: 100%; max-width: 448px; z-index: 100; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #757575; border: none; background: none; font-size: 10px; font-weight: 500; cursor: pointer; }
         .nav-active { color: #00e676; }
         .nav-active svg { fill: #00e676; }
@@ -44,11 +44,12 @@
         .btn-gray { width: 100%; background-color: #e5e7eb; color: #4b5563; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; }
         .input-select { width: 100%; border: 1px solid #d1d5db; padding: 10px; border-radius: 8px; background: white; font-weight: bold; height: 42px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
 
-        /* ホール移動ナビ (修正ポイント: 確実に横並びにする) */
+        /* ホール移動ナビ (左右ボタンの配置修正) */
         .hole-nav { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; background-color: #f3f4f6; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 16px; }
         .hole-nav-btn { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; font-size: 20px; flex-shrink: 0; }
+        .hole-nav-center { text-align: center; flex-grow: 1; }
 
-        /* Shot表示部分のデザイン (左右スライド対応) */
+        /* Shot表示部分のデザイン (左右スライド) */
         .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; overflow: hidden; }
         .shot-label { font-size: 16px; font-weight: 900; font-style: italic; color: #2563eb; text-transform: uppercase; flex-shrink: 0; margin-right: 8px; }
         .shot-btn-container { display: flex; gap: 6px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; padding: 2px 0; scrollbar-width: none; }
@@ -56,7 +57,7 @@
         .shot-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
         .shot-btn-active { background: #2563eb; color: white; border-color: #1e40af; }
 
-        /* Score/Putts入力エリア (はみ出し防止) */
+        /* Score/Putts入力エリア (はみ出し修正) */
         .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 8px; text-align: center; }
         .score-ctrl-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -76,7 +77,7 @@
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
         
-        /* ユーティリティ */
+        /* 共通ユーティリティ */
         .flex { display: flex; }
         .justify-between { justify-content: space-between; }
         .items-center { align-items: center; }
@@ -87,14 +88,16 @@
         .fade-in { animation: fadeIn 0.2s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .space-y-6 > * + * { margin-top: 24px; }
+        .space-y-4 > * + * { margin-top: 16px; }
         .space-y-3 > * + * { margin-top: 12px; }
         .border-l-4 { border-left: 4px solid; }
+        .setting-label { display: block; font-size: 8.5px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
     </style>
 </head>
 <body>
     <div id="app" v-cloak>
-        <!-- Header -->
-        <header class="header-grid">
+        <!-- Header (相対スコア位置修正) -->
+        <header class="header-grid shadow-lg">
             <div class="flex justify-center">
                 <button @click="changeView('guide')" class="w-8 h-8 flex items-center justify-center bg-transparent border-none cursor-pointer">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12" y1="17" y2="17.01"></line></svg>
@@ -120,7 +123,7 @@
                 <div class="space-y-6 text-gray-700" style="font-size:12px; line-height:1.6;">
                     <section class="space-y-3">
                         <h3 class="font-black text-blue-600 border-l-4 border-blue-600 pl-2 uppercase">1. 基本操作の流れ</h3>
-                        <div class="card space-y-3">
+                        <div class="card space-y-3" style="padding: 16px;">
                             <div class="flex gap-3">
                                 <span class="bg-blue-100 text-blue-700 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center font-bold">1</span>
                                 <div><p class="font-bold text-gray-900">準備 (Set)</p><p>コース選択と14本のクラブ登録。自動保存機能により中断も可能です。</p></div>
@@ -138,16 +141,16 @@
 
                     <section class="space-y-3">
                         <h3 class="font-black text-orange-600 border-l-4 border-orange-600 pl-2 uppercase">2. ショット判定の定義</h3>
-                        <div class="card space-y-4">
-                            <div class="flex gap-4 items-start">
+                        <div class="card space-y-4" style="padding: 16px;">
+                            <div class="flex gap-4">
                                 <div class="w-10 h-10 rounded-full bg-gray-800 text-white flex-shrink-0 flex items-center justify-center font-bold text-lg">○</div>
                                 <div><p class="font-bold text-gray-900" style="text-decoration:underline">成功：狙い通り</p><p class="text-gray-500">フェアウェイ、グリーン、狙ったエリアに乗った良好な状態。</p></div>
                             </div>
-                            <div class="flex gap-4 pt-4" style="border-top:1px solid #eee">
+                            <div class="flex gap-4 pt-4 border-t" style="border-top:1px solid #eee">
                                 <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-800 flex-shrink-0 flex items-center justify-center font-bold text-lg">△</div>
                                 <div><p class="font-bold text-gray-900" style="text-decoration:underline">許容：リカバリー可</p><p class="text-gray-500">ラフやカラー。方向（L/R/F/B）を記録してください。</p></div>
                             </div>
-                            <div class="flex gap-4 pt-4" style="border-top:1px solid #eee">
+                            <div class="flex gap-4 pt-4 border-t" style="border-top:1px solid #eee">
                                 <div class="w-10 h-10 rounded-full bg-red-600 text-white flex-shrink-0 flex items-center justify-center font-bold text-lg">☓</div>
                                 <div><p class="font-bold text-gray-900" style="text-decoration:underline">失敗：ミスショット</p><p class="text-gray-500">OB、ペナルティ、林など確実に1打以上をロスする状態。</p></div>
                             </div>
@@ -156,20 +159,20 @@
 
                     <section class="space-y-3">
                         <h3 class="font-black text-purple-600 border-l-4 border-purple-600 pl-2 uppercase">3. 特殊ルールと自動計算</h3>
-                        <div class="card" style="background-color:#faf5ff; border-color:#f3e8ff; color:#581c87;">
+                        <div class="card" style="background:#faf5ff; border-color:#f3e8ff; color:#581c87; padding: 16px;">
                             <p class="font-bold mb-1">【罰打の自動処理】</p>
-                            <p class="mb-3">「OB」は自動2罰打、「PN」は1罰打。次打は自動スキップされます。</p>
-                            <p class="font-bold mb-1 pt-2" style="border-top:1px solid #e9d5ff">【整合性チェック】</p>
+                            <p class="mb-2">「OB」は自動2罰打、「PN」は1罰打。次打は自動スキップされます。</p>
+                            <p class="font-bold mb-1 pt-2 border-t" style="border-top:1px solid #e9d5ff">【整合性チェック】</p>
                             <p>「ショット記録＋パット」の合計とスコア入力値が不一致だとエラーになります。</p>
                         </div>
                     </section>
 
                     <section class="space-y-3">
                         <h3 class="font-black text-green-600 border-l-4 border-green-600 pl-2 uppercase">4. 用語と記号の解説</h3>
-                        <div class="card space-y-6">
+                        <div class="card space-y-6" style="padding: 16px;">
                             <div>
                                 <h4 class="font-bold text-green-700 border-b mb-3" style="border-bottom:1px solid #eee">スコアカードの記号</h4>
-                                <ul class="text-left" style="list-style:none; padding:0">
+                                <ul style="list-style:none; padding:0">
                                     <li class="glossary-item"><span class="glossary-dot">•</span><div><span class="text-red-600 font-bold">◯囲みスコア:</span> バーディ以下</div></li>
                                     <li class="glossary-item"><span class="glossary-dot">•</span><div><span class="text-blue-600 font-bold">△囲みスコア:</span> ボギー</div></li>
                                     <li class="glossary-item"><span class="glossary-dot">•</span><div><span class="text-gray-900 font-bold">□囲みスコア:</span> ダブルボギー以上</div></li>
@@ -177,7 +180,7 @@
                                     <li class="glossary-item"><span class="glossary-dot">•</span><div><span class="font-bold italic text-gray-800">Bの◯囲み:</span> <span class="font-bold text-gray-800">Sand Save</span> 成功。バンカーから2打以内。</div></li>
                                 </ul>
                             </div>
-                            <div class="pt-4" style="border-top:1px solid #eee">
+                            <div class="pt-4 border-t" style="border-top:1px solid #eee">
                                 <h4 class="font-bold text-green-700 border-b mb-2 uppercase" style="font-size:10px">統計メトリクス</h4>
                                 <ul style="list-style:none; padding:0">
                                     <li class="glossary-item"><div><span class="font-black">GIR:</span> 規定打数マイナス2打以下で乗せた割合。</div></li>
@@ -190,17 +193,17 @@
 
                     <section class="space-y-3">
                         <h3 class="font-black text-red-600 border-l-4 border-red-600 pl-2 uppercase">5. オフラインでの利用</h3>
-                        <div class="card" style="background:#fef2f2; border-color:#fee2e2; color:#991b1b;">
-                            <p class="font-bold mb-2">本アプリは電波のない山間部のコースでも動作します。</p>
-                            <p>データはブラウザのLocal Storageに保存されるため、定期的にHistoryタブからCSV出力（バックアップ）を行ってください。</p>
+                        <div class="card" style="background:#fef2f2; border-color:#fee2e2; color:#991b1b; padding: 16px;">
+                            <p class="font-bold">本アプリはPWA対応です。山間部のコースでも動作します。</p>
+                            <p>データはブラウザに保存されるため、定期的にHistoryタブからCSV出力（バックアップ）を行ってください。</p>
                         </div>
                     </section>
 
                     <section class="space-y-3">
                         <h3 class="font-black text-gray-600 border-l-4 border-gray-600 pl-2 uppercase">6. 中断と過去データの確認</h3>
-                        <div class="card" style="background:#f9fafb; font-size:11px;">
+                        <div class="card" style="background:#f9fafb; font-size:11px; padding: 16px;">
                             <p class="font-bold text-gray-900 mb-1">【入力途中に過去データを見る】</p>
-                            <p>1. Cardタブで「Save Round」をして現在データを一時保存。<br>2. Histで過去データを確認。<br>3. 入力再開はHistから保存したデータを読み込みます。</p>
+                            <p>1. Cardタブで「Save Round」をして現在データを一時保存。<br>2. Histで過去データを確認。<br>3. 入力再開はHistで保存したデータを選び読み込みます。</p>
                         </div>
                     </section>
                 </div>
@@ -211,27 +214,27 @@
                 <h2 class="text-xl font-bold border-b pb-1 italic text-gray-800">Round Settings</h2>
                 <div class="space-y-4">
                     <div>
-                        <label style="display:block; font-size:8.5px; font-weight:700; color:#9ca3af; text-transform:uppercase; margin-bottom:4px">Round Date</label>
+                        <label class="setting-label">Round Date</label>
                         <input type="date" v-model="settings.date" class="input-select">
                     </div>
-                    <div class="card text-center" style="background:#f9fafb">
+                    <div class="card text-center" style="background:#f9fafb; padding: 16px;">
                         <input type="file" id="csvFile" @change="importCsv" style="display:none">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
-                            <label for="csvFile" class="bg-black text-white py-2 rounded text-xs font-bold cursor-pointer text-center">Local CSV</label>
+                            <label for="csvFile" class="bg-black text-white py-2 rounded text-xs font-bold cursor-pointer text-center" style="display:flex;align-items:center;justify-content:center">Local CSV</label>
                             <button @click="importFromServer" class="bg-blue-600 text-white py-2 rounded text-xs font-bold border-none cursor-pointer">Sync Server</button>
                         </div>
                     </div>
                     <div v-if="courses && courses.length > 0" class="space-y-4">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
-                            <div><label style="display:block; font-size:8.5px; font-weight:700; color:#9ca3af; text-transform:uppercase; margin-bottom:4px">Index</label><select v-model="settings.prefix" class="input-select"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
-                            <div><label style="display:block; font-size:8.5px; font-weight:700; color:#9ca3af; text-transform:uppercase; margin-bottom:4px">Course</label><select v-model="settings.courseId" class="input-select" @change="autoSelectSections"><option value="">Select...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
+                            <div><label class="setting-label">Index</label><select v-model="settings.prefix" class="input-select"><option value="index">index</option><option v-for="p in prefixes" :key="p" :value="p">{{ p }}</option></select></div>
+                            <div><label class="setting-label">Course</label><select v-model="settings.courseId" class="input-select" @change="autoSelectSections"><option value="">Select...</option><option v-for="c in filteredCourses" :key="c.id" :value="c.id">{{ displayName(c.name) }}</option></select></div>
                         </div>
                         <div v-if="selectedCourse" style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
-                            <div><label style="display:block; font-size:8.5px; font-weight:700; color:#9ca3af; text-transform:uppercase; margin-bottom:4px">Front</label><select v-model="settings.front" class="input-select" @change="syncSections('front')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
-                            <div><label style="display:block; font-size:8.5px; font-weight:700; color:#9ca3af; text-transform:uppercase; margin-bottom:4px">Back</label><select v-model="settings.back" class="input-select" @change="syncSections('back')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
+                            <div><label class="setting-label">Front</label><select v-model="settings.front" class="input-select" @change="syncSections('front')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
+                            <div><label class="setting-label">Back</label><select v-model="settings.back" class="input-select" @change="syncSections('back')"><option v-for="sec in selectedCourse.sections" :key="sec.name" :value="sec.name">{{ sec.name }}</option></select></div>
                         </div>
                         <div class="space-y-2">
-                            <label style="display:block; font-size:8.5px; font-weight:700; color:#9ca3af; text-transform:uppercase; margin-bottom:4px">Selected Clubs</label>
+                            <label class="setting-label">Selected Clubs</label>
                             <div style="display:flex; flex-wrap:wrap; gap:4px">
                                 <button v-for="c in clubMaster" :key="c" @click="toggleClub(c)" 
                                     :style="settings.selectedClubs.includes(c) ? 'background:#10b981; color:white; border-color:#059669' : 'background:#f9fafb; color:#9ca3af; border:1px solid #e5e7eb'"
@@ -243,11 +246,11 @@
                 </div>
             </div>
 
-            <!-- 2. Hole Input Screen -->
+            <!-- 2. Hole Input Screen (ホールナビ修正版) -->
             <div v-if="view === 'hole'" class="space-y-4 fade-in">
                 <div class="hole-nav">
                     <button @click="prevHole" class="hole-nav-btn">◀</button>
-                    <div style="text-align:center; flex-grow:1">
+                    <div class="hole-nav-center">
                         <span style="font-size:10px; font-weight:900; color:#9ca3af; display:block; text-transform:uppercase">{{ currentSectionName }}</span>
                         <span class="font-black italic text-lg">Hole {{ currentHoleNum }}</span>
                         <span style="background:black; color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:8px; font-style:italic">PAR {{ currentPar }}</span>
@@ -255,7 +258,7 @@
                     <button @click="nextHole" class="hole-nav-btn">▶</button>
                 </div>
 
-                <div class="card" style="border-color:#bfdbfe">
+                <div class="card" style="border-color:#bfdbfe; padding: 16px;">
                     <div class="shot-row">
                         <span class="shot-label">SHOT {{ currentShotIdx + 1 }}</span>
                         <div class="shot-btn-container">
@@ -265,7 +268,7 @@
                         </div>
                     </div>
                     
-                    <div class="mb-4">
+                    <div class="mb-4" style="margin-bottom:16px">
                         <select v-model="currentShotData.club" class="input-select">
                             <option value="" disabled selected>Select Club</option>
                             <option v-for="c in orderedClubs" :key="c" :value="c">{{ c }}</option>
@@ -273,12 +276,12 @@
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <div class="flex gap-1">
+                        <div class="flex gap-2">
                             <button v-for="r in ['○', '△', '☓']" :key="r" @click="setResult(r)" 
                                 :style="currentShotData.result === r ? 'background:#1f2937; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
                                 style="width:44px; height:40px; border-radius:8px; font-weight:bold; cursor:pointer">{{ r }}</button>
                         </div>
-                        <div class="flex gap-1">
+                        <div class="flex gap-2">
                             <button @click="holeResults[currentHoleIndex].fw = !holeResults[currentHoleIndex].fw" 
                                 :style="holeResults[currentHoleIndex].fw ? 'background:#059669; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
                                 style="padding:0 12px; height:40px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer">Fw</button>
@@ -288,12 +291,12 @@
                         </div>
                     </div>
 
-                    <div v-if="currentShotData.result === '△'" class="flex gap-1 mt-3" style="margin-top:12px">
+                    <div v-if="currentShotData.result === '△'" class="flex gap-2" style="margin-top:12px">
                         <button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" 
                             :style="currentShotData.direction === d ? 'background:#3b82f6; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
                             style="flex:1; height:36px; border-radius:4px; font-weight:900; font-size:12px; cursor:pointer">{{ d }}</button>
                     </div>
-                    <div v-if="currentShotData.result === '☓'" class="flex gap-1 mt-3" style="margin-top:12px">
+                    <div v-if="currentShotData.result === '☓'" class="flex gap-2" style="margin-top:12px">
                         <button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" 
                             :style="currentShotData.errorType === e ? 'background:#dc2626; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
                             style="flex:1; height:36px; border-radius:4px; font-weight:900; font-size:12px; cursor:pointer">{{ e }}</button>
@@ -341,7 +344,7 @@
                                 <td><template v-if="countStat(hIdx*9 + i - 1, 'bunker') > 0"><div class="bk-circle">B</div></template><template v-else>-</template></td>
                                 <td style="padding:4px; font-size:8px; font-style:italic; color:#6b7280; text-align:left">
                                     <div style="display:flex; flex-wrap:wrap; gap:2px">
-                                        <span v-for="s in getFilledShots(hIdx*9 + i - 1)">{{ s.idx+1 }}:{{ s.club }}{{ s.result }}</span>
+                                        <span v-for="s in getFilledShots(hIdx*9 + i - 1)" style="background:#f3f4f6; border:1px solid #e5e7eb; padding:1px 2px; border-radius:2px">{{ s.idx+1 }}:{{ s.club }}{{ s.result }}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -349,7 +352,7 @@
                     </div>
                 </div>
 
-                <div class="card" style="background:black; color:white; text-align:center">
+                <div class="card" style="background:black; color:white; text-align:center; padding: 16px;">
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr">
                         <div><div style="font-size:10px; color:#9ca3af; font-weight:bold">PAR</div><div style="font-size:24px; font-weight:900">{{ grandTotals.par }}</div></div>
                         <div><div style="font-size:10px; color:#93c5fd; font-weight:bold">SCORE</div><div style="font-size:24px; font-weight:900; color:#4ade80; font-style:italic">{{ totalScoreDisplay }}</div></div>
@@ -363,23 +366,25 @@
                 </div>
             </div>
 
-            <!-- 4. Performance Analysis (完全復元) -->
+            <!-- 4. Performance Analysis (完全復元版) -->
             <div v-if="view === 'analysis'" class="fade-in text-left">
                 <h2 class="text-xl font-bold border-b pb-1 italic font-serif">Performance Analysis</h2>
+                
                 <div v-if="historyStats" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px">
-                    <div class="card text-center" style="margin-bottom:0">
+                    <div class="card text-center" style="margin-bottom:0; padding: 16px;">
                         <div style="font-size:10px; color:#9ca3af; font-weight:900">平均 SCORE</div>
                         <div style="font-size:24px; font-weight:900; color:#2563eb; font-style:italic">{{ historyStats.avgScore }}</div>
                         <div style="font-size:8px; color:#9ca3af; font-weight:bold">Best:{{ historyStats.bestScore }} / Worst:{{ historyStats.worstScore }}</div>
                     </div>
-                    <div class="card text-center" style="margin-bottom:0">
+                    <div class="card text-center" style="margin-bottom:0; padding: 16px;">
                         <div style="font-size:10px; color:#9ca3af; font-weight:900">平均 PUTTS</div>
                         <div style="font-size:24px; font-weight:900; font-style:italic">{{ historyStats.avgPutts }}</div>
                         <div style="font-size:8px; color:#f59e0b; font-weight:bold; font-style:italic">3P+ 平均: {{ historyStats.avgThreePutts }}回</div>
                     </div>
                 </div>
+
                 <div v-if="analysis" class="space-y-6 mt-6">
-                    <div class="card" style="border-color:#fee2e2">
+                    <div class="card" style="border-color:#fee2e2; padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; color:#dc2626; text-transform:uppercase; margin-bottom:12px; font-style:italic">Score Loss Analysis</h3>
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px">
                             <div style="background:#fef2f2; padding:12px; border-radius:8px; text-align:center">
@@ -396,7 +401,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card">
+
+                    <div class="card" style="padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px">PAR別パフォーマンス</h3>
                         <div v-for="p in [3,4,5]" :key="p" style="border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:12px">
                             <div style="font-size:10px; font-weight:900; color:#9ca3af; margin-bottom:4px">PAR {{ p }} HOLES</div>
@@ -408,13 +414,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card">
+
+                    <div class="card" style="padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px; font-style:italic">Skill Categories</h3>
                         <div v-for="(val, label) in analysis.categories" :key="label" style="margin-bottom:16px">
                             <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:900; text-transform:uppercase"><span>{{ label }}</span><span>{{ val }}%</span></div>
                             <div class="progress-bar"><div class="progress-fill" :style="{ width: val + '%', backgroundColor: val > 60 ? '#10b981' : val > 40 ? '#fbbf24' : '#ef4444' }"></div></div>
                         </div>
                     </div>
+
                     <div class="card" style="overflow-x:auto; padding:0">
                         <h3 style="font-size:14px; font-weight:900; padding:16px; border-bottom:1px solid #eee; font-style:italic">Club Performance & Bias</h3>
                         <table style="width:100%; font-size:11px; border-collapse:collapse">
@@ -442,7 +450,8 @@
                     <h2 class="text-xl font-bold italic font-serif">Round History</h2>
                     <button @click="exportAllToCSV" v-if="savedRounds.length" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-bold border-none cursor-pointer">Export CSV</button>
                 </div>
-                <div v-for="(round, index) in savedRounds" :key="index" class="card flex justify-between items-center">
+                <div v-if="!savedRounds.length" style="text-align:center; padding:60px 0; color:#9ca3af; font-style:italic">No rounds saved yet.</div>
+                <div v-for="(round, index) in savedRounds" :key="index" class="card flex justify-between items-center" style="padding: 16px;">
                     <div @click="loadRoundData(round)" style="flex-grow:1; cursor:pointer">
                         <div style="font-size:10px; color:#9ca3af; font-weight:900; font-style:italic">{{ round.date }}</div>
                         <div style="font-size:14px; font-weight:900; color:#1f2937">{{ round.course }}</div>
