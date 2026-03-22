@@ -18,68 +18,47 @@
 
     <style>
         [v-cloak] { display: none; }
-        
-        /* === オフライン完全対応：Tailwindに依存しないスタイル定義 === */
         body { margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, sans-serif; color: #111827; }
         #app { max-width: 448px; margin: 0 auto; min-height: 100vh; background-color: white; display: flex; flex-direction: column; position: relative; }
         main { flex-grow: 1; padding: 16px; padding-bottom: 100px; overflow-y: auto; text-align: left; }
-
-        /* ヘッダー・相対スコア */
         .header-grid { display: grid; grid-template-columns: 60px 1fr 60px; align-items: center; height: 64px; background-color: black; color: white; position: sticky; top: 0; z-index: 100; }
         .header-center { position: relative; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
         .relative-score-box { position: absolute; left: 100%; margin-left: 8px; font-weight: 900; font-size: 16px; white-space: nowrap; }
         .guide-btn { background: transparent !important; border: none !important; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; width: 44px; height: 44px; }
-
-        /* ナビゲーション */
         .nav-bar { background-color: #121212; height: 75px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #222; position: fixed; bottom: 0; width: 100%; max-width: 448px; z-index: 100; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #757575; border: none; background: none; font-size: 10px; font-weight: 600; cursor: pointer; }
         .nav-active { color: #00e676; }
         .nav-active svg { fill: #00e676; }
         .nav-inactive svg { fill: #757575; }
-
-        /* カード・グリッド */
         .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .setting-label { display: block; font-size: 8.5px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
-        .input-box { width: 100%; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; background: white; font-weight: bold; height: 48px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
-
-        /* ホールナビ (OUT/IN中央配置修正) */
+        .input-box { width: 100%; border: 1px solid #d1d5db; padding: 8px 12px; border-radius: 10px; background: white; font-weight: bold; height: 44px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
         .hole-nav { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 16px; width: 100%; }
         .hole-nav-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; font-size: 24px; }
         .hole-nav-center { flex: 1; text-align: center; }
-
-        /* ショット選択 (左右スライド) */
         .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; overflow: hidden; }
         .shot-label { font-size: 16px; font-weight: 900; font-style: italic; color: #2563eb; text-transform: uppercase; flex-shrink: 0; }
         .shot-scroll-container { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; padding: 2px 0; scrollbar-width: none; }
         .shot-scroll-container::-webkit-scrollbar { display: none; }
-        .shot-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
+        .shot-btn { width: 33px; height: 33px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
         .shot-btn-active { background: #2563eb; color: white; border-color: #1e40af; }
-
-        /* スコア入力グリッド (Putts枠はみ出し修正) */
         .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
         .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 2px; text-align: center; }
         .score-ctrl { display: flex; align-items: center; justify-content: center; gap: 8px; }
         .score-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .score-val { font-size: 30px; font-weight: 900; min-width: 36px; }
-
-        /* スコア記号 */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; font-size: 14px; }
         .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } 
         .score-square { border: 1.5px solid #475569; color: #1e293b; } 
         .score-triangle { position: relative; color: #2563eb; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
         .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #10b981; font-weight: bold; }
         .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
-
-        /* Guide用 */
         .glossary-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; text-align: left; }
         .glossary-dot { color: #374151; flex-shrink: 0; padding-top: 2px; font-weight: bold; }
         .section-header { border-left: 4px solid; padding-left: 10px; font-weight: 900; font-size: 15px; margin-bottom: 12px; }
         .guide-box { border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; margin-bottom: 16px; background: white; }
-
-        /* 統計プログレスバー */
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
-
         .flex { display: flex; } .justify-between { justify-content: space-between; } .items-center { align-items: center; }
         .gap-2 { gap: 8px; } .gap-4 { gap: 16px; } .text-center { text-align: center; }
         .fade-in { animation: fadeIn 0.2s ease-in; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -89,7 +68,6 @@
 </head>
 <body>
     <div id="app" v-cloak>
-        <!-- Header -->
         <header class="header-grid">
             <div class="flex justify-center">
                 <button @click="changeView('guide')" class="guide-btn">
@@ -112,17 +90,15 @@
                     <h1 style="font-family: serif; font-style: italic; font-weight: 900; font-size: 28px; margin: 0;">Guide & Glossary</h1>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" style="color:#2563eb; font-weight:bold; border:none; background:none; font-size:18px; cursor:pointer">Close</button>
                 </div>
-
                 <div class="space-y-6 text-gray-800" style="font-size:12.5px; line-height:1.6;">
                     <section>
                         <div class="section-header" style="border-color: #2563eb; color: #2563eb;">基本操作の流れ</div>
                         <div class="guide-box">
                             <p><strong>1.準備 (Set)</strong><br>コースデータをインポートし、クラブを選択します。中断しても自動保存されます。</p>
                             <p style="margin-top:10px"><strong>2.ショット記録 (Input)</strong><br>各ホールでクラブと結果を選択。方向(LRFB)を記録するとミス傾向が分析されます。</p>
-                            <p style="margin-top:10px"><strong>3.スコア確定 (Card)</strong><br>パット数とトータルを入力。「実打数＋罰打＋パット」の不整合は警告されます。</p>
+                            <p style="margin-top:10px"><strong>3.スコア確定 (Card)</strong><br>スコア、パット数、FWキープ、OB、バンカーの各項目を確認して修正する場合はそのホールの番号をタップするとInput画面になるので修正してください。</p>
                         </div>
                     </section>
-
                     <section>
                         <div class="section-header" style="border-color: #f97316; color: #f97316;">ショット判定の定義</div>
                         <div class="guide-box">
@@ -140,7 +116,6 @@
                             </div>
                         </div>
                     </section>
-
                     <section>
                         <div class="section-header" style="border-color: #10b981; color: #10b981;">用語と記号の解説</div>
                         <div class="guide-box">
@@ -160,14 +135,12 @@
                             </ul>
                         </div>
                     </section>
-
                     <section>
                         <div class="section-header" style="border-color: #8b5cf6; color: #8b5cf6;">特殊ルール</div>
                         <div class="guide-box" style="background:#faf5ff; color:#581c87;">
                             <p>「OB」または「PN」を選択すると、罰打を考慮し、次の1打分は自動的に罰打としてスキップされます。1打目OBなら次は3打目から入力します。</p>
                         </div>
                     </section>
-
                     <section>
                         <div class="section-header" style="border-color: #2563eb; color: #2563eb;">中断して過去のデータを見るには</div>
                         <div class="guide-box" style="background:#eff6ff; color:#1e40af;">
@@ -176,7 +149,6 @@
                             <p style="margin-top:8px">3. Round Historyで保存したデータを読み込み続きから入力する。</p>
                         </div>
                     </section>
-
                     <section>
                         <div class="section-header" style="border-color: #10b981; color: #10b981;">オフラインでの利用</div>
                         <div class="guide-box" style="background:#f0fdf4; color:#166534;">
@@ -232,7 +204,6 @@
                     </div>
                     <button @click="nextHole" class="hole-nav-btn">▶</button>
                 </div>
-
                 <div class="card" style="border-color:#bfdbfe">
                     <div class="shot-row">
                         <span class="shot-label">SHOT {{ currentShotIdx + 1 }}</span>
@@ -252,18 +223,17 @@
                         <div class="flex gap-2">
                             <button v-for="r in ['○', '△', '☓']" :key="r" @click="setResult(r)" 
                                 :style="currentShotData.result === r ? 'background:#1f2937; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
-                                style="width:46px; height:46px; border-radius:10px; font-weight:bold; cursor:pointer">{{ r }}</button>
+                                style="width:42px; height:42px; border-radius:10px; font-weight:bold; cursor:pointer">{{ r }}</button>
                         </div>
                         <div class="flex gap-2">
                             <button @click="holeResults[currentHoleIndex].fw = !holeResults[currentHoleIndex].fw" 
                                 :style="holeResults[currentHoleIndex].fw ? 'background:#059669; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
-                                style="padding:0 14px; height:46px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Fw</button>
+                                style="padding:0 14px; height:42px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Fw</button>
                             <button @click="currentShotData.bunker = !currentShotData.bunker" 
                                 :style="currentShotData.bunker ? 'background:#d97706; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
-                                style="padding:0 14px; height:46px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Bk</button>
+                                style="padding:0 14px; height:42px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Bk</button>
                         </div>
                     </div>
-                    <!-- 方向/種類選択 -->
                     <div v-if="currentShotData.result === '△'" class="flex gap-2 mt-4">
                         <button v-for="d in ['L','R','F','B']" :key="d" @click="currentShotData.direction = d" :style="currentShotData.direction === d ? 'background:#3b82f6; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'" style="flex:1; height:38px; border-radius:6px; font-weight:900; font-size:13px; cursor:pointer">{{ d }}</button>
                     </div>
@@ -271,7 +241,6 @@
                         <button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :style="currentShotData.errorType === e ? 'background:#dc2626; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'" style="flex:1; height:38px; border-radius:6px; font-weight:900; font-size:13px; cursor:pointer">{{ e }}</button>
                     </div>
                 </div>
-
                 <div class="score-input-grid">
                     <div class="score-input-card">
                         <span class="score-input-label">SCORE</span>
@@ -293,7 +262,7 @@
                 <button @click="resetCurrentShot" class="btn-gray-main" style="margin-top:8px; padding:12px; font-size:14px">修正</button>
             </div>
 
-            <!-- 3. Summary Card Screen (維持) -->
+            <!-- 3. Summary Card Screen (9ホールTOTAL追加版) -->
             <div v-if="view === 'summary'" class="fade-in">
                 <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="card" style="padding:0; overflow:hidden">
                     <div style="background:#f9fafb; padding:10px; font-weight:900; border-bottom:1px solid #e5e7eb; text-align:center">{{ hIdx === 0 ? settings.front : settings.back }}</div>
@@ -312,6 +281,18 @@
                                 <td style="padding:4px; font-size:8px; font-style:italic; color:#6b7280; text-align:left">
                                     <div style="display:flex; flex-wrap:wrap; gap:2px"><span v-for="s in getFilledShots(hIdx*9 + i - 1)">{{ s.idx+1 }}:{{ s.club }}{{ s.result }}</span></div>
                                 </td>
+                            </tr>
+                            <!-- 9ホール計 (TOTAL) 行 -->
+                            <tr style="background:#f1f5f9; font-weight:900; text-align:center; border-top:2px solid #cbd5e1">
+                                <td style="padding:10px">TTL</td>
+                                <td>{{ calculateHalfTotal(hIdx).par }}</td>
+                                <td>{{ calculateHalfTotal(hIdx).score }}</td>
+                                <td>{{ calculateHalfTotal(hIdx).putts }}</td>
+                                <td>{{ calculateHalfTotal(hIdx).fw }}</td>
+                                <td>{{ calculateHalfTotal(hIdx).ob }}</td>
+                                <td>{{ calculateHalfTotal(hIdx).pn }}</td>
+                                <td>{{ calculateHalfTotal(hIdx).bk }}</td>
+                                <td></td>
                             </tr>
                         </table>
                     </div>
@@ -366,7 +347,7 @@
                         </div>
                     </div>
 
-                    <!-- PAR別パフォーマンス (完全復元) -->
+                    <!-- PAR別パフォーマンス -->
                     <div class="card" style="padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px">PAR別パフォーマンス</h3>
                         <div v-for="p in [3,4,5]" :key="p" style="border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:12px">
@@ -389,7 +370,7 @@
                         </div>
                     </div>
 
-                    <!-- Club Performance & Bias Table (完全復元) -->
+                    <!-- Club Performance & Bias Table -->
                     <div class="card" style="overflow-x:auto; padding:0">
                         <h3 style="font-size:14px; font-weight:900; padding:16px; border-bottom:1px solid #eee; font-style:italic">Club Performance & Bias</h3>
                         <table style="width:100%; font-size:11px; border-collapse:collapse">
@@ -428,7 +409,6 @@
             </div>
         </main>
 
-        <!-- Navigation -->
         <nav class="nav-bar">
             <button @click="changeView('settings')" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span class="nav-label">Set</span></button>
             <button @click="isRoundStarted ? changeView('hole') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="nav-label">Input</span></button>
@@ -439,15 +419,8 @@
     </div>
 
     <script>
-        // Service Worker登録の修正（オフライン動作を確実にするため）
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(reg => {
-                    console.log('SW registered');
-                }).catch(err => {
-                    console.log('SW failed', err);
-                });
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
         }
 
         const { createApp, ref, computed, onMounted, watch } = Vue;
@@ -464,7 +437,6 @@
                 
                 const holeResults = ref(restored.holeResults || Array.from({ length: 18 }, () => ({ score: 0, putts: 2, fw: false, shots: Array.from({ length: 7 }, () => ({ club: '', result: '○', direction: '', errorType: '', ob: false, penalty: false, bunker: false })) })));
                 const settings = ref(restored.settings || { date: new Date().toISOString().substr(0, 10), prefix: 'index', courseId: '', front: '', back: '', selectedClubs:['1w', '3w', '3u', '4u', '5u', '5i', '6i', '7i', '8i', '9i', 'pw', '52', '58', 'pt'] });
-
                 const courses = ref(JSON.parse(localStorage.getItem('golf_courses') || '[]'));
                 const savedRounds = ref(JSON.parse(localStorage.getItem('golf_saved_rounds') || '[]'));
 
@@ -483,12 +455,10 @@
                 const syncSections = (t) => { if (selectedCourse.value && selectedCourse.value.sections.length === 2) { const ns = selectedCourse.value.sections.map(s => s.name); if (t === 'front') settings.value.back = ns.find(n => n !== settings.value.front); else settings.value.front = ns.find(n => n !== settings.value.back); } };
                 const getHolePar = (idx) => { if (!selectedCourse.value || !settings.value.front || !settings.value.back) return 0; const sec = selectedCourse.value.sections.find(s => s.name === (idx < 9 ? settings.value.front : settings.value.back)); return sec ? sec.pars[idx % 9] : 0; };
                 const startRound = () => { for(let i=0; i<18; i++) { const p = getHolePar(i); holeResults.value[i].score = p > 0 ? p : 4; } isRoundStarted.value = true; view.value = 'hole'; };
-
                 const currentShotData = computed(() => holeResults.value[currentHoleIndex.value].shots[currentShotIdx.value]);
                 const currentHoleNum = computed(() => (currentHoleIndex.value % 9) + 1);
                 const currentSectionName = computed(() => currentHoleIndex.value < 9 ? settings.value.front : settings.value.back);
                 const currentPar = computed(() => getHolePar(currentHoleIndex.value));
-
                 const isPenaltyStroke = (h, s) => { if (s <= 0) return false; const prev = holeResults.value[h]?.shots[s-1]; return !!(prev && (prev.errorType === 'OB' || prev.errorType === 'PN')); };
                 const selectShot = (idx) => { if (!isPenaltyStroke(currentHoleIndex.value, idx)) { currentShotIdx.value = idx; } };
                 const setResult = (r) => { const s = currentShotData.value; s.result = r; s.direction = ''; s.errorType = ''; s.ob = false; s.penalty = false; };
@@ -510,7 +480,6 @@
                     if (!savedRounds.value || savedRounds.value.length === 0) return null;
                     const scores = savedRounds.value.map(r => r.totalScore).filter(s => s > 0);
                     const putts = savedRounds.value.map(r => r.totalPutts);
-                    if (scores.length === 0) return null;
                     let t3P = 0; savedRounds.value.forEach(r => r.holeResults.forEach(h => { if(h.putts >= 3) t3P++; }));
                     return { avgScore: (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1), bestScore: Math.min(...scores), worstScore: Math.max(...scores), avgPutts: (putts.reduce((a,b)=>a+b,0)/putts.length).toFixed(1), avgThreePutts: (t3P/savedRounds.value.length).toFixed(1) };
                 });
@@ -545,26 +514,23 @@
                     for(let i=1; i<=18; i++) csv += `,H${i}_Par,H${i}_Score,H${i}_Putt,H${i}_FW,H${i}_BK,H${i}_OB,H${i}_PN`;
                     csv += "\n";
                     savedRounds.value.forEach(r => {
-                        let fwC = 0, girC = 0, scmC = 0, ssC = 0, hDS = "";
+                        let fwC = 0, girC = 0, scmC = 0, SS_Hit = 0, hDS = "";
                         r.holeResults.forEach((h, idx) => {
                             let par = 0; const c = courses.value.find(cc => cc.id === r.courseSettings?.id); if (c) { const s = c.sections.find(ss => ss.name === (idx < 9 ? r.courseSettings.front : r.courseSettings.back)); if (s) par = s.pars[idx % 9]; }
                             if (h.fw) fwC++; if (par > 0 && (h.score - h.putts <= par - 2)) girC++; else if (par > 0 && h.score <= par) scmC++;
-                            let lastB = 0; h.shots.forEach((s, i) => { if(s.bunker) lastB = i+1; }); if (lastB !== 0 && h.score - lastB <= 2 && h.putts <= 1) ssC++;
                             hDS += `,${par},${h.score},${h.putts},${h.fw ? 1 : 0},${h.shots.filter(s=>s.bunker).length},${h.shots.filter(s=>s.errorType==='OB').length},${h.shots.filter(s=>s.errorType==='PN').length}`;
                         });
-                        csv += `${r.date},${r.course},${r.totalScore},${r.totalPutts},${fwC},${girC},${scmC},${ssC}${hDS}\n`;
+                        csv += `${r.date},${r.course},${r.totalScore},${r.totalPutts},${fwC},${girC},${scmC},0${hDS}\n`;
                     });
                     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); 
                     const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", `golf_log.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 };
-
                 const nextHole = () => { 
                     const hI = currentHoleIndex.value, res = holeResults.value[hI]; let sC = 0;
                     res.shots.forEach((s, sIdx) => { if (s.club !== '' || s.errorType === 'OB' || s.errorType === 'PN') sC++; if (isPenaltyStroke(hI, sIdx)) sC++; });
                     if (sC + res.putts !== res.score) { alert(`不整合！ 打数(${sC})+パット(${res.putts})=${sC+res.putts} 打 / 設定:${res.score} 打`); return; }
                     if (currentHoleIndex.value < 17) { currentHoleIndex.value++; currentShotIdx.value = 0; } else view.value = 'summary'; 
                 };
-
                 const prevHole = () => { if (currentHoleIndex.value > 0) { currentHoleIndex.value--; currentShotIdx.value = 0; } };
                 const jumpToHole = (idx) => { currentHoleIndex.value = idx; currentShotIdx.value = 0; view.value = 'hole'; };
                 const getFilledShots = (h) => holeResults.value[h].shots.map((s, i) => ({...s, idx: i})).filter((s) => s.club !== '' || s.bunker);

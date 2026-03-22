@@ -1,4 +1,4 @@
-const CACHE_NAME = 'golf-app-v31-final-guide-style-perfect';
+const CACHE_NAME = 'golf-app-v33-final-perfect';
 const urlsToCache = [
   './',
   './index.html',
