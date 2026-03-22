@@ -42,10 +42,10 @@
         .setting-label { display: block; font-size: 8.5px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
         .input-box { width: 100%; border: 1px solid #d1d5db; padding: 12px; border-radius: 10px; background: white; font-weight: bold; height: 48px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
 
-        /* ホールナビ (OUT中央配置修正) */
+        /* ホールナビ (OUT中央配置) */
         .hole-nav { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 16px; width: 100%; }
         .hole-nav-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; font-size: 24px; }
-        .hole-nav-center { flex: 1; text-align: center; }
+        .hole-nav-center { flex: 1; text-align: center; } /* 中央寄せ追加 */
 
         /* ショット選択 (左右スライド) */
         .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; overflow: hidden; }
@@ -55,12 +55,12 @@
         .shot-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
         .shot-btn-active { background: #2563eb; color: white; border-color: #1e40af; }
 
-        /* スコア入力グリッド (狭い画面での横はみ出し修正) */
+        /* スコア入力グリッド (はみ出し修正) */
         .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-        .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 4px; text-align: center; }
-        .score-ctrl { display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 2px; text-align: center; } /* padding調整 */
+        .score-ctrl { display: flex; align-items: center; justify-content: center; gap: 8px; } /* gap調整 */
         .score-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .score-val { font-size: 32px; font-weight: 900; min-width: 32px; }
+        .score-val { font-size: 28px; font-weight: 900; min-width: 36px; } /* size調整 */
 
         /* スコア記号 */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; font-size: 14px; }
