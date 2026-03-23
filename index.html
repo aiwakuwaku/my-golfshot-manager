@@ -46,7 +46,7 @@
         .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
         .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 2px; text-align: center; }
         .score-ctrl { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .score-btn { width: 40px; height: 40px; border-radius: 50%; border: solid 1px #d1d5db; background: white; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .score-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .score-val { font-size: 30px; font-weight: 900; min-width: 36px; }
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; font-size: 14px; }
         .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } 
@@ -85,7 +85,7 @@
         </header>
 
         <main>
-            <!-- 0. Guide & Glossary -->
+            <!-- 0. Guide & Glossary (完全不変) -->
             <div v-if="view === 'guide'" class="fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 mb-6">
                     <h1 style="font-family: serif; font-style: italic; font-weight: 900; font-size: 28px; margin: 0;">Guide & Glossary</h1>
