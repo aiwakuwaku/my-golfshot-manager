@@ -84,7 +84,7 @@
         </header>
 
         <main>
-            <!-- 0. Guide & Glossary (全項目復元) -->
+            <!-- 0. Guide & Glossary -->
             <div v-if="view === 'guide'" class="fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 mb-6">
                     <h1 style="font-family: serif; font-style: italic; font-weight: 900; font-size: 28px; margin: 0;">Guide & Glossary</h1>
@@ -95,7 +95,7 @@
                         <div class="section-header" style="border-color: #2563eb; color: #2563eb;">基本操作の流れ</div>
                         <div class="guide-box">
                             <p><strong>1.準備 (Set)</strong><br>コースデータをインポートし、クラブを選択します。中断しても自動保存されます。</p>
-                            <p style="margin-top:10px"><strong>2.ショット記録 (Input)</strong><br>各ホールでクラブと結果を選択。方向(LRFB)を記録するとミス傾向が分析されます。</p>
+                            <p style="margin-top:10px"><strong>2.ショット記録 (Input)</strong><br>各ホールでクラブと結果を選択. 方向(LRFB)を記録するとミス傾向が分析されます。</p>
                             <p style="margin-top:10px"><strong>3.スコア確定 (Card)</strong><br>スコア、パット数、FWキープ、OB、バンカーの各項目を確認して修正する場合はそのホールの番号をタップするとInput画面になるので修正してください。</p>
                         </div>
                     </section>
@@ -262,7 +262,7 @@
                 <button @click="resetCurrentShot" class="btn-gray-main" style="margin-top:8px; padding:12px; font-size:14px">修正</button>
             </div>
 
-            <!-- 3. Summary Card Screen (9ホールTOTAL追加版) -->
+            <!-- 3. Summary Card Screen -->
             <div v-if="view === 'summary'" class="fade-in">
                 <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="card" style="padding:0; overflow:hidden">
                     <div style="background:#f9fafb; padding:10px; font-weight:900; border-bottom:1px solid #e5e7eb; text-align:center">{{ hIdx === 0 ? settings.front : settings.back }}</div>
@@ -282,7 +282,6 @@
                                     <div style="display:flex; flex-wrap:wrap; gap:2px"><span v-for="s in getFilledShots(hIdx*9 + i - 1)">{{ s.idx+1 }}:{{ s.club }}{{ s.result }}</span></div>
                                 </td>
                             </tr>
-                            <!-- 9ホール計 (TOTAL) 行 -->
                             <tr style="background:#f1f5f9; font-weight:900; text-align:center; border-top:2px solid #cbd5e1">
                                 <td style="padding:10px">TTL</td>
                                 <td>{{ calculateHalfTotal(hIdx).par }}</td>
@@ -310,7 +309,7 @@
                 </div>
             </div>
 
-            <!-- 4. Performance Analysis (完全復元版) -->
+            <!-- 4. Performance Analysis -->
             <div v-if="view === 'analysis'" class="fade-in text-left">
                 <h2 class="font-black italic text-2xl border-b pb-2 mb-6">Performance Analysis</h2>
                 
@@ -410,7 +409,7 @@
         </main>
 
         <nav class="nav-bar">
-            <button @click="changeView('settings')" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span class="nav-label">Set</span></button>
+            <button @click="changeView('settings')" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c1.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span class="nav-label">Set</span></button>
             <button @click="isRoundStarted ? changeView('hole') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="nav-label">Input</span></button>
             <button @click="isRoundStarted ? changeView('summary') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'summary' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg><span class="nav-label">Card</span></button>
             <button @click="isRoundStarted ? changeView('analysis') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'analysis' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg><span class="nav-label">Stats</span></button>
