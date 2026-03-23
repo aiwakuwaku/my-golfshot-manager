@@ -1,11 +1,12 @@
-const CACHE_NAME = 'golf-pro-v2-11-cache-v10';
+const CACHE_NAME = 'golf-app-v33-final-perfect
+';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-golf.png'
-];
-
+  './icon-192.png',
+  './icon-512.png'
+  ];
 // インストール時に全資産をキャッシュ
 self.addEventListener('install', (event) => {
   self.skipWaiting();
