@@ -1,4 +1,4 @@
-const CACHE_NAME = 'golf-app-v36-fixed';
+const CACHE_NAME = 'golf-app-v40-ultimate';
 const ASSETS = [
   './',
   './index.html',
@@ -10,17 +10,21 @@ const ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js'
 ];
 
-// インストール時にすべての資産をキャッシュ
+// インストール: キャッシュを強制的に作成
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      console.log('SW: Caching all assets');
+      // 一つ失敗しても中断されないよう個別にキャッシュ
+      return Promise.allSettled(
+        ASSETS.map(url => cache.add(url).catch(err => console.log('Failed to cache:', url, err)))
+      );
     })
   );
 });
 
-// 古いキャッシュの削除
+// アクティベート: 旧キャッシュを削除
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
@@ -31,20 +35,19 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// フェッチ処理（文字化け対策：Content-Typeヘッダーの強制上書き）
+// フェッチ: キャッシュがあればそれを返す（オフライン優先）
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      // キャッシュがあれば即座に返す
       if (cachedResponse) {
-        // HTMLファイルの場合、charset=UTF-8 を強制して文字化けを防止
-        const contentType = cachedResponse.headers.get('content-type') || '';
-        if (contentType.includes('text/html') || event.request.url.endsWith('/') || event.request.url.includes('index.html')) {
+        // 文字化け対策: HTMLファイルには明示的にcharsetを付加
+        if (event.request.mode === 'navigate' || event.request.url.endsWith('index.html')) {
           const newHeaders = new Headers(cachedResponse.headers);
           newHeaders.set('Content-Type', 'text/html; charset=UTF-8');
           return cachedResponse.blob().then(blob => {
             return new Response(blob, {
               status: cachedResponse.status,
-              statusText: cachedResponse.statusText,
               headers: newHeaders
             });
           });
@@ -52,12 +55,16 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
+      // キャッシュにない場合はネットワークから取得
       return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
-        }
+        if (!networkResponse || networkResponse.status !== 200) return networkResponse;
+        
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
         return networkResponse;
+      }).catch(() => {
+        // ネットワークもダメで、キャッシュもない場合
+        return new Response('Offline contents not available', { status: 503 });
       });
     })
   );

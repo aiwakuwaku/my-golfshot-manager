@@ -85,7 +85,7 @@
         </header>
 
         <main>
-            <!-- 0. Guide & Glossary (完全不変) -->
+            <!-- 0. Guide & Glossary -->
             <div v-if="view === 'guide'" class="fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 mb-6">
                     <h1 style="font-family: serif; font-style: italic; font-weight: 900; font-size: 28px; margin: 0;">Guide & Glossary</h1>
@@ -415,8 +415,13 @@
     </div>
 
     <script>
+        // PWA Registration with debug
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW success:', reg.scope))
+                    .catch(err => console.error('SW failed:', err));
+            });
         }
 
         const { createApp, ref, computed, onMounted, watch } = Vue;
