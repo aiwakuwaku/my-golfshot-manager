@@ -1,23 +1,26 @@
-const CACHE_NAME = 'golf-app-v35'; // バージョンを上げて再認識させる
+const CACHE_NAME = 'golf-app-v36-fixed';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  // CDNのライブラリも事前にキャッシュリストに入れるとオフラインでより安定します
   'https://unpkg.com/vue@3/dist/vue.global.js',
   'https://cdn.tailwindcss.com',
   'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js'
 ];
 
+// インストール時にすべての資産をキャッシュ
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
   );
 });
 
+// 古いキャッシュの削除
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
@@ -28,19 +31,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// フェッチ処理（文字化け対策：Content-Typeヘッダーの強制上書き）
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // --- 文字化け対策の核心部分 ---
-        // HTMLファイルの場合、レスポンスヘッダーに charset=UTF-8 を強制的に付与して返す
-        if (event.request.url.endsWith('/') || event.request.url.includes('index.html')) {
+        // HTMLファイルの場合、charset=UTF-8 を強制して文字化けを防止
+        const contentType = cachedResponse.headers.get('content-type') || '';
+        if (contentType.includes('text/html') || event.request.url.endsWith('/') || event.request.url.includes('index.html')) {
           const newHeaders = new Headers(cachedResponse.headers);
           newHeaders.set('Content-Type', 'text/html; charset=UTF-8');
-          return new Response(cachedResponse.body, {
-            status: cachedResponse.status,
-            statusText: cachedResponse.statusText,
-            headers: newHeaders
+          return cachedResponse.blob().then(blob => {
+            return new Response(blob, {
+              status: cachedResponse.status,
+              statusText: cachedResponse.statusText,
+              headers: newHeaders
+            });
           });
         }
         return cachedResponse;
@@ -52,8 +58,6 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
         }
         return networkResponse;
-      }).catch(() => {
-        // オフラインかつキャッシュもない場合の予備処理（必要に応じて）
       });
     })
   );
