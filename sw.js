@@ -1,54 +1,56 @@
-const CACHE_NAME = 'golf-app-v33-final-perfect';
-const urlsToCache = [
+const CACHE_NAME = 'golf-pro-v2-11-cache-v10';
+const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  'https://unpkg.com/vue@3/dist/vue.global.js',
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js'
+  './icon-golf.png'
 ];
 
+// インストール時に全資産をキャッシュ
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return Promise.all(
-        urlsToCache.map(url => {
-          return cache.add(url).catch(err => console.error('Cache add error:', url, err));
-        })
-      );
+      console.log('Caching assets');
+      return cache.addAll(ASSETS).catch(err => {
+        console.error('Failed to cache assets. Check if icon-golf.png exists.', err);
+      });
     })
   );
-  self.skipWaiting();
 });
 
+// 古いキャッシュをクリーンアップ
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (key !== CACHE_NAME) {
+          console.log('Deleting old cache:', key);
+          return caches.delete(key);
+        }
+      }));
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// キャッシュ優先戦略 (Stale-While-Revalidate)
+// キャッシュがあれば即座に返し、同時にネットワークから最新を取得してキャッシュを更新します
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, networkResponse.clone());
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        const fetchedResponse = fetch(event.request).then((networkResponse) => {
+          // 取得成功したらキャッシュを更新
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
+          }
           return networkResponse;
+        }).catch(() => {
+          // ネットワークエラー時（完全オフライン）は何もせずエラーを出さない
         });
+
+        // キャッシュがあればそれを返す。なければネットワークの結果を待つ
+        return cachedResponse || fetchedResponse;
       });
     })
   );
