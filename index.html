@@ -2,7 +2,6 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Golf Shot Manager</title>
     <meta name="theme-color" content="#121212">
@@ -19,56 +18,82 @@
 
     <style>
         [v-cloak] { display: none; }
+        
+        /* === オフライン時の表示乱れを防止するデザイン固定設定 === */
+        * { box-sizing: border-box; } /* これがないとオフライン時にサイズ計算が狂い画像が乱れます */
+        
         body { margin: 0; padding: 0; background-color: #f3f4f6; font-family: -apple-system, sans-serif; color: #111827; }
         #app { max-width: 448px; margin: 0 auto; min-height: 100vh; background-color: white; display: flex; flex-direction: column; position: relative; }
         main { flex-grow: 1; padding: 16px; padding-bottom: 100px; overflow-y: auto; text-align: left; }
+
+        /* ヘッダー・相対スコア */
         .header-grid { display: grid; grid-template-columns: 60px 1fr 60px; align-items: center; height: 64px; background-color: black; color: white; position: sticky; top: 0; z-index: 100; }
         .header-center { position: relative; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
         .relative-score-box { position: absolute; left: 100%; margin-left: 8px; font-weight: 900; font-size: 16px; white-space: nowrap; }
         .guide-btn { background: transparent !important; border: none !important; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; width: 44px; height: 44px; }
+
+        /* ナビゲーション */
         .nav-bar { background-color: #121212; height: 75px; display: flex; align-items: center; justify-content: space-around; border-top: 1px solid #222; position: fixed; bottom: 0; width: 100%; max-width: 448px; z-index: 100; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #757575; border: none; background: none; font-size: 10px; font-weight: 600; cursor: pointer; }
         .nav-active { color: #00e676; }
         .nav-active svg { fill: #00e676; }
         .nav-inactive svg { fill: #757575; }
+
+        /* カード・グリッド */
         .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .setting-label { display: block; font-size: 8.5px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px; }
         .input-box { width: 100%; border: 1px solid #d1d5db; padding: 8px 12px; border-radius: 10px; background: white; font-weight: bold; height: 44px; font-size: 16px; -webkit-appearance: none; box-sizing: border-box; }
+
+        /* ホールナビ */
         .hole-nav { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 16px; width: 100%; }
         .hole-nav-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; font-size: 24px; }
         .hole-nav-center { flex: 1; text-align: center; }
+
+        /* ショット選択 */
         .shot-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; overflow: hidden; }
         .shot-label { font-size: 16px; font-weight: 900; font-style: italic; color: #2563eb; text-transform: uppercase; flex-shrink: 0; }
         .shot-scroll-container { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; padding: 2px 0; scrollbar-width: none; }
         .shot-scroll-container::-webkit-scrollbar { display: none; }
         .shot-btn { width: 33px; height: 33px; border-radius: 50%; border: 1px solid #e5e7eb; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
         .shot-btn-active { background: #2563eb; color: white; border-color: #1e40af; }
+
+        /* スコア入力グリッド (はみ出し修正済) */
         .score-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
         .score-input-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 2px; text-align: center; }
         .score-ctrl { display: flex; align-items: center; justify-content: center; gap: 8px; }
         .score-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .score-val { font-size: 30px; font-weight: 900; min-width: 36px; }
+
+        /* スコア記号 */
         .score-box { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; font-size: 14px; }
         .score-circle { border: 1.5px solid #f87171; border-radius: 50%; color: #dc2626; } 
         .score-square { border: 1.5px solid #475569; color: #1e293b; } 
         .score-triangle { position: relative; color: #2563eb; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpolygon points='15,2 28,27 2,27' fill='none' stroke='%2360a5fa' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
         .h-circle { border: 1.5px solid #10b981; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #10b981; font-weight: bold; }
         .bk-circle { border: 1.2px solid #333; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-weight: 900; }
+
+        /* Guide用 */
         .glossary-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; text-align: left; }
         .glossary-dot { color: #374151; flex-shrink: 0; padding-top: 2px; font-weight: bold; }
         .section-header { border-left: 4px solid; padding-left: 10px; font-weight: 900; font-size: 15px; margin-bottom: 12px; }
         .guide-box { border-radius: 12px; border: 1px solid #e5e7eb; padding: 16px; margin-bottom: 16px; background: white; }
+
+        /* 統計プログレスバー */
         .progress-bar { height: 6px; border-radius: 3px; background: #e5e7eb; overflow: hidden; margin-top: 4px; }
         .progress-fill { height: 100%; transition: width 0.5s ease-out; }
+
         .flex { display: flex; } .justify-between { justify-content: space-between; } .items-center { align-items: center; }
         .gap-2 { gap: 8px; } .gap-4 { gap: 16px; } .text-center { text-align: center; }
         .fade-in { animation: fadeIn 0.2s ease-in; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .btn-green-main { width: 100%; background-color: #10b981; color: white; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; font-size: 16px; }
-        .btn-gray-main { width: 100%; background-color: #e5e7eb; color: #4b5563; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; }
+        
+        /* 修正：ボタンの角丸とはみ出しをオフラインでも守るための詳細定義 */
+        .btn-green-main { width: 100%; background-color: #10b981; color: white; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; font-size: 16px; display: block; }
+        .btn-gray-main { width: 100%; background-color: #e5e7eb; color: #4b5563; font-weight: 900; padding: 16px; border-radius: 12px; border: none; cursor: pointer; display: block; text-decoration: none; line-height: 1; }
     </style>
 </head>
 <body>
     <div id="app" v-cloak>
+        <!-- Header -->
         <header class="header-grid">
             <div class="flex justify-center">
                 <button @click="changeView('guide')" class="guide-btn">
@@ -85,12 +110,13 @@
         </header>
 
         <main>
-            <!-- 0. Guide & Glossary -->
+            <!-- 0. Guide & Glossary (全項目復元) -->
             <div v-if="view === 'guide'" class="fade-in">
                 <div class="flex justify-between items-center border-b-2 border-gray-800 pb-2 mb-6">
                     <h1 style="font-family: serif; font-style: italic; font-weight: 900; font-size: 28px; margin: 0;">Guide & Glossary</h1>
                     <button @click="view = isRoundStarted ? 'summary' : 'settings'" style="color:#2563eb; font-weight:bold; border:none; background:none; font-size:18px; cursor:pointer">Close</button>
                 </div>
+
                 <div class="space-y-6 text-gray-800" style="font-size:12.5px; line-height:1.6;">
                     <section>
                         <div class="section-header" style="border-color: #2563eb; color: #2563eb;">基本操作の流れ</div>
@@ -100,6 +126,7 @@
                             <p style="margin-top:10px"><strong>3.スコア確定 (Card)</strong><br>スコア、パット数、FWキープ、OB、バンカーの各項目を確認して修正する場合はそのホールの番号をタップするとInput画面になるので修正してください。</p>
                         </div>
                     </section>
+
                     <section>
                         <div class="section-header" style="border-color: #f97316; color: #f97316;">ショット判定の定義</div>
                         <div class="guide-box">
@@ -117,6 +144,7 @@
                             </div>
                         </div>
                     </section>
+
                     <section>
                         <div class="section-header" style="border-color: #10b981; color: #10b981;">用語と記号の解説</div>
                         <div class="guide-box">
@@ -136,12 +164,14 @@
                             </ul>
                         </div>
                     </section>
+
                     <section>
                         <div class="section-header" style="border-color: #8b5cf6; color: #8b5cf6;">特殊ルール</div>
                         <div class="guide-box" style="background:#faf5ff; color:#581c87;">
                             <p>「OB」または「PN」を選択すると、罰打を考慮し、次の1打分は自動的に罰打としてスキップされます。1打目OBなら次は3打目から入力します。</p>
                         </div>
                     </section>
+
                     <section>
                         <div class="section-header" style="border-color: #2563eb; color: #2563eb;">中断して過去のデータを見るには</div>
                         <div class="guide-box" style="background:#eff6ff; color:#1e40af;">
@@ -150,6 +180,7 @@
                             <p style="margin-top:8px">3. Round Historyで保存したデータを読み込み続きから入力する。</p>
                         </div>
                     </section>
+
                     <section>
                         <div class="section-header" style="border-color: #10b981; color: #10b981;">オフラインでの利用</div>
                         <div class="guide-box" style="background:#f0fdf4; color:#166534;">
@@ -168,8 +199,8 @@
                     <div class="card" style="background:#f9fafb; text-align:center">
                         <input type="file" id="csvFile" @change="importCsv" style="display:none">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
-                            <label for="csvFile" class="btn-gray-main" style="background:black; color:white; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer">Local CSV</label>
-                            <button @click="importFromServer" class="btn-gray-main" style="background:#2563eb; color:white; font-size:14px">Sync Server</button>
+                            <label for="csvFile" class="btn-gray-main" style="background:black; color:white; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius: 12px;">Local CSV</label>
+                            <button @click="importFromServer" class="btn-gray-main" style="background:#2563eb; color:white; font-size:14px; border-radius: 12px;">Sync Server</button>
                         </div>
                     </div>
                     <div v-if="courses && courses.length > 0" class="space-y-4">
@@ -205,6 +236,7 @@
                     </div>
                     <button @click="nextHole" class="hole-nav-btn">▶</button>
                 </div>
+
                 <div class="card" style="border-color:#bfdbfe">
                     <div class="shot-row">
                         <span class="shot-label">SHOT {{ currentShotIdx + 1 }}</span>
@@ -229,7 +261,7 @@
                         <div class="flex gap-2">
                             <button @click="holeResults[currentHoleIndex].fw = !holeResults[currentHoleIndex].fw" 
                                 :style="holeResults[currentHoleIndex].fw ? 'background:#059669; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
-                                style="padding:0 14px; height:42px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Fw</button>
+                                style="padding:0 12px; height:42px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Fw</button>
                             <button @click="currentShotData.bunker = !currentShotData.bunker" 
                                 :style="currentShotData.bunker ? 'background:#d97706; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'"
                                 style="padding:0 14px; height:42px; border-radius:10px; font-size:13px; font-weight:bold; cursor:pointer">Bk</button>
@@ -242,6 +274,7 @@
                         <button v-for="e in ['OB','PN','林']" :key="e" @click="setErrorType(e)" :style="currentShotData.errorType === e ? 'background:#dc2626; color:white' : 'background:white; color:#d1d5db; border:1px solid #e5e7eb'" style="flex:1; height:38px; border-radius:6px; font-weight:900; font-size:13px; cursor:pointer">{{ e }}</button>
                     </div>
                 </div>
+
                 <div class="score-input-grid">
                     <div class="score-input-card">
                         <span class="score-input-label">SCORE</span>
@@ -263,7 +296,7 @@
                 <button @click="resetCurrentShot" class="btn-gray-main" style="margin-top:8px; padding:12px; font-size:14px">修正</button>
             </div>
 
-            <!-- 3. Summary Card Screen -->
+            <!-- 3. Summary Card Screen (9ホールTOTAL追加版) -->
             <div v-if="view === 'summary'" class="fade-in">
                 <div v-for="(half, hIdx) in ['Front', 'Back']" :key="hIdx" class="card" style="padding:0; overflow:hidden">
                     <div style="background:#f9fafb; padding:10px; font-weight:900; border-bottom:1px solid #e5e7eb; text-align:center">{{ hIdx === 0 ? settings.front : settings.back }}</div>
@@ -310,7 +343,7 @@
                 </div>
             </div>
 
-            <!-- 4. Performance Analysis -->
+            <!-- 4. Performance Analysis (完全復元版) -->
             <div v-if="view === 'analysis'" class="fade-in text-left">
                 <h2 class="font-black italic text-2xl border-b pb-2 mb-6">Performance Analysis</h2>
                 
@@ -328,6 +361,7 @@
                 </div>
 
                 <div v-if="analysis" class="space-y-6 mt-8">
+                    <!-- Score Loss Analysis -->
                     <div class="card" style="border-color:#fee2e2; padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; color:#dc2626; text-transform:uppercase; margin-bottom:12px; font-style:italic">Score Loss Analysis</h3>
                         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px">
@@ -346,6 +380,7 @@
                         </div>
                     </div>
 
+                    <!-- PAR別パフォーマンス -->
                     <div class="card" style="padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px">PAR別パフォーマンス</h3>
                         <div v-for="p in [3,4,5]" :key="p" style="border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:12px">
@@ -359,6 +394,7 @@
                         </div>
                     </div>
 
+                    <!-- Skill Categories -->
                     <div class="card" style="padding: 16px;">
                         <h3 style="font-size:14px; font-weight:900; margin-bottom:12px; font-style:italic">Skill Categories</h3>
                         <div v-for="(val, label) in analysis.categories" :key="label" style="margin-bottom:16px">
@@ -367,6 +403,7 @@
                         </div>
                     </div>
 
+                    <!-- Club Performance & Bias Table -->
                     <div class="card" style="overflow-x:auto; padding:0">
                         <h3 style="font-size:14px; font-weight:900; padding:16px; border-bottom:1px solid #eee; font-style:italic">Club Performance & Bias</h3>
                         <table style="width:100%; font-size:11px; border-collapse:collapse">
@@ -406,7 +443,7 @@
         </main>
 
         <nav class="nav-bar">
-            <button @click="changeView('settings')" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c1.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span class="nav-label">Set</span></button>
+            <button @click="changeView('settings')" class="nav-item" :class="view === 'settings' ? 'nav-active' : 'nav-inactive'"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg><span class="nav-label">Set</span></button>
             <button @click="isRoundStarted ? changeView('hole') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'hole' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg><span class="nav-label">Input</span></button>
             <button @click="isRoundStarted ? changeView('summary') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'summary' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg><span class="nav-label">Card</span></button>
             <button @click="isRoundStarted ? changeView('analysis') : null" class="nav-item" :class="[!isRoundStarted ? 'nav-disabled' : (view === 'analysis' ? 'nav-active' : 'nav-inactive')]"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg><span class="nav-label">Stats</span></button>
@@ -415,15 +452,7 @@
     </div>
 
     <script>
-        // PWA Registration with debug
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW success:', reg.scope))
-                    .catch(err => console.error('SW failed:', err));
-            });
-        }
-
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
         const { createApp, ref, computed, onMounted, watch } = Vue;
         createApp({
             setup() {
